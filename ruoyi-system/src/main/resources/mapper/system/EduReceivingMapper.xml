@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.EduReceivingMapper">
+    
+    <resultMap type="EduReceiving" id="EduReceivingResult">
+        <result property="id"    column="id"    />
+        <result property="batchId"    column="batch_id"    />
+        <result property="createDate"    column="createDate"    />
+        <result property="createTime"    column="createTime"    />
+        <result property="shipperCode"    column="shipper_code"    />
+        <result property="orderCode"    column="order_code"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="pulletNum"    column="pullet_num"    />
+        <result property="pieceNum"    column="piece_num"    />
+        <result property="warmArea"    column="warm_area"    />
+    </resultMap>
+
+    <sql id="selectEduReceivingVo">
+        select id, batch_id, createDate, createTime, shipper_code, order_code, goods_code, goods_name, goods_num, pullet_num, piece_num, warm_area from edu_receiving
+    </sql>
+
+    <select id="selectEduReceivingList" parameterType="EduReceiving" resultMap="EduReceivingResult">
+        <include refid="selectEduReceivingVo"/>
+        <where>  
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="createDate != null "> and createDate = #{createDate}</if>
+            <if test="createTime != null "> and createTime = #{createTime}</if>
+            <if test="shipperCode != null  and shipperCode != ''"> and shipper_code = #{shipperCode}</if>
+            <if test="orderCode != null  and orderCode != ''"> and order_code = #{orderCode}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsNum != null "> and goods_num = #{goodsNum}</if>
+            <if test="pulletNum != null "> and pullet_num = #{pulletNum}</if>
+            <if test="pieceNum != null "> and piece_num = #{pieceNum}</if>
+            <if test="warmArea != null  and warmArea != ''"> and warm_area = #{warmArea}</if>
+        </where>
+    </select>
+    
+    <select id="selectEduReceivingById" parameterType="Long" resultMap="EduReceivingResult">
+        <include refid="selectEduReceivingVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEduReceiving" parameterType="EduReceiving" useGeneratedKeys="true" keyProperty="id">
+        insert into edu_receiving
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">batch_id,</if>
+            <if test="createDate != null">createDate,</if>
+            <if test="createTime != null">createTime,</if>
+            <if test="shipperCode != null">shipper_code,</if>
+            <if test="orderCode != null">order_code,</if>
+            <if test="goodsCode != null">goods_code,</if>
+            <if test="goodsName != null">goods_name,</if>
+            <if test="goodsNum != null">goods_num,</if>
+            <if test="pulletNum != null">pullet_num,</if>
+            <if test="pieceNum != null">piece_num,</if>
+            <if test="warmArea != null">warm_area,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">#{batchId},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="shipperCode != null">#{shipperCode},</if>
+            <if test="orderCode != null">#{orderCode},</if>
+            <if test="goodsCode != null">#{goodsCode},</if>
+            <if test="goodsName != null">#{goodsName},</if>
+            <if test="goodsNum != null">#{goodsNum},</if>
+            <if test="pulletNum != null">#{pulletNum},</if>
+            <if test="pieceNum != null">#{pieceNum},</if>
+            <if test="warmArea != null">#{warmArea},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertEduReceivingList" parameterType="EduReceiving">
+        insert into edu_receiving(batch_id,createDate,createTime,shipper_code,goods_code,goods_name,goods_num,order_code,pullet_num,piece_num,warm_area)values
+        <foreach item="receiving" collection="list" separator=",">
+            (#{receiving.batchId},#{receiving.createDate},#{receiving.createTime},#{receiving.shipperCode},#{receiving.goodsCode},#{receiving.goodsName},#{receiving.goodsNum},#{receiving.orderCode},#{receiving.pulletNum},#{receiving.pieceNum},#{receiving.warmArea})
+        </foreach>
+    </insert>
+
+    <update id="updateEduReceiving" parameterType="EduReceiving">
+        update edu_receiving
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createDate != null">createDate = #{createDate},</if>
+            <if test="createTime != null">createTime = #{createTime},</if>
+            <if test="shipperCode != null">shipper_code = #{shipperCode},</if>
+            <if test="orderCode != null">order_code = #{orderCode},</if>
+            <if test="goodsCode != null">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="goodsNum != null">goods_num = #{goodsNum},</if>
+            <if test="pulletNum != null">pullet_num = #{pulletNum},</if>
+            <if test="pieceNum != null">piece_num = #{pieceNum},</if>
+            <if test="warmArea != null">warm_area = #{warmArea},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEduReceivingById" parameterType="Long">
+        delete from edu_receiving where id = #{id}
+    </delete>
+    <delete id="deleteEduReceivingByUserId" parameterType="Long">
+        delete from edu_receiving where batch_id = #{userId}
+    </delete>
+
+    <delete id="deleteEduReceivingByIds" parameterType="String">
+        delete from edu_receiving where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getEveryDay" parameterType="Long" resultMap="EduReceivingResult">
+     select createDate as 'createDate',count(distinct(order_code)) as 'goods_num'
+     from edu_receiving
+     where batch_id = #{userId}   group by createDate order by createDate
+    </select>
+
+    <select id="getEveryDay1" parameterType="Long" resultMap="EduReceivingResult">
+  select delivery_date as 'createDate',count(distinct(order_code)) as 'goods_num' from edu_delivery
+             where batch_id = #{userId}  group by delivery_date order by delivery_date
+    </select>
+
+    <select id="getShipper" parameterType="Long" resultMap="EduReceivingResult">
+  select createDate as 'createDate',count(distinct(shipper_code)) as 'goods_num' from edu_receiving
+             where batch_id =#{userId}  group by createDate order by createDate
+    </select>
+    <select id="getCustomer" parameterType="Long" resultMap="EduReceivingResult">
+          select delivery_date as 'createDate',count(distinct(customer_code)) as 'goods_num' from edu_delivery
+             where batch_id =#{userId}  group by delivery_date
+              order by delivery_date
+    </select>
+
+    <select id="getShip_to_party" parameterType="Long" resultMap="EduReceivingResult">
+           select delivery_date as 'createDate',count(distinct(ship_to_party)) as 'goods_num' from edu_delivery
+             where batch_id =#{userId}  group by delivery_date order by delivery_date
+    </select>
+
+    <select id="getGoods_num" parameterType="Long" resultMap="EduReceivingResult">
+        select createDate as 'createDate', goods_num as 'goods_num'
+from edu_receiving
+where batch_id = #{userId}
+    </select>
+
+    <select id="getGoods_num1" parameterType="Long" resultMap="EduReceivingResult">
+        select delivery_date as 'createDate', ceil(sum(goods_num)) as 'goods_num'
+from edu_delivery
+where batch_id = #{userId}
+group by delivery_date
+order by delivery_date
+    </select>
+    <select id="getTatol_num" parameterType="Long" resultMap="EduReceivingResult">
+select  goods_code as 'goods_code', ceil(sum(delivery_total)) as 'goods_num'  from edu_physical where batch_id =#{batch_id} group by goods_code order by goods_num desc
+    </select>
+
+    <select id="getEveryTime" parameterType="Long" resultMap="EduReceivingResult">
+   select  DATE_FORMAT(b.date,'%H:00:00') AS 'goods_code', COUNT(*)/c.date AS 'goods_num'  from (
+   select distinct(a.date) as 'date' from (
+   select  CONCAT(CONCAT(createDate,' '),concat(substring(createTime,1,5),':00')) as 'date'
+    from edu_receiving where batch_id = #{userId})a)b , (SELECT count(distinct(createDate)) as 'date' from edu_receiving where batch_id = #{userId})c
+   group by goods_code
+   order by goods_code asc
+    </select>
+    <select id="getReceivingTime" parameterType="Long" resultMap="EduReceivingResult">
+    select  DATE_FORMAT(b.date,'%H:00:00') AS 'createTime', COUNT(*) AS 'goods_num'
+    from (select distinct(a.date) as 'date'
+    from (select  CONCAT(CONCAT(createDate,' '),concat(substring(createTime,1,5),':00')) as 'date'
+    from edu_receiving where batch_id =  #{userId})a)b , (SELECT count(distinct(createDate)) as 'date' from edu_receiving where batch_id =  #{userId})c
+    group by createTime
+    order by createTime asc
+    </select>
+    <select id="getReceivingTimes" parameterType="Long" resultMap="EduReceivingResult">
+    select DATE_FORMAT(createTime,'%H:%i:00') as 'createTime' ,count(1) as 'goods_num'
+    from edu_receiving
+    where batch_id =  #{userId}
+    group by DATE_FORMAT(createTime,'%H:%i')
+    </select>
+    <select id="getIndustry" resultMap="EduReceivingResult">
+     select id as 'batch_id',name as 'goods_name'
+     from sys_project
+     where id between '345' and '354'
+    </select>
+</mapper>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.EduDeliveryMapper">
+    
+    <resultMap type="EduDelivery" id="EduDeliveryResult">
+        <result property="id"    column="id"    />
+        <result property="batchId"    column="batch_id"    />
+        <result property="customerCode"    column="customer_code"    />
+        <result property="shipToParty"    column="ship_to_party"    />
+        <result property="deliveryDate"    column="delivery_date"    />
+        <result property="deliveryTime"    column="delivery_time"    />
+        <result property="orderCode"    column="order_code"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="pulletNum"    column="pullet_num"    />
+        <result property="pieceNum"    column="piece_num"    />
+        <result property="warmArea"    column="warm_area"    />
+    </resultMap>
+
+    <sql id="selectEduDeliveryVo">
+        select id, batch_id, customer_code, ship_to_party, delivery_date, delivery_time, order_code, goods_code, goods_name, goods_num, pullet_num, piece_num, warm_area from edu_delivery
+    </sql>
+
+    <select id="selectEduDeliveryList" parameterType="EduDelivery" resultMap="EduDeliveryResult">
+        <include refid="selectEduDeliveryVo"/>
+        <where>  
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="customerCode != null  and customerCode != ''"> and customer_code = #{customerCode}</if>
+            <if test="shipToParty != null  and shipToParty != ''"> and ship_to_party = #{shipToParty}</if>
+            <if test="deliveryDate != null "> and delivery_date = #{deliveryDate}</if>
+            <if test="deliveryTime != null "> and delivery_time = #{deliveryTime}</if>
+            <if test="orderCode != null  and orderCode != ''"> and order_code = #{orderCode}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsNum != null "> and goods_num = #{goodsNum}</if>
+            <if test="pulletNum != null "> and pullet_num = #{pulletNum}</if>
+            <if test="pieceNum != null "> and piece_num = #{pieceNum}</if>
+            <if test="warmArea != null  and warmArea != ''"> and warm_area = #{warmArea}</if>
+        </where>
+    </select>
+    
+    <select id="selectEduDeliveryById" parameterType="Long" resultMap="EduDeliveryResult">
+        <include refid="selectEduDeliveryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEduDelivery" parameterType="EduDelivery" useGeneratedKeys="true" keyProperty="id">
+        insert into edu_delivery
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">batch_id,</if>
+            <if test="customerCode != null">customer_code,</if>
+            <if test="shipToParty != null">ship_to_party,</if>
+            <if test="deliveryDate != null">delivery_date,</if>
+            <if test="deliveryTime != null">delivery_time,</if>
+            <if test="orderCode != null">order_code,</if>
+            <if test="goodsCode != null">goods_code,</if>
+            <if test="goodsName != null">goods_name,</if>
+            <if test="goodsNum != null">goods_num,</if>
+            <if test="pulletNum != null">pullet_num,</if>
+            <if test="pieceNum != null">piece_num,</if>
+            <if test="warmArea != null">warm_area,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">#{batchId},</if>
+            <if test="customerCode != null">#{customerCode},</if>
+            <if test="shipToParty != null">#{shipToParty},</if>
+            <if test="deliveryDate != null">#{deliveryDate},</if>
+            <if test="deliveryTime != null">#{deliveryTime},</if>
+            <if test="orderCode != null">#{orderCode},</if>
+            <if test="goodsCode != null">#{goodsCode},</if>
+            <if test="goodsName != null">#{goodsName},</if>
+            <if test="goodsNum != null">#{goodsNum},</if>
+            <if test="pulletNum != null">#{pulletNum},</if>
+            <if test="pieceNum != null">#{pieceNum},</if>
+            <if test="warmArea != null">#{warmArea},</if>
+         </trim>
+    </insert>
+    <insert id="insertEduDeliveryList" parameterType="EduDelivery" >
+        insert into edu_delivery(batch_id,customer_code,ship_to_party,delivery_date,delivery_time,order_code,goods_code,goods_name,goods_num,pullet_num,piece_num,warm_area)
+        values
+        <foreach item="delivery" collection="list" separator=",">
+            (#{delivery.batchId},#{delivery.customerCode},#{delivery.shipToParty},#{delivery.deliveryDate},#{delivery.deliveryTime},#{delivery.orderCode},#{delivery.goodsCode},#{delivery.goodsName},#{delivery.goodsNum},#{delivery.pulletNum},#{delivery.pieceNum},#{delivery.warmArea})
+        </foreach>
+    </insert>
+    <update id="updateEduDelivery" parameterType="EduDelivery">
+        update edu_delivery
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="batchId != null">batch_id = #{batchId},</if>
+            <if test="customerCode != null">customer_code = #{customerCode},</if>
+            <if test="shipToParty != null">ship_to_party = #{shipToParty},</if>
+            <if test="deliveryDate != null">delivery_date = #{deliveryDate},</if>
+            <if test="deliveryTime != null">delivery_time = #{deliveryTime},</if>
+            <if test="orderCode != null">order_code = #{orderCode},</if>
+            <if test="goodsCode != null">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="goodsNum != null">goods_num = #{goodsNum},</if>
+            <if test="pulletNum != null">pullet_num = #{pulletNum},</if>
+            <if test="pieceNum != null">piece_num = #{pieceNum},</if>
+            <if test="warmArea != null">warm_area = #{warmArea},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEduDeliveryById" parameterType="Long">
+        delete from edu_delivery where id = #{id}
+    </delete>
+    <delete id="deleteEduDeliveryByUserId" parameterType="Long">
+        delete from edu_delivery where batch_id = #{userId}
+    </delete>
+    <delete id="deleteEduDeliveryByIds" parameterType="String">
+        delete from edu_delivery where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="getCustomers" parameterType="Long" resultMap="EduDeliveryResult">
+select customer_code,count(distinct(delivery_date)) as 'goods_num'
+from edu_delivery
+where batch_id =#{userId}
+group by customer_code order by goods_num desc
+    </select>
+    <select id="getCustomersType" parameterType="java.util.HashMap" resultMap="EduDeliveryResult">
+    select count(a.customer_code) as 'customer_code' from (select customer_code,count(distinct(delivery_date)) as 'order_code'
+from edu_delivery
+where batch_id = #{batch_id}
+group by customer_code)a
+where a.order_code between #{num1} and #{num2}
+    </select>
+    <select id="getCustomersOrders" parameterType="Long" resultMap="EduDeliveryResult">
+select customer_code,count(distinct(order_code)) as 'goods_num'
+from edu_delivery
+where batch_id =#{userId}
+group by customer_code order by goods_num desc
+    </select>
+    <select id="getCustomersTimes" parameterType="Long" resultMap="EduDeliveryResult">
+select customer_code,sum(goods_num) as 'goods_num'
+from edu_delivery
+group by customer_code order by goods_num desc
+    </select>
+    <select id="getCustomersGoods" parameterType="java.util.HashMap" resultMap="EduDeliveryResult">
+        select count(a.customer_code) as 'customer_code', ceil(sum(a.pallet_capacity)) as 'customer_code' from (select customer_code,count(distinct(delivery_date)) as 'order_code',sum(pullet_num) as 'pallet_capacity'
+from edu_delivery
+where batch_id =#{batch_id}
+group by customer_code)a
+where a.order_code between #{num1} and #{num2}
+    </select>
+    <select id="getDayss" parameterType="java.util.HashMap" resultMap="EduDeliveryResult">
+    select count(DISTINCT (delivery_date)) as 'goods_code' from edu_delivery where batch_id = #{batch_id}
+    </select>
+    <select id="getIK" parameterType="Long" resultMap="EduDeliveryResult">
+    select  a.goods_code as 'order_code',count(a.goods_code) as 'goods_code'
+   from edu_delivery a
+    WHERE
+        a.batch_id =#{userId}
+   group by a.goods_name
+   order by count(a.goods_name) desc
+    </select>
+
+    <select id="getIKHist" parameterType="Long" resultMap="EduDeliveryResult">
+        select b.goods_code as 'goods_num',count(b.goods_code) as 'order_code'  from( select  goods_code as 'order_code',count(goods_code) as 'goods_code'
+   from edu_delivery
+    WHERE batch_id = #{userId}
+   group by goods_code)b
+   group by b.goods_code
+   order by b.goods_code DESC
+    </select>
+    <select id="getIQ" parameterType="Long" resultMap="EduDeliveryResult">
+select  a.goods_code as 'order_code',ceil(sum(a.goods_num))as 'goods_num'
+        from edu_delivery a
+            WHERE
+        a.batch_id = #{batch_id}
+        group by a.goods_code
+        order by ceil(sum(a.goods_num)) DESC
+    </select>
+    <select id="getIQHist" parameterType="Long" resultMap="EduDeliveryResult">
+      select  b.goods_num as 'goods_num',count(order_code)as 'order_code'
+      from(select  goods_code as 'order_code',ceil(sum(goods_num))as 'goods_num'
+        from edu_delivery
+            WHERE
+        batch_id =#{batch_id}
+        group by goods_code)b
+        group by b.goods_num
+        order by b.goods_num DESC
+    </select>
+    <select id="getDeliveryNum" parameterType="Long" resultMap="EduDeliveryResult">
+       select DATE_FORMAT(delivery_time,'%T') as 'delivery_time',sum(pullet_num) as 'pullet_num'
+       from edu_delivery
+       where batch_id = #{userId}
+       group by DATE_FORMAT(delivery_time,'%T')
+    </select>
+
+    <select id="getDeliveryDay" parameterType="Long" resultMap="EduDeliveryResult">
+       select delivery_date ,sum(pullet_num) as 'pullet_num'
+       from edu_delivery
+       where batch_id = #{userId}
+       group by delivery_date
+    </select>
+
+    <select id="getPart" parameterType="Long" resultMap="EduDeliveryResult">
+        select b.num as 'goods_num' ,c.num as 'pullet_num' from(select count(1) as 'num'
+        from (select piece_num-floor(piece_num) as 'num' from edu_delivery
+        where batch_id =  #{userId}
+        group by goods_code)a
+        where a.num=0)b,(select count(1) as 'num' from (select piece_num-floor(piece_num) as 'num' from edu_delivery
+        where batch_id = #{userId}
+        group by goods_code)a
+        where a.num >0)c
+    </select>
+
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.EduEmpDataMapper">
+    
+    <resultMap type="EduEmpData" id="EduEmpDataResult">
+        <result property="id"    column="id"    />
+        <result property="batchId"    column="batch_id"    />
+        <result property="departmenName"    column="departmen_name"    />
+        <result property="dutyDescription"    column="duty_description"    />
+        <result property="employeeNumber"    column="employee_number"    />
+        <result property="employeeSalary"    column="employee_salary"    />
+        <result property="processCapacity"    column="process_capacity"    />
+    </resultMap>
+
+    <sql id="selectEduEmpDataVo">
+        select id, batch_id, departmen_name, duty_description, employee_number, employee_salary, process_capacity from edu_emp_data
+    </sql>
+
+    <select id="selectEduEmpDataList" parameterType="EduEmpData" resultMap="EduEmpDataResult">
+        <include refid="selectEduEmpDataVo"/>
+        <where>  
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="departmenName != null  and departmenName != ''"> and departmen_name like concat('%', #{departmenName}, '%')</if>
+            <if test="dutyDescription != null  and dutyDescription != ''"> and duty_description = #{dutyDescription}</if>
+            <if test="employeeNumber != null "> and employee_number = #{employeeNumber}</if>
+            <if test="employeeSalary != null "> and employee_salary = #{employeeSalary}</if>
+            <if test="processCapacity != null "> and process_capacity = #{processCapacity}</if>
+        </where>
+    </select>
+    
+    <select id="selectEduEmpDataById" parameterType="Long" resultMap="EduEmpDataResult">
+        <include refid="selectEduEmpDataVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEduEmpData" parameterType="EduEmpData" useGeneratedKeys="true" keyProperty="id">
+        insert into edu_emp_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">batch_id,</if>
+            <if test="departmenName != null">departmen_name,</if>
+            <if test="dutyDescription != null">duty_description,</if>
+            <if test="employeeNumber != null">employee_number,</if>
+            <if test="employeeSalary != null">employee_salary,</if>
+            <if test="processCapacity != null">process_capacity,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">#{batchId},</if>
+            <if test="departmenName != null">#{departmenName},</if>
+            <if test="dutyDescription != null">#{dutyDescription},</if>
+            <if test="employeeNumber != null">#{employeeNumber},</if>
+            <if test="employeeSalary != null">#{employeeSalary},</if>
+            <if test="processCapacity != null">#{processCapacity},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEduEmpData" parameterType="EduEmpData">
+        update edu_emp_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="batchId != null">batch_id = #{batchId},</if>
+            <if test="departmenName != null">departmen_name = #{departmenName},</if>
+            <if test="dutyDescription != null">duty_description = #{dutyDescription},</if>
+            <if test="employeeNumber != null">employee_number = #{employeeNumber},</if>
+            <if test="employeeSalary != null">employee_salary = #{employeeSalary},</if>
+            <if test="processCapacity != null">process_capacity = #{processCapacity},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEduEmpDataById" parameterType="Long">
+        delete from edu_emp_data where id = #{id}
+    </delete>
+
+    <delete id="deleteEduEmpDataByIds" parameterType="String">
+        delete from edu_emp_data where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <insert id="insertEduEmpDataList" parameterType="EduEmpData" >
+        insert into edu_emp_data(batch_id,departmen_name,duty_description,employee_number,employee_salary,process_capacity)
+        values
+        <foreach item="eduEmpData" collection="list" separator=",">
+            (#{eduEmpData.batchId},#{eduEmpData.departmenName},#{eduEmpData.dutyDescription},#{eduEmpData.employeeNumber},#{eduEmpData.employeeSalary},#{eduEmpData.processCapacity})
+        </foreach>
+    </insert>
+    <delete id="deleteEmpDataListByUserId" parameterType="Long">
+        delete from edu_emp_data where batch_id = #{userId}
+    </delete>
+</mapper>

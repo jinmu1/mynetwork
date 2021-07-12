@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('EIQ分析')" />
+</head>
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header">
+        <div style="font-size:26px;text-align: center">EOQ</div>
+        <div style="height: 17px;"></div>
+        <div style="line-height: 33px;">经济订货批量（economic order quantity）简称EOQ，通过平衡采购进货成本和保管仓储成本核算，以实现总库存成本最低的最佳订货量。经济订货批量是固定订货批量模型的一种，可以用来确定企业一次订货(外购或自制)的数量。当企业按照经济订货批量来订货时，可实现订货成本和储存成本之和最小化。基本EOQ模型基于以下的基本假设：</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.	企业能随时补充存货</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.	能集中到货，而不是陆续入库</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.	不允许缺货，无缺货成本</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.	在一定时期内，存货需求量稳定并确知</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.	存货单价不变，且不考虑现金折扣</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.	企业现金充足，不会因现金短缺影响进货</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7.	在订货周期内，所有相关成本没有较大变化</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.	存货市场供应充足，不会因买不到存货而影响其他</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9.	该项物资需求是独立的， 不与其他物资一起享受联合采购优惠</div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>基本EOQ条件选择：</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content"  style="height:600px">
+                        <div class="form-group">
+                            <h5>基本EOQ满足的条件为：</h5>
+                            <div class="checkbox-custom checkbox-default">
+                                <input type="checkbox" id="check1">
+                                <label >需求是确定的且变化率（单位时间内需求）为常数R；</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-custom checkbox-default">
+                                <input type="checkbox" id="check2">
+                                <label >对于任意数量的订单，采购与准备费用（固定费用）为C3；</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-custom checkbox-default">
+                                <input type="checkbox" id="check3">
+                                <label >任意订单的提前期为0（存储量降至0时，可立即得到补充）；</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-custom checkbox-default">
+                                <input type="checkbox" id="check4">
+                                <label >不允许缺货（缺货费用无穷大）；</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-custom checkbox-default">
+                                <input type="checkbox" id="check5">
+                                <label >单位时间内的单位存储费用为C1。</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-custom checkbox-default">
+                                <input type="checkbox" id="check6" >
+                                <label >允许缺货，并且不会因此缺货而损失销售机会。</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-custom checkbox-default">
+                                <input type="checkbox" id="check8" >
+                                <label >到货需要一定时间</label>
+                            </div>
+                        </div>
+                        <a class="btn btn-primary btn-rounded btn-block" onclick="query()"> 确定提交</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>基本EOQ计算:</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div class="panel panel-bordered">
+
+                            <div>
+                                <p>商品名称</p>
+                                <select onchange="reloadEoq()" name="name" id="name" type="text"  class="form-control"    >
+
+                                </select>
+                            </div>
+                            <div>
+                                <p>周期内总需求量</p>
+                                <input   name="total" id="total" type="text"  class="form-control"  >
+
+                                </input>
+                            </div>
+                            <div>
+                                <p>物料采购单价</p>
+                                <input  name="price" id="price"  type="text"  class="form-control" >
+
+                                </input>
+                            </div>
+                            <div>
+                                <p>单位库存保管费用</p>
+                                <input   name="unitCost" id="unitCost" type="text"  class="form-control"  >
+
+                                </input>
+                            </div>
+                            <div>
+                                <p>请填写:单次订货成本</p>
+                                <input  name="cost" id="cost" type="text"  class="form-control"  >
+
+                                </input>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>基本EOQ公式选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div id="bar5" style="display: block;">
+                            <div class="form-group">
+                                <div id="bar5Ra1"><input type="radio" name="false" value="1"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/89901557fbac40ffbfac965c30d089eb.png"></div>
+                                <div id="bar5Ra2"><input type="radio"  name="false" value="2"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/f1d56045aaae43c0a30e31d175c91aab.png"></div>
+                            </div>
+                            <div class="form-group">
+                                <div id="bar5Ra3"><input type="radio"  name="false" value="2"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/61968495c5dd4664bae7eb4f604d1230.png"></div>
+                                <div id="bar5Ra4"><input type="radio" name="false" value="2"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/4856f597d8764feebde6eb44ff42cf63.png"></div>
+                            </div>
+                            <a class="btn btn-primary btn-rounded btn-block" onclick="adds()"> 确定提交</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>基本EOQ对应变量</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div id="bar1" style="height: 100%">
+                            <div>
+                                <p>K（元/件）</p>
+                                <select onchange="validatedSelect()"  name="select1" id="select1" class="form-control">
+
+                                </select>
+                            </div>
+                            <div>
+                                <p>C1</p>
+                                <select onchange="validatedSelect()" type="text"  class="form-control" name="select2" id="select2" >
+
+                                </select>
+                            </div>
+                            <div>
+                                <p>C3</p>
+                                <select onchange="validatedSelect()"  name="select3" id="select3" class="form-control" >
+
+                                </select>
+                            </div>
+                            <div>
+                                <p>R</p>
+                                <select onchange="validatedSelect()"  name="select4" id="select4"  class="form-control">
+
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>基本EOQ计算结果</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table1" >
+                            <thead style="background-color: #d9d9d9;">
+                            </thead>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+<!--        <div class="row">-->
+<!--            <div class="col-sm-6">-->
+<!--                <div class="ibox float-e-margins">-->
+<!--                    <div class="ibox-title">-->
+<!--                        <h5>数量折扣EOQ与价格无关条件选择：</h5>-->
+<!--                        <div class="ibox-tools">-->
+<!--                            <a class="collapse-link">-->
+<!--                                <i class="fa fa-chevron-up"></i>-->
+<!--                            </a>-->
+<!--                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">-->
+<!--                                <i class="fa fa-wrench"></i>-->
+<!--                            </a>-->
+<!--                            <ul class="dropdown-menu dropdown-user">-->
+<!--                                <li><a href="#">选项1</a>-->
+<!--                                </li>-->
+<!--                                <li><a href="#">选项2</a>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                            <a class="close-link">-->
+<!--                                <i class="fa fa-times"></i>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="ibox-content"  style="height:600px">-->
+<!--                        <div class="form-group">-->
+<!--                            <h5>数量折扣C1与价格无关EOQ满足的条件为：</h5>-->
+<!--                            <div class="checkbox-custom checkbox-default">-->
+<!--                                <input type="checkbox" id="checkq1" >-->
+<!--                                <label >需求是确定的且变化率（单位时间内需求）为常数R；</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="form-group">-->
+<!--                            <div class="checkbox-custom checkbox-default">-->
+<!--                                <input type="checkbox" id="checkq2" >-->
+<!--                                <label >对于任意数量的订单，采购与准备费用（固定费用）为C3；</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="form-group">-->
+<!--                            <div class="checkbox-custom checkbox-default">-->
+<!--                                <input type="checkbox" id="checkq3">-->
+<!--                                <label >任意订单的提前期为0（存储量降至0时，可立即得到补充）；</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="form-group">-->
+<!--                            <div class="checkbox-custom checkbox-default">-->
+<!--                                <input type="checkbox" id="checkq4">-->
+<!--                                <label >不允许缺货（缺货费用无穷大）；</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="form-group">-->
+<!--                            <div class="checkbox-custom checkbox-default">-->
+<!--                                <input type="checkbox" id="checkq5">-->
+<!--                                <label >单位时间内的单位存储费用为C1。</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="form-group">-->
+<!--                            <div class="checkbox-custom checkbox-default">-->
+<!--                                <input type="checkbox" id="checkq6" >-->
+<!--                                <label >允许缺货，并且不会因此缺货而损失销售机会。</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="form-group">-->
+<!--                            <div class="checkbox-custom checkbox-default">-->
+<!--                                <input type="checkbox" id="checkq7">-->
+<!--                                <label >不允许缺货，（缺货费用无穷大）</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="form-group">-->
+<!--                            <div class="checkbox-custom checkbox-default">-->
+<!--                                <input type="checkbox" id="checkq8" >-->
+<!--                                <label >到货需要一定时间</label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <a class="btn btn-primary btn-rounded btn-block" onclick="queryq()"> 确定提交</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-sm-6">-->
+<!--                <div class="ibox float-e-margins">-->
+<!--                    <div class="ibox-title">-->
+<!--                        <h5>数量折扣EOQ(与价格无关)计算数据:</h5>-->
+<!--                        <div class="ibox-tools">-->
+<!--                            <a class="collapse-link">-->
+<!--                                <i class="fa fa-chevron-up"></i>-->
+<!--                            </a>-->
+<!--                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">-->
+<!--                                <i class="fa fa-wrench"></i>-->
+<!--                            </a>-->
+<!--                            <ul class="dropdown-menu dropdown-user">-->
+<!--                                <li><a href="#">选项1</a>-->
+<!--                                </li>-->
+<!--                                <li><a href="#">选项2</a>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                            <a class="close-link">-->
+<!--                                <i class="fa fa-times"></i>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="ibox-content" style="height:600px">-->
+<!--                        <div class="panel panel-bordered">-->
+
+<!--                            <div>-->
+<!--                                <p>商品名称</p>-->
+<!--                                <select onchange="reloadEoq1()" name="name1" id="name1" type="text"  class="form-control"    >-->
+
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>周期内总需求量</p>-->
+<!--                                <input   name="total1" id="total1" type="text"  class="form-control"  >-->
+
+<!--                                </input>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>单价</p>-->
+<!--                                <input  name="price1" id="price1"  type="text"  class="form-control" >-->
+
+<!--                                </input>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>单位库存保管费用</p>-->
+<!--                                <input   name="unitCost1" id="unitCost1" type="text"  class="form-control"  >-->
+
+<!--                                </input>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>请填写:单次订货成本</p>-->
+<!--                                <input  name="cost1" id="cost1" type="text"  class="form-control"  >-->
+
+<!--                                </input>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>折扣系数m1</p>-->
+<!--                                <input onchange="valM1()"  name="m1" id="m1" type="text"  class="form-control"  >-->
+
+<!--                                </input>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>折扣系数m2</p>-->
+<!--                                <input onchange="valM2()"  name="m2" id="m2" type="text"  class="form-control"  >-->
+
+<!--                                </input>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>折扣点n1</p>-->
+<!--                                <input onchange="valN1()"  name="n1" id="n1" type="text"  class="form-control"  >-->
+
+<!--                                </input>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>折扣点n2</p>-->
+<!--                                <input onchange="valN2()"  name="n2" id="n2" type="text"  class="form-control"  >-->
+
+<!--                                </input>-->
+<!--                            </div>-->
+
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="row">-->
+<!--            <div class="col-sm-6">-->
+<!--                <div class="ibox float-e-margins">-->
+<!--                    <div class="ibox-title">-->
+<!--                        <h5>数量折扣EOQ(与价格无关)公式选择</h5>-->
+<!--                        <div class="ibox-tools">-->
+<!--                            <a class="collapse-link">-->
+<!--                                <i class="fa fa-chevron-up"></i>-->
+<!--                            </a>-->
+<!--                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">-->
+<!--                                <i class="fa fa-wrench"></i>-->
+<!--                            </a>-->
+<!--                            <ul class="dropdown-menu dropdown-user">-->
+<!--                                <li><a href="#">选项1</a>-->
+<!--                                </li>-->
+<!--                                <li><a href="#">选项2</a>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                            <a class="close-link">-->
+<!--                                <i class="fa fa-times"></i>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="ibox-content" style="height:600px">-->
+<!--                        <div id="bard5d" style="display: block;">-->
+<!--                            <div class="form-group">-->
+<!--                                <div id="bar5Rad2"><input type="radio"  name="false1" value="2"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/f1aa51498b0b4eeeaa20a95a1a5a488c.png"></div>-->
+<!--                                <div id="bar5Rad1"><input type="radio" name="false1" value="1"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/923bdb0741454fb5a6ccd175684ce257.png"></div>-->
+<!--                            </div>-->
+<!--                            <div class="form-group">-->
+<!--                                <div id="bar5Rad3"><input type="radio"  name="false1" value="2"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/e246dedcb2004547b1d6fee75723b698.png"></div>-->
+<!--                                <div id="bar5Rad4"><input type="radio" name="false1" value="2"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/66c12bc9c1544f59a05879cc6cb4f9ec.png"></div>-->
+<!--                            </div>-->
+<!--                            <a class="btn btn-primary btn-rounded btn-block" onclick="addsd()"> 确定提交</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-sm-6">-->
+<!--                <div class="ibox float-e-margins">-->
+<!--                    <div class="ibox-title">-->
+<!--                        <h5>选择计算最小总成本公式</h5>-->
+<!--                        <div class="ibox-tools">-->
+<!--                            <a class="collapse-link">-->
+<!--                                <i class="fa fa-chevron-up"></i>-->
+<!--                            </a>-->
+<!--                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">-->
+<!--                                <i class="fa fa-wrench"></i>-->
+<!--                            </a>-->
+<!--                            <ul class="dropdown-menu dropdown-user">-->
+<!--                                <li><a href="#">选项1</a>-->
+<!--                                </li>-->
+<!--                                <li><a href="#">选项2</a>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                            <a class="close-link">-->
+<!--                                <i class="fa fa-times"></i>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="ibox-content" style="height:600px">-->
+<!--                        <div id="bar1d" style="height: 100%">-->
+<!--                            <div class="form-group">-->
+<!--                                <div id="bar6Ra1"><input type="radio"  name="false2" value="2"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/4856f597d8764feebde6eb44ff42cf63.png"></div>-->
+<!--                                <div id="bar6Ra2"><input type="radio" name="false2" value="2"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/61968495c5dd4664bae7eb4f604d1230.png"></div>-->
+<!--                            </div>-->
+<!--                            <div class="form-group">-->
+<!--                                <div id="bar6Ra3"><input type="radio"  name="false2" value="2"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/f1d56045aaae43c0a30e31d175c91aab.png"></div>-->
+<!--                                <div id="bar6Ra4"><input type="radio" name="false2"  value="1"><img src="https://glc360.oss-cn-hangzhou.aliyuncs.com/upload/test/89901557fbac40ffbfac965c30d089eb.png"></div>-->
+<!--                            </div>-->
+<!--                            <a class="btn btn-primary btn-rounded btn-block" onclick="addsdd()"> 确定提交</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="row">-->
+<!--            <div class="col-sm-6">-->
+<!--                <div class="ibox float-e-margins">-->
+<!--                    <div class="ibox-title">-->
+<!--                        <h5>数量折扣EOQ(与价格无关)对应变量</h5>-->
+<!--                        <div class="ibox-tools">-->
+<!--                            <a class="collapse-link">-->
+<!--                                <i class="fa fa-chevron-up"></i>-->
+<!--                            </a>-->
+<!--                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">-->
+<!--                                <i class="fa fa-wrench"></i>-->
+<!--                            </a>-->
+<!--                            <ul class="dropdown-menu dropdown-user">-->
+<!--                                <li><a href="#">选项1</a>-->
+<!--                                </li>-->
+<!--                                <li><a href="#">选项2</a>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                            <a class="close-link">-->
+<!--                                <i class="fa fa-times"></i>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="ibox-content" style="height:600px">-->
+<!--                        <div id="bar2" style="height: 100%">-->
+<!--                            <div>-->
+<!--                                <p>K（元/件）</p>-->
+<!--                                <select onchange="validatedSelect1()"  name="select1" id="select1d" class="form-control">-->
+
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>C1</p>-->
+<!--                                <select onchange="validatedSelect1()" type="text"  class="form-control" name="select2d" id="select2d" >-->
+
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>C3</p>-->
+<!--                                <select onchange="validatedSelect1()"  name="select3d" id="select3d" class="form-control" >-->
+
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <p>R</p>-->
+<!--                                <select onchange="validatedSelect1()"  name="select4d" id="select4d"  class="form-control">-->
+
+<!--                                </select>-->
+<!--                            </div>-->
+
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-sm-6">-->
+<!--                <div class="ibox float-e-margins">-->
+<!--                    <div class="ibox-title">-->
+<!--                        <h5>数量折扣EOQ(与价格无关)计算结果</h5>-->
+<!--                        <div class="ibox-tools">-->
+<!--                            <a class="collapse-link">-->
+<!--                                <i class="fa fa-chevron-up"></i>-->
+<!--                            </a>-->
+<!--                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">-->
+<!--                                <i class="fa fa-wrench"></i>-->
+<!--                            </a>-->
+<!--                            <ul class="dropdown-menu dropdown-user">-->
+<!--                                <li><a href="#">选项1</a>-->
+<!--                                </li>-->
+<!--                                <li><a href="#">选项2</a>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                            <a class="close-link">-->
+<!--                                <i class="fa fa-times"></i>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="ibox-content" style="height:600px">-->
+<!--                        <table class="col-sm-12 select-table table-striped"-->
+<!--                               id="bootstrap-table2" >-->
+<!--                            <thead style="background-color: #d9d9d9;">-->
+<!--                            </thead>-->
+<!--                        </table>-->
+
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--        </div>-->
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: echarts-js" />
+    <script  th:inline="javascript">
+
+        var ctx = [[@{/}]];
+        var prefix = ctx + "system/eoq";
+            function query() {
+                    var check1 = document.getElementById("check1").checked;
+                    var check2 = document.getElementById("check2").checked;
+                    var check3 = document.getElementById("check3").checked;
+                    var check4 = document.getElementById("check4").checked;
+                    var check5 = document.getElementById("check5").checked;
+                    var check6 = document.getElementById("check6").checked;
+                    var check8 = document.getElementById("check8").checked;
+
+                    if (check1 == true && check2 == true && check3 == true && check4 == true && check5 == true && check6 == false &&  check8 == false) {
+                        $.modal.msgSuccess('选择正确！')
+                    }else {
+                        $.modal.msgError('选择错误！')
+                    }
+            }
+            // function queryq() {
+            //     var check1 = document.getElementById("checkq1").checked;
+            //     var check2 = document.getElementById("checkq2").checked;
+            //     var check3 = document.getElementById("checkq3").checked;
+            //     var check4 = document.getElementById("checkq4").checked;
+            //     var check5 = document.getElementById("checkq5").checked;
+            //     var check6 = document.getElementById("checkq6").checked;
+            //     var check7 = document.getElementById("checkq7").checked;
+            //     var check8 = document.getElementById("checkq8").checked;
+            //
+            //     if (check1==true&&check2==true&&check3==true&&check4==true&&check5==true&&check6==true&&check7==false&&check8==false) {
+            //         $.modal.msgSuccess('选择正确！')
+            //     }else {
+            //         $.modal.msgError('选择错误！')
+            //     }
+            // }
+
+            function adds() {
+                var val=$('input:radio[name="false"]:checked').val();
+                if (val=='1'){
+
+                    $.modal.msgSuccess('选择正确！')
+                }else {
+
+                    $.modal.msgError('选择错误！')
+                }
+            }
+            function addsd() {
+                var val=$('input:radio[name="false1"]:checked').val();
+                if (val=='1'){
+                    $.modal.msgSuccess('选择正确！')
+                }else {
+
+                    $.modal.msgError('选择错误！')
+                }
+            }
+            function addsdd() {
+                var val=$('input:radio[name="false2"]:checked').val();
+                if (val=='1'){
+                    $.modal.msgSuccess('选择正确！')
+                }else {
+
+                    $.modal.msgError('选择错误！')
+                }
+            }
+            function valM1() {
+                if(document.getElementById("m1").value>1||document.getElementById("m1").value<0){
+                    $.modal.msgError("数值值介于0到1");
+                    document.getElementById("m1").value = 0;
+                }
+            }
+            function valM2() {
+                if(document.getElementById("m2").value>1||document.getElementById("m2").value<0){
+                    $.modal.msgError("数值值介于0到1");
+                    document.getElementById("m2").value = 0;
+                }
+            }
+            function valN1() {
+                if(document.getElementById("n1").value>1||document.getElementById("n1").value<0){
+                    $.modal.msgError("数值值介于0到1");
+                    document.getElementById("n1").value = 0;
+                }
+            }
+            function valN2() {
+                if(document.getElementById("n2").value>1||document.getElementById("n2").value<0){
+                    $.modal.msgError("数值值介于0到1");
+                    document.getElementById("n2").value = 0;
+                }
+            }
+            function reloadEoq(){
+                var select=$("#name option:selected").val();
+                var arr1=select.split("-");
+                document.getElementById("price").value = arr1[0];
+                document.getElementById("total").value = arr1[1];
+                document.getElementById("unitCost").value = arr1[0]*0.2;
+            }
+            function reloadEoq1(){
+                var select=$("#name1 option:selected").val();
+                var arr1=select.split("-");
+                document.getElementById("price1").value = arr1[0];
+                document.getElementById("total1").value = arr1[1];
+                document.getElementById("unitCost1").value = arr1[0]*0.2;
+            }
+            function validatedSelect(){
+                var select1=$("#select1 option:selected").text();
+                var select2=$("#select2 option:selected").text();
+                var select3=$("#select3 option:selected").text();
+                var select4=$("#select4 option:selected").text();
+                if("物料采购单价"==select1&&"每月单位库存保管费用"==select2&&"单次订货成本"==select3&&"周期内总需求量"==select4){
+                    $.modal.msgSuccess('选择正确！')
+                    load4();
+                }
+            }
+            function validatedSelect1(){
+                var select1=$("#select1d option:selected").text();
+                var select2=$("#select2d option:selected").text();
+                var select3=$("#select3d option:selected").text();
+                var select4=$("#select4d option:selected").text();
+                if("物料采购单价"==select1&&"每月单位库存保管费用"==select2&&"单次订货成本"==select3&&"周期内总需求量"==select4){
+                    $.modal.msgSuccess('选择正确！')
+                    load8();
+                }
+            }
+            $(function () {
+                load1();
+                load2();
+            });
+            function load1() {
+                $.post(prefix + "/eoq/bar1", function(result) {
+                    var d = result.rows;
+                    var Alloptions="<option  value=''  >"+'请选择'+"</option>";
+                    for(var i=0;i<d.length;i++){
+                        var value1=d[i].stock_price+"-"+d[i].total_delivery+"-"+d[i].total_receiving;
+                        var options="<option  value='"+ value1 +"'  >"+ d[i].goods_name +"</option>";
+                        Alloptions=Alloptions+options;
+                    }
+                    $("#name").append(Alloptions);
+                    var options0="<option  value=''  >"+'请选择'+"</option>";
+                    var options1=options0+"<option  value=''   >"+'物料采购单价'+"</option>";
+                    var options2=options1+"<option  value=''  >"+'每月单位库存保管费用'+"</option>";
+                    var options3=options2+"<option  value=''  >"+'单次订货成本'+"</option>";
+                    var options4=options3+"<option  value=''  >"+'周期内总需求量'+"</option>";
+                    $("#select1").append(options4);
+                    $("#select2").append(options4);
+                    $("#select3").append(options4);
+                    $("#select4").append(options4);
+                })
+            }
+            function load2() {
+                $.post(prefix + "/eoq/bar1", function(result) {
+                    var d = result.rows;
+                    var Alloptions="<option  value=''  >"+'请选择'+"</option>";
+                    for(var i=0;i<d.length;i++){
+                        var value1=d[i].stock_price+"-"+d[i].total_delivery+"-"+d[i].total_receiving;
+                        var options="<option  value='"+ value1 +"'  >"+ d[i].goods_name +"</option>";
+                        Alloptions=Alloptions+options;
+                    }
+                    $("#name1").append(Alloptions);
+                    var options0="<option  value=''  >"+'请选择'+"</option>";
+                    var options1=options0+"<option  value=''   >"+'物料采购单价'+"</option>";
+                    var options2=options1+"<option  value=''  >"+'每月单位库存保管费用'+"</option>";
+                    var options3=options2+"<option  value=''  >"+'单次订货成本'+"</option>";
+                    var options4=options3+"<option  value=''  >"+'周期内总需求量'+"</option>";
+                    $("#select1d").append(options4);
+                    $("#select2d").append(options4);
+                    $("#select3d").append(options4);
+                    $("#select4d").append(options4);
+                })
+            }
+            function footerStyle(column) {
+                return {
+//         	    userBalance: {
+//         	        classes: 'class'
+//         	    },
+                    userBalance: {
+                        css: { color: 'red', 'font-weight': 'normal' }
+                    }
+                }[column.field]
+            };
+            function load4() {
+                $("#bootstrap-table1").bootstrapTable('destroy');
+                $('#bootstrap-table1').bootstrapTable({
+                    url: prefix + "/eoq/basic/bar3",
+                    queryParams:getParams,
+                    method: 'post',
+                    showFooter: false,
+                    showSearch: false,
+                    showRefresh: false,
+                    contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+                    showToggle: false,
+                    showColumns: false,
+                    pagination: false,
+                    sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber:1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    footerStyle: footerStyle,
+                    columns: [{
+                        checkbox: false
+                    }, {
+                        field : 'eoq',
+                        title : '经济订货批量Q'
+                    }, {
+                        field : 'total_cost',
+                        title : 'CT(Q*)'
+                    }, {
+                        field : 'frequency',
+                        title : '订货次数'
+                    }, {
+                        field : 'cycle',
+                        title : '订货周期'
+                    }]
+                });
+            }
+            // function load8() {
+            //     $("#bootstrap-table2").bootstrapTable('destroy');
+            //
+            //     $('#bootstrap-table2').bootstrapTable({
+            //         url: prefix + "/eoq/noPrice/bar3",
+            //         queryParams:getParams1,
+            //         method: 'post',
+            //         showFooter: false,
+            //         showSearch: false,
+            //         showRefresh: false,
+            //         contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+            //         showToggle: false,
+            //         showColumns: false,
+            //         pagination: false,
+            //         sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+            //         pageNumber:1,                       //初始化加载第一页，默认第一页
+            //         pageSize: 10,                       //每页的记录行数（*）
+            //         pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            //         footerStyle: footerStyle,
+            //         columns: [{
+            //             checkbox: false
+            //         }, {
+            //             field : 'eoq',
+            //             title : 'Q1'
+            //         }, {
+            //             field : 'eoq1',
+            //             title : 'Q2'
+            //         }, {
+            //             field : 'eoq2',
+            //             title : 'Q3'
+            //         }, {
+            //             field : 'total_cost',
+            //             title : 'TC(Q1)'
+            //         }, {
+            //             field : 'total_cost_Q1',
+            //             title : 'TC(Q2)'
+            //         }, {
+            //             field : 'total_cost_Q2',
+            //             title : 'TC(Q3)'
+            //         }]
+            //     });
+            // }
+            function getParams(){
+                var temp = {
+                    total: document.getElementById("total").value,
+                    price: document.getElementById("price").value,
+                    unitCost: document.getElementById("unitCost").value,
+                    cost: document.getElementById("cost").value
+                }
+                return temp;
+            }
+            // function getParams1(){
+            //     var temp = {
+            //         total: document.getElementById("total").value,
+            //         price: document.getElementById("price").value,
+            //         unitCost: document.getElementById("unitCost").value,
+            //         cost: document.getElementById("cost").value,
+            //         m1:document.getElementById("m1").value,
+            //         m2:document.getElementById("m2").value,
+            //         n1:document.getElementById("n1").value,
+            //         n2:document.getElementById("n2").value
+            //     }
+            //     return temp;
+            // }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('EIQ分析')" />
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/ajax/libs/artTemplate/template.min.js}"></script>
+    <script th:src="@{/js/lang.core.js}"></script>
+    <script th:src="@{/js/morris.js}"></script>
+    <script th:src="@{/js/raphael-2.1.0.min.js}"></script>
+
+</head>
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header">
+    </div>
+    <div class="wrapper wrapper-content fadeInRight">
+        <div class="p-w-md m-t-sm">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>入库订单数量（日）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-2" style="margin-top: 50px">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>峰值(入)</big>
+                                                    <h3 class="no-margins" id="max"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>均值(入)</big>
+                                                    <h3 class="no-margins" id="avg"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>谷值(入)</big>
+                                                    <h3 class="no-margins " id="min"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>振幅(入)</big>
+                                                    <h3 class="no-margins" id="amplitude"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>上浮(入)</big>
+                                                    <h3 class="no-margins" id="up"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>下浮(入)</big>
+                                                    <h3 class="no-margins " id="down"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-10" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo" style="height: 300px"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>出库订单数量（日）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-2" style="margin-top: 50px">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>峰值(出)</big>
+                                                    <h3 class="no-margins" id="max6"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>均值(出)</big>
+                                                    <h3 class="no-margins" id="avg6"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>谷值(出)</big>
+                                                    <h3 class="no-margins " id="min6"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>振幅(出)</big>
+                                                    <h3 class="no-margins" id="amplitude6"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>上浮(出)</big>
+                                                    <h3 class="no-margins" id="up6"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>下浮(出)</big>
+                                                    <h3 class="no-margins " id="down6"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-10" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example6">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo6" style="height: 300px"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>供应商数量（日）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-2" style="margin-top: 50px">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>峰值</big>
+                                                    <h3 class="no-margins" id="max1"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>均值</big>
+                                                    <h3 class="no-margins" id="avg1"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>谷值</big>
+                                                    <h3 class="no-margins " id="min1"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>振幅</big>
+                                                    <h3 class="no-margins" id="amplitude1"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>上浮</big>
+                                                    <h3 class="no-margins" id="up1"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>下浮</big>
+                                                    <h3 class="no-margins " id="down1"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-10" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example1">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo1" style="height: 300px"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>客户数量（天）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 550px" >
+                            <div class="row">
+                                <div class="col-lg-2" style="margin-top: 50px">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>峰值</big>
+                                                    <h3 class="no-margins" id="max2"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>均值</big>
+                                                    <h3 class="no-margins" id="avg2"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>谷值</big>
+                                                    <h3 class="no-margins " id="min2"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>振幅</big>
+                                                    <h3 class="no-margins" id="amplitude2"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>上浮</big>
+                                                    <h3 class="no-margins" id="up2"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>下浮</big>
+                                                    <h3 class="no-margins " id="down2"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-10" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example2">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo2" style="height: 300px"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>送达方数量（日）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-2" style="margin-top: 50px">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>峰值</big>
+                                                    <h3 class="no-margins" id="max3"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>均值</big>
+                                                    <h3 class="no-margins" id="avg3"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>谷值</big>
+                                                    <h3 class="no-margins " id="min3"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>振幅</big>
+                                                    <h3 class="no-margins" id="amplitude3"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>上浮</big>
+                                                    <h3 class="no-margins" id="up3"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>下浮</big>
+                                                    <h3 class="no-margins " id="down3"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-10" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example3">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo3" style="height: 300px"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>入库物流量数量（日）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-2" style="margin-top: 50px">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>峰值</big>
+                                                    <h3 class="no-margins" id="max41"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>均值</big>
+                                                    <h3 class="no-margins" id="avg41"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>谷值</big>
+                                                    <h3 class="no-margins " id="min41"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>振幅</big>
+                                                    <h3 class="no-margins" id="amplitude41"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>上浮</big>
+                                                    <h3 class="no-margins" id="up41"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>下浮</big>
+                                                    <h3 class="no-margins " id="down41"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-10" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example4">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo4" style="height: 300px"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>出库物流量数量（日）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-2" style="margin-top: 50px">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>峰值</big>
+                                                    <h3 class="no-margins" id="max42"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>均值</big>
+                                                    <h3 class="no-margins" id="avg42"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>谷值</big>
+                                                    <h3 class="no-margins " id="min42"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>振幅</big>
+                                                    <h3 class="no-margins" id="amplitude42"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>上浮</big>
+                                                    <h3 class="no-margins" id="up42"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>下浮</big>
+                                                    <h3 class="no-margins " id="down42"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-10" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example7">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo7" style="height: 300px"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="ibox ">
+                                        <div class="ibox-title">
+                                            <h5>库存量（日）</h5>
+                                            <div class="ibox-tools">
+                                                <a class="collapse-link">
+                                                    <i class="fa fa-chevron-up"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="ibox-content" style="position: relative;height: 400px" >
+                                            <div class="row">
+                                                <div class="col-lg-2" style="margin-top: 50px">
+                                                    <div class="row">
+                                                        <div class="col-lg-6">
+                                                            <ul class="stat-list">
+                                                                <li>
+                                                                    <big>峰值</big>
+                                                                    <h3 class="no-margins" id="max5"></h3>
+                                                                </li>
+                                                                <li>
+                                                                    <big>均值</big>
+                                                                    <h3 class="no-margins" id="avg5"></h3>
+                                                                </li>
+                                                                <li>
+                                                                    <big>谷值</big>
+                                                                    <h3 class="no-margins " id="min5"></h3>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <ul class="stat-list">
+                                                                <li>
+                                                                    <big>振幅</big>
+                                                                    <h3 class="no-margins" id="amplitude5"></h3>
+                                                                </li>
+                                                                <li>
+                                                                    <big>上浮</big>
+                                                                    <h3 class="no-margins" id="up5"></h3>
+                                                                </li>
+                                                                <li>
+                                                                    <big>下浮</big>
+                                                                    <h3 class="no-margins " id="down5"></h3>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-10" >
+                                                    <div class="flot-chart">
+                                                        <div class="spiner-example5">
+                                                            <div class="sk-spinner sk-spinner-wave">
+                                                                <div class="sk-rect1"></div>
+                                                                <div class="sk-rect2"></div>
+                                                                <div class="sk-rect3"></div>
+                                                                <div class="sk-rect4"></div>
+                                                                <div class="sk-rect5"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="del" id="demo5" style="height: 300px"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: echarts-js" />
+
+    <script  th:inline="javascript">
+        var ctx = [[@{/}]];
+           var prefix = ctx + "system/basic";
+            var demo = echarts.init(document.getElementById('demo'));
+            var demo1 = echarts.init(document.getElementById('demo1'));
+            var demo2 = echarts.init(document.getElementById('demo2'));
+            var demo3 = echarts.init(document.getElementById('demo3'));
+            var demo4 = echarts.init(document.getElementById('demo4'));
+            var demo5 = echarts.init(document.getElementById('demo5'));
+            var demo6 = echarts.init(document.getElementById('demo6'));
+            var demo7 = echarts.init(document.getElementById('demo7'));
+
+
+            $.post(prefix + "/basic/bar1", function(result) {
+                    var d = result.rows;
+                        var data1 =[];
+                        var data2 =[];
+
+                for(var i = 0;i<d.length;i++){
+                    data1.push(formatDate(d[i].createDate));
+                    data2.push(d[i].goodsNum);
+                }
+                $("#max").html(Math.round(arrMaxNum2(data2)));
+                $("#avg").html(Math.round(arrAverageNum2(data2)));
+                $("#min").html(Math.round(arrMinNum2(data2)));
+                $("#amplitude").html(Math.round(((arrMaxNum2(data2)-arrMinNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                $("#up").html(Math.round(((arrMaxNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                $("#down").html(Math.round(((arrMinNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        var   option = {
+                            backgroundColor:'rgba(255, 255, 255, 0)',
+                            dataZoom : {
+                                show : true,
+                                realtime : true
+                            },
+                            legend: [
+                                {
+                                    left:'left',
+                                    textStyle:{color:'#7f7f7f'},
+                                    data:['日入库订单分布']
+                                }
+                            ],
+                            toolbox: {
+                                show: true,
+                                feature : {
+                                    mark : {show: true},
+                                    dataView : {show: true, readOnly: false},
+                                    magicType : {show: true, type: ['line', 'bar']},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            xAxis:  {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: data1
+                            },
+                            yAxis: [{
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}个'
+                                }
+                            }],
+                            series: [
+                                {
+                                    name:'日入库订单分布',
+                                    type:'line',
+                                    data:data2,
+                                    smooth:true,
+                                    symbol:'none',
+                                    itemStyle : {
+                                        normal : {
+                                            color:'#39c7aa'
+                                        }
+                                    },
+                                    markPoint: {
+                                        color:'#39c7aa',
+                                        data: [
+                                            {type: 'max', name: '峰值'},
+                                            {type: 'min', name: '谷值'}
+                                        ]
+                                    },
+                                    markLine: {
+                                        data: [
+                                            {type: 'average', name: '均值'}
+                                        ]
+                                    }
+                                }
+                            ]
+                        };
+                        $('.spiner-example').hide();
+                        demo.setOption(option);
+
+            });
+
+            $.post(prefix + "/basic/bar2", function(result) {
+                    var d = result.rows;
+                        var data1 =[];
+                        var data2 =[];
+                        for(var i = 0;i<d.length;i++){
+                            data1.push(formatDate(d[i].createDate));
+                            data2.push(d[i].goodsNum);
+                        }
+                        $("#max6").html(Math.round(arrMaxNum2(data2)));
+                        $("#avg6").html(Math.round(arrAverageNum2(data2)));
+                        $("#min6").html(Math.round(arrMinNum2(data2)));
+                        $("#amplitude6").html(Math.round(((arrMaxNum2(data2)-arrMinNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#up6").html(Math.round(((arrMaxNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#down6").html(Math.round(((arrMinNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        var   option = {
+                            backgroundColor:'rgba(255, 255, 255, 0)',
+                            dataZoom : {
+                                show : true,
+                                realtime : true
+                            },
+                            legend: [
+                                {
+                                    left:'left',
+                                    textStyle:{color:'#7f7f7f'},
+                                    data:['日出库订单分布']
+                                }
+                            ],
+                            toolbox: {
+                                show: true,
+                                feature : {
+                                    mark : {show: true},
+                                    dataView : {show: true, readOnly: false},
+                                    magicType : {show: true, type: ['line', 'bar']},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            xAxis:  {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: data1
+                            },
+                            yAxis: {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}个'
+                                }
+                            },
+                            series: [{
+                                name:'日出库订单分布',
+                                type:'line',
+                                data:data2,
+                                smooth:true,
+                                symbol:'none',
+                                itemStyle : {
+                                    normal : {
+                                        color:'#39c7aa'
+                                    }
+                                },
+                                markPoint: {
+                                    color:'#39c7aa',
+                                    data: [
+                                        {type: 'max', name: '峰值'},
+                                        {type: 'min', name: '谷值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '均值'}
+                                    ]
+                                }
+                            }
+                            ]
+                        };
+                        $('.spiner-example6').hide();
+                        demo6.setOption(option);
+
+            });
+            $.post(prefix + "/basic/bar3", function(result) {
+                    var d = result.rows;
+                        var data1 =[];
+                        var data2 =[];
+                        for(var i = 0;i<d.length;i++){
+                            data1.push(formatDate(d[i].createDate));
+                            data2.push(d[i].goodsNum);
+                        }
+
+                        $("#max1").html(Math.round(arrMaxNum2(data2)));
+                        $("#avg1").html(Math.round(arrAverageNum2(data2)));
+                        $("#min1").html(Math.round(arrMinNum2(data2)));
+                        $("#amplitude1").html(Math.round(((arrMaxNum2(data2)-arrMinNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#up1").html(Math.round(((arrMaxNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#down1").html(Math.round(((arrMinNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        var colors = ['#5793f3', '#d14a61','#475bd1','#5d33d1'];
+
+                        var   option = {
+                            backgroundColor:'rgba(255, 255, 255, 0)',
+                            dataZoom : {
+                                show : true,
+                                realtime : true
+                            },
+                            legend: [
+                                {
+                                    left:'left',
+                                    textStyle:{color:'#7f7f7f'},
+                                    data:['每天供应商数量']
+                                }
+                            ],
+                            toolbox: {
+                                show: true,
+                                feature : {
+                                    mark : {show: true},
+                                    dataView : {show: true, readOnly: false},
+                                    magicType : {show: true, type: ['line', 'bar']},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            xAxis:  {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: data1
+                            },
+                            yAxis: {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}个'
+                                }
+                            },
+                            series: [
+                                {
+                                    name:'每天供应商数量',
+                                    type:'line',
+                                    data:data2,
+                                    smooth:true,
+                                    symbol:'none',
+                                    itemStyle : {
+                                        normal : {
+                                            color:'#39c7aa'
+                                        }
+                                    },
+                                    markPoint: {
+                                        color:'#39c7aa',
+                                        data: [
+                                            {type: 'max', name: '峰值'},
+                                            {type: 'min', name: '谷值'}
+                                        ]
+                                    },
+                                    markLine: {
+                                        data: [
+                                            {type: 'average', name: '均值'}
+                                        ]
+                                    }
+                                }
+                            ]
+                        };
+                        $('.spiner-example1').hide();
+                        demo1.setOption(option);
+
+
+            });
+            $.post(prefix + "/basic/bar4", function(result) {
+                    var d = result.rows;
+
+
+                        var data1 =[];
+                        var data2 =[];
+                        for(var i = 0;i<d.length;i++){
+                            data1.push(formatDate(d[i].createDate));
+                            data2.push(d[i].goodsNum);
+                        }
+                        $("#max2").html(Math.round(arrMaxNum2(data2)));
+                        $("#avg2").html(Math.round(arrAverageNum2(data2)));
+                        $("#min2").html(Math.round(arrMinNum2(data2)));
+                        $("#amplitude2").html(Math.round(((arrMaxNum2(data2)-arrMinNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#up2").html(Math.round(((arrMaxNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#down2").html(Math.round(((arrMinNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        var   option = {
+                            backgroundColor:'rgba(255, 255, 255, 0)',
+                            dataZoom : {
+                                show : true,
+                                realtime : true
+                            },
+                            legend: [
+                                {
+                                    left:'left',
+                                    textStyle:{color:'#7f7f7f'},
+                                    data:['每天客户数量']
+                                }
+                            ],
+                            toolbox: {
+                                show: true,
+                                feature : {
+                                    mark : {show: true},
+                                    dataView : {show: true, readOnly: false},
+                                    magicType : {show: true, type: ['line', 'bar']},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            xAxis:  {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: data1
+                            },
+                            yAxis: {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}个'
+                                }
+                            },
+                            series: [
+                                {
+                                    name:'每天客户数量',
+                                    type:'line',
+                                    data:data2,
+                                    smooth:true,
+                                    symbol:'none',
+                                    itemStyle : {
+                                        normal : {
+                                            color:'#39c7aa'
+                                        }
+                                    },
+                                    markPoint: {
+                                        color:'#39c7aa',
+                                        data: [
+                                            {type: 'max', name: '峰值'},
+                                            {type: 'min', name: '谷值'}
+                                        ]
+                                    },
+                                    markLine: {
+                                        data: [
+                                            {type: 'average', name: '均值'}
+                                        ]
+                                    }
+                                }
+                            ]
+                        };
+                        $('.spiner-example2').hide();
+                        demo2.setOption(option);
+
+            });
+            $.post(prefix + "/basic/bar5", function(result) {
+                var d = result.rows;
+                        var data1 =[];
+                        var data2 =[];
+                        for(var i = 0;i<d.length;i++) {
+                            data1.push(formatDate(d[i].createDate));
+                            data2.push(d[i].goodsNum);
+                        }
+
+                        $("#max3").html(Math.round(arrMaxNum2(data2)));
+                        $("#avg3").html(Math.round(arrAverageNum2(data2)));
+                        $("#min3").html(Math.round(arrMinNum2(data2)));
+                        $("#amplitude3").html(Math.round(((arrMaxNum2(data2)-arrMinNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#up3").html(Math.round(((arrMaxNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#down3").html(Math.round(((arrMinNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        var colors = ['#5793f3', '#d14a61','#475bd1','#5d33d1'];
+
+                        var   option = {
+                            backgroundColor:'rgba(255, 255, 255, 0)',
+                            dataZoom : {
+                                show : true,
+                                realtime : true
+                            },
+                            legend: [
+                                {
+                                    left:'left',
+                                    textStyle:{color:'#7f7f7f'},
+                                    data:['每天送达方数量']
+                                }
+                            ],
+                            toolbox: {
+                                show: true,
+                                feature : {
+                                    mark : {show: true},
+                                    dataView : {show: true, readOnly: false},
+                                    magicType : {show: true, type: ['line', 'bar']},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            xAxis:  {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: data1
+                            },
+                            yAxis: {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}个'
+                                }
+                            },
+                            series: [
+                                {
+                                    name:'每天送达方数量',
+                                    type:'line',
+                                    data:data2,
+                                    smooth:true,
+                                    symbol:'none',
+                                    itemStyle : {
+                                        normal : {
+                                            color:'#39c7aa'
+                                        }
+                                    },
+                                    markPoint: {
+                                        color:'#39c7aa',
+                                        data: [
+                                            {type: 'max', name: '峰值'},
+                                            {type: 'min', name: '谷值'}
+                                        ]
+                                    },
+                                    markLine: {
+                                        data: [
+                                            {type: 'average', name: '均值'}
+                                        ]
+                                    }
+                                }
+                            ]
+                        };
+                        $('.spiner-example3').hide();
+                        demo3.setOption(option);
+
+
+            });
+        $.post(prefix + "/basic/bar6", function(result) {
+                    var d = result.rows;
+
+
+                        var data1 =[];
+                        var data2 =[];
+                        for(var i = 0;i<d.length;i++){
+                            data1.push(formatDate(d[i].createDate));
+                            data2.push(d[i].goodsNum);
+                        }
+
+                        $("#max41").html(Math.round(arrMaxNum2(data2)));
+                        $("#avg41").html(Math.round(arrAverageNum2(data2)));
+                        $("#min41").html(Math.round(arrMinNum2(data2)));
+                        $("#amplitude41").html(Math.round(((arrMaxNum2(data2)-arrMinNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#up41").html(Math.round(((arrMaxNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#down41").html(Math.round(((arrMinNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+
+                        var   option = {
+                            backgroundColor:'rgba(255, 255, 255, 0)',
+                            dataZoom : {
+                                show : true,
+                                realtime : true
+                            },
+                            legend: [
+                                {
+                                    left:'left',
+                                    textStyle:{color:'#7f7f7f'},
+                                    data:['每天入库数量(托)']
+                                }
+                            ],
+                            toolbox: {
+                                show: true,
+                                feature : {
+                                    mark : {show: true},
+                                    dataView : {show: true, readOnly: false},
+                                    magicType : {show: true, type: ['line', 'bar']},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            xAxis:  {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: data1
+                            },
+                            yAxis: {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}个'
+                                }
+                            },
+                            series: [
+                                {
+                                    name:'每天入库数量(托)',
+                                    type:'line',
+                                    data:data2,
+                                    smooth:true,
+                                    symbol:'none',
+                                    itemStyle : {
+                                        normal : {
+                                            color:'#39c7aa'
+                                        }
+                                    },
+                                    markPoint: {
+                                        color:'#39c7aa',
+                                        data: [
+                                            {type: 'max', name: '峰值'},
+                                            {type: 'min', name: '谷值'}
+                                        ]
+                                    },
+                                    markLine: {
+                                        data: [
+                                            {type: 'average', name: '均值'}
+                                        ]
+                                    }
+                                }
+                            ]
+                        };
+                        $('.spiner-example4').hide();
+                        demo4.setOption(option);
+
+
+            });
+            $.post(prefix + "/basic/bar7", function(result) {
+                    var d = result.rows;
+
+                        var data1 =[];
+                        var data2 =[];
+                        for(var i = 0;i<d.length;i++){
+                            data1.push(formatDate(d[i].createDate));
+                            data2.push(d[i].goodsNum);
+                        }
+
+                        $("#max42").html(Math.round(arrMaxNum2(data2)));
+                        $("#avg42").html(Math.round(arrAverageNum2(data2)));
+                        $("#min42").html(Math.round(arrMinNum2(data2)));
+                        $("#amplitude42").html(Math.round(((arrMaxNum2(data2)-arrMinNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#up42").html(Math.round(((arrMaxNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#down42").html(Math.round(((arrMinNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+
+                        var   option = {
+                            backgroundColor:'rgba(255, 255, 255, 0)',
+                            dataZoom : {
+                                show : true,
+                                realtime : true
+                            },
+                            legend: [
+                                {
+                                    left:'left',
+                                    textStyle:{color:'#7f7f7f'},
+                                    data:['每天出库数量']
+                                }
+                            ],
+                            toolbox: {
+                                show: true,
+                                feature : {
+                                    mark : {show: true},
+                                    dataView : {show: true, readOnly: false},
+                                    magicType : {show: true, type: ['line', 'bar']},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            xAxis:  {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: data1
+                            },
+                            yAxis: {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}个'
+                                }
+                            },
+                            series: [
+                                {
+                                    name:'每天出库数量(托)',
+                                    type:'line',
+                                    data:data2,
+                                    smooth:true,
+                                    symbol:'none',
+                                    itemStyle : {
+                                        normal : {
+                                            color:'#39c7aa'
+                                        }
+                                    },
+                                    markPoint: {
+                                        color:'#39c7aa',
+                                        data: [
+                                            {type: 'max', name: '峰值'},
+                                            {type: 'min', name: '谷值'}
+                                        ]
+                                    },
+                                    markLine: {
+                                        data: [
+                                            {type: 'average', name: '均值'}
+                                        ]
+                                    }
+                                }
+                            ]
+                        };
+                        $('.spiner-example7').hide();
+                        demo7.setOption(option);
+            });
+            $.post(prefix + "/basic/bar8", function(result) {
+                var d = result.rows;
+
+                        var data1 =[];
+                        var data2 =[];
+                        for(var i = 0;i<d.length;i++){
+                            data1.push(d[i].goodsCode);
+                            data2.push(d[i].goodsNum);
+                        }
+
+                        $("#max5").html(Math.round(arrMaxNum2(data2)));
+                        $("#avg5").html(Math.round(arrAverageNum2(data2)));
+                        $("#min5").html(Math.round(arrMinNum2(data2)));
+                        $("#amplitude5").html(Math.round(((arrMaxNum2(data2)-arrMinNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#up5").html(Math.round(((arrMaxNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        $("#down5").html(Math.round(((arrMinNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+
+
+                        var   option = {
+                            backgroundColor:'rgba(255, 255, 255, 0)',
+                            dataZoom : {
+                                show : true,
+                                realtime : true
+                            },
+                            legend: [
+                                {
+                                    left:'left',
+                                    textStyle:{color:'#7f7f7f'},
+                                    data:['各物料库存数量']
+                                }
+                            ],
+                            toolbox: {
+                                show: true,
+                                feature : {
+                                    mark : {show: true},
+                                    dataView : {show: true, readOnly: false},
+                                    magicType : {show: true, type: ['line', 'bar']},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            xAxis:  {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: data1
+                            },
+                            yAxis: {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}'
+                                }
+                            },
+                            series: [
+                                {
+                                    name:'各物料库存数量',
+                                    type:'line',
+                                    data:data2,
+                                    smooth:true,
+                                    symbol:'none',
+                                    itemStyle : {
+                                        normal : {
+                                            color:'#39c7aa'
+                                        }
+                                    },
+                                    markPoint: {
+                                        color:'#39c7aa',
+                                        data: [
+                                            {type: 'max', name: '峰值'},
+                                            {type: 'min', name: '谷值'}
+                                        ]
+                                    },
+                                    markLine: {
+                                        data: [
+                                            {type: 'average', name: '均值'}
+                                        ]
+                                    }
+                                }
+                            ]
+                        };
+                        $('.spiner-example5').hide();
+                        demo5.setOption(option);
+            });
+            function arrMaxNum2(arr) {
+                return Math.max.apply(null, arr);
+            }
+            function arrMinNum2(arr) {
+                return Math.min.apply(null, arr);
+            }
+            function arrAverageNum2(arr) {
+                var len = arr.length;
+                var sum = 0;
+                for(var i = 0;i<len;i++){
+                    sum +=parseFloat(arr[i]);
+                }
+                return sum/len;
+            }
+            function formatDate(data) {
+                return Date.format(new Date(data), "yyyy-MM-dd");
+            }
+
+    </script>
+
+</body>
+</html>

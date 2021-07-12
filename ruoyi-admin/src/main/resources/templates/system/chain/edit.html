@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改glc')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-chain-edit" th:object="${glcNetworkSupplyChain}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单类型：</label>
+                <div class="col-sm-8">
+                    <select name="orderType" class="form-control m-b">
+                        <option value="">所有</option>
+                    </select>
+                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单数量：</label>
+                <div class="col-sm-8">
+                    <input name="orderQuantity" th:field="*{orderQuantity}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">售达方描述：</label>
+                <div class="col-sm-8">
+                    <input name="saleDafang" th:field="*{saleDafang}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">售达方ID：</label>
+                <div class="col-sm-8">
+                    <input name="saleId" th:field="*{saleId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">售达方经度：</label>
+                <div class="col-sm-8">
+                    <input name="saleLng" th:field="*{saleLng}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">售达方纬度：</label>
+                <div class="col-sm-8">
+                    <input name="saleLat" th:field="*{saleLat}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">产品组描述：</label>
+                <div class="col-sm-8">
+                    <input name="productGroup" th:field="*{productGroup}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">物料：</label>
+                <div class="col-sm-8">
+                    <input name="material" th:field="*{material}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">一级销售渠道：</label>
+                <div class="col-sm-8">
+                    <input name="primarySales" th:field="*{primarySales}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">二级销售渠道：</label>
+                <div class="col-sm-8">
+                    <input name="secondaryMarketing" th:field="*{secondaryMarketing}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">分中心：</label>
+                <div class="col-sm-8">
+                    <input name="branchCenter" th:field="*{branchCenter}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">分拨中心ID：</label>
+                <div class="col-sm-8">
+                    <input name="branchId" th:field="*{branchId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">分拨中心经度：</label>
+                <div class="col-sm-8">
+                    <input name="branchLng" th:field="*{branchLng}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">分拨中心纬度：</label>
+                <div class="col-sm-8">
+                    <input name="branchLat" th:field="*{branchLat}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">配送中心：</label>
+                <div class="col-sm-8">
+                    <input name="deliveryCenter" th:field="*{deliveryCenter}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">配送中心ID：</label>
+                <div class="col-sm-8">
+                    <input name="deliveryId" th:field="*{deliveryId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">配送中心经度：</label>
+                <div class="col-sm-8">
+                    <input name="deliveryLng" th:field="*{deliveryLng}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">配送中心纬度：</label>
+                <div class="col-sm-8">
+                    <input name="deliveryLat" th:field="*{deliveryLat}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">工厂名称：</label>
+                <div class="col-sm-8">
+                    <input name="factoryName" th:field="*{factoryName}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">要求到货日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="requestArrival" th:value="${#dates.format(glcNetworkSupplyChain.requestArrival, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">承诺到货日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="promiseArrival" th:value="${#dates.format(glcNetworkSupplyChain.promiseArrival, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">配车制单日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="preparationCar" th:value="${#dates.format(glcNetworkSupplyChain.preparationCar, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">提货点：</label>
+                <div class="col-sm-8">
+                    <input name="pickUp" th:field="*{pickUp}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">车辆计划提货时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="vehicleSchedule" th:value="${#dates.format(glcNetworkSupplyChain.vehicleSchedule, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">车辆实际到达时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="actualArrivalVehicle" th:value="${#dates.format(glcNetworkSupplyChain.actualArrivalVehicle, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">车辆及时到位数量：</label>
+                <div class="col-sm-8">
+                    <input name="numberVehicles" th:field="*{numberVehicles}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">装车实际开始时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="actualStartLoading" th:value="${#dates.format(glcNetworkSupplyChain.actualStartLoading, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">装车实际结束时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="actualEndLoading" th:value="${#dates.format(glcNetworkSupplyChain.actualEndLoading, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">装车及时数量：</label>
+                <div class="col-sm-8">
+                    <input name="loadingQuantity" th:field="*{loadingQuantity}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">工厂实际发货日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="actualShipment" th:value="${#dates.format(glcNetworkSupplyChain.actualShipment, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">工厂实际发货时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="actualDelivery" th:value="${#dates.format(glcNetworkSupplyChain.actualDelivery, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">预计到分中心：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="expectedCentre" th:value="${#dates.format(glcNetworkSupplyChain.expectedCentre, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">车队到分中心登记日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="carArrive" th:value="${#dates.format(glcNetworkSupplyChain.carArrive, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">及时卸车入库数量：</label>
+                <div class="col-sm-8">
+                    <input name="unloadingQuantity" th:field="*{unloadingQuantity}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">货到分中心入库日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="storageGoods" th:value="${#dates.format(glcNetworkSupplyChain.storageGoods, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">分中心提货单过账日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="centresPosting" th:value="${#dates.format(glcNetworkSupplyChain.centresPosting, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">客户实际签收日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="actualSignature" th:value="${#dates.format(glcNetworkSupplyChain.actualSignature, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">签收数量：</label>
+                <div class="col-sm-8">
+                    <input name="signQuantity" th:field="*{signQuantity}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">返单数量：</label>
+                <div class="col-sm-8">
+                    <input name="returnQuantity" th:field="*{returnQuantity}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">运输延误天数：</label>
+                <div class="col-sm-8">
+                    <input name="delayTransport" th:field="*{delayTransport}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">到货延误天数：</label>
+                <div class="col-sm-8">
+                    <input name="delayArrival" th:field="*{delayArrival}" class="form-control" type="text">
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/chain";
+        $("#form-chain-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-chain-edit').serialize());
+            }
+        }
+
+        $("input[name='requestArrival']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='promiseArrival']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='preparationCar']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='vehicleSchedule']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='actualArrivalVehicle']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='actualStartLoading']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='actualEndLoading']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='actualShipment']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='actualDelivery']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='expectedCentre']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='carArrive']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='storageGoods']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='centresPosting']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='actualSignature']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

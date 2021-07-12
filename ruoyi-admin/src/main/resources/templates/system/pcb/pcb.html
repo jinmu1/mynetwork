@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('EIQ分析')" />
+</head>
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header">
+        <div class="col-sm-12">
+            <div style="font-size:26px;text-align: center;color: #76838f;" ><h3>PCB分析</h3></div>
+            <div class="content" style="color: #76838f;">
+                <div style="line-height: 33px;text-align:left;text-indent:25px">储运单位分析（PCB分析）也称货态分析，即考察配送中心各作业环节的基本储运单位类型（P表示托盘单位、C表示件单位、B表示单品）。不同的储运单位所配备的储存和搬运设备是不同的。</div>
+                <div style="line-height: 33px;text-align:left;text-indent:25px">配送中心储区是指一个可以独立进行储存或分拣作业的区域，储运模式是指该储区的进货储存单位和分拣出货单位的类型。配送中心的储运模式主要包括P- P、C→C、P→C、C→B和B→B等5种单储运模式以及P→(P、C)、C→(C、B)和P→(P、C、B)等三种复合储运模式，储运模式的选择取决于配送中心订单的订货单位和订货量。根据配送中心的储运模式和物料出货频率即可进行储区配置。</div>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>商品物料拆零情况选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <select onchange="reloadGoods()" name="name" id="name" type="text"  class="form-control"    >
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>出库PCB情况分析</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table" >
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>出库PCB情况分析</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="#">选项1</a>
+                            </li>
+                            <li><a href="#">选项2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" style="height:300px">
+                    <div class="panel panel-bordered">
+
+                        <div>请选择该物料的出库形式</div>
+                        <select onchange="reloadType()" name="out" id="out" type="text"  class="form-control"    >
+                            <option value="P">P</option>
+                            <option value="C">C</option>
+                            <option value="B">B</option>
+                            <option value="P,C">PC</option>
+                            <option value="P,B">PB</option>
+                            <option value="C,B">CB</option>
+                            <option value="P,C,B">PCB</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>出库PCB情况分析</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table1" >
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: echarts-js" />
+    <script  th:inline="javascript">
+        var ctx = [[@{/}]];
+        var prefix = ctx + "system/pcb";
+        loadName();
+        function loadName() {
+                $.post(prefix + "/pcb/bar1", function(result) {
+                    var d = result.rows;
+                    var Alloptions="<option  value=''>"+'请选择'+"</option>";
+                    for(var i=0;i<d.length;i++){
+                        var options="<option  value='"+ d[i].goods_name +"' >"+ d[i].goods_name +"</option>";
+                        Alloptions=Alloptions+options;
+                    }
+                    $("#name").append(Alloptions);
+                })
+            }
+            function footerStyle(column) {
+                return {
+                    userBalance: {
+                        css: { color: 'red', 'font-weight': 'normal' }
+                    }
+                }[column.field]
+            }
+        function reloadGoods() {
+            $("#bootstrap-table").bootstrapTable('destroy');
+            $('#bootstrap-table').bootstrapTable({
+                url: prefix + "/pcb/bar2",
+                method: 'post',
+                showFooter: true,
+                showSearch: false,
+                queryParams:getParams,
+                showRefresh: false,
+                showToggle: false,
+                contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+                showColumns: false,
+                pagination: true,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber:1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                footerStyle: footerStyle,
+                columns: [{
+                    checkbox: false
+                }, {
+                    field : 'goods_name',
+                    title : '物料描述'
+                }, {
+                    field : 'num',
+                    title : '过账数量SKU'
+                }, {
+                    field : 'unit_cases',
+                    title : '过账数量(件)'
+                }, {
+                    field : 'pallet_capacity',
+                    title : '托盘装件数'
+                }, {
+                    field : 'pallet_num',
+                    title : '托盘数量'
+                },  {
+                    field : 'cases_num2',
+                    title : '托外单品数量'
+                }, {
+                    field : 'cases_num3',
+                    title : '托外整件数量'
+                }]
+
+            });
+        }
+            function getParams(){
+                var temp = {
+                    goods_name: document.getElementById("name").value,
+                }
+                return temp;
+            }
+            function reloadType() {
+                var Out=$("#out option:selected").val();
+
+                if(Out!=null){
+                    loadAll();
+                }
+            }
+            function loadAll() {
+                $("#bootstrap-table1").bootstrapTable('destroy');
+
+                $('#bootstrap-table1').bootstrapTable({
+                    url: prefix + "/pcb/bar3",
+                    method: 'post',
+                    showFooter: true,
+                    queryParams:getParams,
+                    showSearch: false,
+                    showRefresh: false,
+                    showToggle: false,
+                    contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+                    showColumns: false,
+                    pagination: true,
+                    sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber:1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    footerStyle: footerStyle,
+                    columns: [{
+                        checkbox: false
+                    }, {
+                        field : 'goods_name',
+                        title : '物料描述'
+                    },  {
+                        field : 'result2',
+                        title : '拣货单位'
+                    }]
+
+                });
+            }
+    </script>
+
+</body>
+</html>

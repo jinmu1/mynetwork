@@ -1,0 +1,625 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>环球物流咨询规划平台</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <!-- Animation CSS -->
+    <link th:href="@{/css/loading/animate.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link   th:href="@{/css/loading/style.css}" rel="stylesheet"/>
+    <link   th:href="@{/css/layer.css}" rel="stylesheet"/>
+    <script>
+    </script>
+
+</head>
+
+<body id="page-top">
+<div class="navbar-wrapper">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/wx">登录平台</a>
+<!--                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">登录平台</span></button>-->
+<!--                <button type="button" class="navbar-brand"   data-dismiss="modal" data-target="#myModal">登录平台</button>-->
+<!--                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">打开示例窗口</button>-->
+<!--                <div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">-->
+<!--                    <div class="modal-dialog">-->
+<!--                            <div id="weixin" style="text-align:center"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a class="page-scroll" href="#page-top">首页</a></li>
+                    <li><a class="page-scroll" href="#features">特色</a></li>
+                    <!--                    <li><a class="page-scroll" href="#team">注册</a></li>-->
+                    <!--                    <li><a class="page-scroll" href="#">应用</a></li>-->
+                    <li><a class="page-scroll" href="#pricing">更多</a></li>
+                    <li><a class="page-scroll" href="#contact">联系我们</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<div id="inSlider" class="carousel slide carousel-fade" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#inSlider" data-slide-to="0" class="active"></li>
+        <li data-target="#inSlider" data-slide-to="1"></li>
+    </ol>
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            <div class="container">
+                <div class="carousel-caption">
+                    <h1>环球物流咨询<br/>
+                        打造国内最专业、系统、前沿的<br/>
+                        物流与供应链规划咨询第一品牌<br/>
+                    </h1>
+                    <p>我们的咨询业务:覆盖了仓储规划、生产物流规划、物流网络规划、城市配送规划、<br/>
+                        物流园区规划等企业物流规划。</p>
+                    <p>
+<!--                        <a class="btn btn-lg btn-primary" href="#" role="button">登录平台</a>-->
+                    </p>
+                </div>
+                <div class="carousel-image wow zoomIn">
+                    <img th:src="@{/img/landing/mylaptop.png}" alt="laptop"/>
+                </div>
+            </div>
+            <!-- Set background for slide in css -->
+            <div class="header-back one"></div>
+
+        </div>
+        <div class="item">
+            <div class="container">
+                <div class="carousel-caption blank">
+                    <h1>物流规划工具：</h1>
+                    <p>提高规划效率与准确性，让规划趋于理性.</p>
+<!--                    <p><a class="btn btn-lg btn-primary" href="#" role="button">登录物流规划平台</a></p>-->
+                </div>
+            </div>
+            <!-- Set background for slide in css -->
+            <div class="header-back two"></div>
+        </div>
+    </div>
+    <a class="left carousel-control" href="#inSlider" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#inSlider" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+
+
+<section id="features" class="container services">
+    <div class="row">
+        <div class="col-sm-3">
+            <h2>仓储数据输入</h2>
+            <p>支持用户根据现有模板上传相关多种类型数据，仓储物流规划功能模块支持上传的数据类型包括：订单类数据、资源类数据等</p>
+            <div class="modal fade" id="clickmore" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content videomaxbox">
+                        <div class="modal-body">
+                            <div class="showstep videobox"><img  th:src="@{/img/landing/showg1.gif}" class="img-fluid videobox" alt="dashboard" id="showStep"> </div>
+                        </div>
+                        <div class="modal-footer" id="videobtn">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p><a class="navy-link" href="#" role="button">详情 &raquo;</a></p>
+        </div>
+        <div class="col-sm-3">
+            <h2>仓储数据分析</h2>
+            <p>根据用户上传数据生成多种数据分析结果，支持多种图表展示形式。用户可根据需求下载图表图片并针对图表结果进行自主分析.</p>
+            <p><a class="navy-link" href="#" role="button">详情 &raquo;</a></p>
+        </div>
+        <div class="col-sm-3">
+            <h2>3D图形呈现</h2>
+            <p>以虚拟环境为基础，根据用户上传数据生成功能区面积测算结果，支持用户进行进行相应参数调整并进行三维效果展示.</p>
+            <p><a class="navy-link" href="#" role="button">详情 &raquo;</a></p>
+        </div>
+        <div class="col-sm-3">
+            <h2>生成仓储报告</h2>
+            <p>根据用户自主分析结果自动生成多种规划报告，包括生产力评估报告、基础环境评估报告、入库解决方案、出库解决方案等.</p>
+            <p><a class="navy-link" href="#" role="button">详情 &raquo;</a></p>
+        </div>
+    </div>
+</section>
+
+<section  class="container features">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="navy-line"></div>
+            <h1>我们的特色<br/> <span class="navy">P&D Platform 仓储物流规划功能模块具有的特色</span> </h1>
+            <p>P&D（Planning and Digitization）Platform 目前只开放仓储物流规划功能模块. </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-center wow fadeInLeft">
+            <div>
+                <i class="fa fa-mobile features-icon"></i>
+                <h2>结构化设计</h2>
+                <p>平台是帮助用户进行仓储物流分析与优化的规划工具，是仓储物流规划的方法论的载体。仓储规划方法论中的各个层级及要素已对应到平台的各个菜单栏目中.</p>
+            </div>
+            <div class="m-t-lg">
+                <i class="fa fa-bar-chart features-icon"></i>
+                <h2>3D化展示</h2>
+                <p>平台可向用户推荐功能区规划方案，并以3D图形呈现。用户可查看平台推荐的布局方案，也可在各个功能区模块下调整规划参数，并查看3D图形的模拟结果.</p>
+            </div>
+        </div>
+        <div class="col-md-6 text-center  wow zoomIn">
+            <img  th:src="@{/img/loading/perspective.png}"   alt="dashboard" class="img-responsive">
+        </div>
+        <div class="col-md-3 text-center wow fadeInRight">
+            <div>
+                <i class="fa fa-envelope features-icon"></i>
+                <h2>多元化指标</h2>
+                <p>平台可计算多项指标，并以图表的方式将指标的结果和数据特征进行呈现，指标和图表的结合可以帮助用户诊断业务中存在的问题或瓶颈，目前平台支持近百个指标的计算和呈现.</p>
+            </div>
+            <div class="m-t-lg">
+                <i class="fa fa-google features-icon"></i>
+                <h2>自主化分析</h2>
+                <p>平台可根据用户的操作选择和编辑内容输出不同维度的报告，形成解决方案。平台将用户输入内容划分为特征、问题、建议、策略、属性五个维度，协助用户形成系统性的规划思维方式.</p>
+            </div>
+        </div>
+    </div>
+    <!--    <div class="row">-->
+    <!--        <div class="col-lg-12 text-center">-->
+    <!--            <div class="navy-line"></div>-->
+    <!--            <h1>Discover great feautres</h1>-->
+    <!--            <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. </p>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <!--    <div class="row features-block">-->
+    <!--        <div class="col-lg-6 features-text wow fadeInLeft">-->
+    <!--            <small>立即体验</small>-->
+    <!--            <h2>购买服务后即可体验平台功能 </h2>-->
+    <!--            <p>INSPINIA Admin Theme is a premium admin dashboard template with flat design concept. It is fully responsive admin dashboard template built with Bootstrap 3+ Framework, HTML5 and CSS3, Media query. It has a huge collection of reusable UI components and integrated with latest jQuery plugins.</p>-->
+    <!--            <a href="" class="btn btn-primary">Learn more</a>-->
+    <!--        </div>-->
+    <!--        <div class="col-lg-6 text-right wow fadeInRight">-->
+    <!--            <img th:src="@{/img/loading/dashboard.png}" alt="dashboard" class="img-responsive pull-right">-->
+    <!--        </div>-->
+    <!--    </div>-->
+</section>
+
+<!--<section id="team" class="gray-section team">-->
+<!--    <div class="container">-->
+<!--        <div class="row m-b-lg">-->
+<!--            <div class="col-lg-12 text-center">-->
+<!--                <div class="navy-line"></div>-->
+<!--                <h1>Our Team</h1>-->
+<!--                <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod.</p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="row">-->
+<!--            <div class="col-sm-4 wow fadeInLeft">-->
+<!--                <div class="team-member">-->
+<!--                    <img  th:src="@{/img/loading/avatar3.jpg}" class="img-responsive img-circle img-small" alt="">-->
+<!--                    <h4><span class="navy">Amelia</span> Smith</h4>-->
+<!--                    <p>Lorem ipsum dolor sit amet, illum fastidii dissentias quo ne. Sea ne sint animal iisque, nam an soluta sensibus. </p>-->
+<!--                    <ul class="list-inline social-icon">-->
+<!--                        <li><a href="#"><i class="fa fa-twitter"></i></a>-->
+<!--                        </li>-->
+<!--                        <li><a href="#"><i class="fa fa-facebook"></i></a>-->
+<!--                        </li>-->
+<!--                        <li><a href="#"><i class="fa fa-linkedin"></i></a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-sm-4">-->
+<!--                <div class="team-member wow zoomIn">-->
+<!--                    <img  th:src="@{/img/loading/avatar1.jpg}"  class="img-responsive img-circle" alt="">-->
+<!--                    <h4><span class="navy">John</span> Novak</h4>-->
+<!--                    <p>Lorem ipsum dolor sit amet, illum fastidii dissentias quo ne. Sea ne sint animal iisque, nam an soluta sensibus.</p>-->
+<!--                    <ul class="list-inline social-icon">-->
+<!--                        <li><a href="#"><i class="fa fa-twitter"></i></a>-->
+<!--                        </li>-->
+<!--                        <li><a href="#"><i class="fa fa-facebook"></i></a>-->
+<!--                        </li>-->
+<!--                        <li><a href="#"><i class="fa fa-linkedin"></i></a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-sm-4 wow fadeInRight">-->
+<!--                <div class="team-member">-->
+<!--                    <img  th:src="@{/img/loading/avatar2.jpg}" class="img-responsive img-circle img-small" alt="">-->
+<!--                    <h4><span class="navy">Peter</span> Johnson</h4>-->
+<!--                    <p>Lorem ipsum dolor sit amet, illum fastidii dissentias quo ne. Sea ne sint animal iisque, nam an soluta sensibus.</p>-->
+<!--                    <ul class="list-inline social-icon">-->
+<!--                        <li><a href="#"><i class="fa fa-twitter"></i></a>-->
+<!--                        </li>-->
+<!--                        <li><a href="#"><i class="fa fa-facebook"></i></a>-->
+<!--                        </li>-->
+<!--                        <li><a href="#"><i class="fa fa-linkedin"></i></a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="row">-->
+<!--            <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg m-b-lg">-->
+<!--                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut eaque, laboriosam veritatis, quos non quis ad perspiciatis, totam corporis ea, alias ut unde.</p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</section>-->
+
+<!--<section class="features">-->
+<!--    <div class="container">-->
+<!--        <div class="row">-->
+<!--            <div class="col-lg-12 text-center">-->
+<!--                <div class="navy-line"></div>-->
+<!--                <h1>Even more great feautres</h1>-->
+<!--                <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. </p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="row features-block">-->
+<!--            <div class="col-lg-3 features-text wow fadeInLeft">-->
+<!--                <small>INSPINIA</small>-->
+<!--                <h2>Perfectly designed </h2>-->
+<!--                <p>INSPINIA Admin Theme is a premium admin dashboard template with flat design concept. It is fully responsive admin dashboard template built with Bootstrap 3+ Framework, HTML5 and CSS3, Media query. It has a huge collection of reusable UI components and integrated with latest jQuery plugins.</p>-->
+<!--                <a href="" class="btn btn-primary">Learn more</a>-->
+<!--            </div>-->
+<!--            <div class="col-lg-6 text-right m-t-n-lg wow zoomIn">-->
+<!--                <img  th:src="@{/img/loading/iphone.jpg}"   class="img-responsive" alt="dashboard">-->
+<!--            </div>-->
+<!--            <div class="col-lg-3 features-text text-right wow fadeInRight">-->
+<!--                <small>INSPINIA</small>-->
+<!--                <h2>Perfectly designed </h2>-->
+<!--                <p>INSPINIA Admin Theme is a premium admin dashboard template with flat design concept. It is fully responsive admin dashboard template built with Bootstrap 3+ Framework, HTML5 and CSS3, Media query. It has a huge collection of reusable UI components and integrated with latest jQuery plugins.</p>-->
+<!--                <a href="" class="btn btn-primary">Learn more</a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--</section>-->
+
+<!--<section id="testimonials" class="navy-section testimonials">-->
+
+<!--    <div class="container">-->
+<!--        <div class="row">-->
+<!--            <div class="col-lg-12 text-center wow zoomIn">-->
+<!--                <i class="fa fa-comment big-icon"></i>-->
+<!--                <h1>-->
+<!--                    What our users say-->
+<!--                </h1>-->
+<!--                <div class="testimonials-text">-->
+<!--                    <i>"Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."</i>-->
+<!--                </div>-->
+<!--                <small>-->
+<!--                    <strong>12.02.2014 - Andy Smith</strong>-->
+<!--                </small>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--</section>-->
+<!--<section class="features">-->
+<!--    <div class="container">-->
+<!--        <div class="row">-->
+<!--            <div class="col-lg-12 text-center">-->
+<!--                <div class="navy-line"></div>-->
+<!--                <h1>More and more extra great feautres</h1>-->
+<!--                <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. </p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="row">-->
+<!--            <div class="col-lg-5 col-lg-offset-1 features-text">-->
+<!--                <small>INSPINIA</small>-->
+<!--                <h2>Perfectly designed </h2>-->
+<!--                <i class="fa fa-bar-chart big-icon pull-right"></i>-->
+<!--                <p>INSPINIA Admin Theme is a premium admin dashboard template with flat design concept. It is fully responsive admin dashboard template built with Bootstrap 3+ Framework, HTML5 and CSS3, Media query. It has a huge collection of reusable UI components and integrated with.</p>-->
+<!--            </div>-->
+<!--            <div class="col-lg-5 features-text">-->
+<!--                <small>INSPINIA</small>-->
+<!--                <h2>Perfectly designed </h2>-->
+<!--                <i class="fa fa-bolt big-icon pull-right"></i>-->
+<!--                <p>INSPINIA Admin Theme is a premium admin dashboard template with flat design concept. It is fully responsive admin dashboard template built with Bootstrap 3+ Framework, HTML5 and CSS3, Media query. It has a huge collection of reusable UI components and integrated with.</p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="row">-->
+<!--            <div class="col-lg-5 col-lg-offset-1 features-text">-->
+<!--                <small>INSPINIA</small>-->
+<!--                <h2>Perfectly designed </h2>-->
+<!--                <i class="fa fa-clock-o big-icon pull-right"></i>-->
+<!--                <p>INSPINIA Admin Theme is a premium admin dashboard template with flat design concept. It is fully responsive admin dashboard template built with Bootstrap 3+ Framework, HTML5 and CSS3, Media query. It has a huge collection of reusable UI components and integrated with.</p>-->
+<!--            </div>-->
+<!--            <div class="col-lg-5 features-text">-->
+<!--                <small>INSPINIA</small>-->
+<!--                <h2>Perfectly designed </h2>-->
+<!--                <i class="fa fa-users big-icon pull-right"></i>-->
+<!--                <p>INSPINIA Admin Theme is a premium admin dashboard template with flat design concept. It is fully responsive admin dashboard template built with Bootstrap 3+ Framework, HTML5 and CSS3, Media query. It has a huge collection of reusable UI components and integrated with.</p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--</section>-->
+<section id="pricing" class="pricing">
+    <div class="container">
+        <div class="row m-b-lg">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>平台</h1>
+                <p></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 wow zoomIn">
+                <ul class="pricing-plan list-unstyled selected">
+                    <li class="pricing-title">
+                        一星用户
+                    </li>
+                    <li class="pricing-desc">
+                        可从平台数据库直接查看<span class="navy">1个行业</span>特征数据模板，并进行后续应用与操作；
+                    </li>
+                    <li class="pricing-price">
+                        <span>199元</span> / 年
+                    </li>
+                    <li>
+                        支持用户根据平台方法指引进行EIQ、ABC、PCB、EOQ的具体数据内容分析操作；
+                    </li>
+                    <li>
+                        用户需结合EIQ、ABC、PCB、EOQ具体分析内容的深刻理解进行操作，正确完成后才可出现图表，在操作过程中深入理解具体分析方法
+                    </li>
+                    <li>
+                        不支持自有数据上传与分析
+
+                    </li>
+                    <!--                    <li>-->
+                    <!--                        Calendar-->
+                    <!--                    </li>-->
+                    <!--                    <li>-->
+                    <!--                        AngularJs-->
+                    <!--                    </li>-->
+                    <li>
+                        <button class="btn btn-primary btn-xs"  style="margin-bottom: 8px" id="pay_submit">购买</button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 wow zoomIn">
+                <ul class="pricing-plan list-unstyled selected">
+                    <li class="pricing-title">
+                        二星用户
+                    </li>
+                    <li class="pricing-desc">
+                        可从平台数据库直接查看 <span class="navy">5个行业</span>特征数据模板，并进行后续应用与操作
+                    </li>
+                    <li class="pricing-price">
+                        <span>299元</span> / 年
+                    </li>
+                    <li>
+                        支持用户根据平台方法指引进行EIQ、ABC、PCB、EOQ的具体数据内容分析操作；
+                    </li>
+                    <li>
+                        用户需结合EIQ、ABC、PCB、EOQ具体分析内容的深刻理解进行操作，正确完成后才可出现图表，在操作过程中深入理解具体分析方法；
+
+                    </li>
+                    <li>
+                        不支持自有数据上传与分析
+                    </li>
+                    <!--                    <li>-->
+                    <!--                        AngularJs-->
+                    <!--                    </li>-->
+                    <!--                    <li>-->
+                    <!--                        <strong>Support platform</strong>-->
+                    <!--                    </li>-->
+                    <li class="plan-action">
+                        <a class="btn btn-primary btn-xs" href="#" style="margin-bottom: 8px">购买</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 wow zoomIn">
+                <ul class="pricing-plan list-unstyled selected">
+                    <li class="pricing-title">
+                        三星用户
+                    </li>
+                    <li class="pricing-desc">
+                        可从平台数据库直接查看<span class="navy">10个行业</span>特征数据模板，并进行后续应用与操作.
+                    </li>
+                    <li class="pricing-price">
+                        <span>399元</span> / 年
+                    </li>
+                    <li>
+                        支持用户根据平台方法指引进行EIQ、ABC、PCB、EOQ的具体数据内容分析操作
+                    </li>
+                    <li>
+                        用户需结合EIQ、ABC、PCB、EOQ具体分析内容的深刻理解进行操作，正确完成后才可出现图表，在操作过程中深入理解具体分析方法.
+                    </li>
+                    <li>
+                        不支持自有数据上传与分析
+                    </li>
+                    <!--                    <li>-->
+                    <!--                        Calendar-->
+                    <!--                    </li>-->
+                    <!--                    <li>-->
+                    <!--                        AngularJs-->
+                    <!--                    </li>-->
+                    <li>
+                        <a class="btn btn-primary btn-xs" href="#" style="margin-bottom: 8px">购买</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-3 wow zoomIn">
+                <ul class="pricing-plan list-unstyled selected">
+                    <li class="pricing-title">
+                        四星用户
+                    </li>
+                    <li class="pricing-desc">
+                        可从平台数据库直接查看<span class="navy">10个行业</span>特征数据模板，并可进行<span class="navy">自有数据上传</span>；
+                    </li>
+                    <li class="pricing-price">
+                        <span>599元</span> / 年
+                    </li>
+                    <li>
+                        支持用户根据平台方法指引进行EIQ、ABC、PCB、EOQ的具体数据内容分析操作；
+                    </li>
+                    <li>
+                        用户需结合EIQ、ABC、PCB、EOQ具体分析内容的深刻理解进行操作，正确完成后才可出现图表，在操作过程中深入理解具体分析方法
+                    </li>
+                    <li>
+                        <span class="navy">支持</span>自有数据上传与分析
+                    </li>
+                    <!--                    <li>-->
+                    <!--                        Calendar-->
+                    <!--                    </li>-->
+                    <!--                    <li>-->
+                    <!--                        AngularJs-->
+                    <!--                    </li>-->
+                    <li>
+                        <a class="btn btn-primary btn-xs" href="#" style="margin-bottom: 8px">购买</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row m-t-lg">
+            <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg">
+                <p>*版本还在更新，后续会有更多功能模块会逐渐上线. <span class="navy">基础版本</span>  未来更会加入网络规划，和建模仿真等模块.</p>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section id="contact" class="gray-section contact">
+    <div class="container">
+        <div class="row m-b-lg">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>联系我们</h1>
+                <p>Global Logistics Consulting.</p>
+            </div>
+        </div>
+        <div class="row m-b-lg">
+            <div class="col-lg-3 col-lg-offset-3">
+                <address>
+                    <strong><span class="navy">公司简介：</span></strong><br/>
+                    我们的核心成员在行业内有着十年以上的经验，我们研发了仓储物流、生产物流、物流网络、城市配送等物流规划模型<br/>
+                    <abbr title="Phone">Tel:</abbr> 13551050190
+                    <br><abbr title="email">微信号:</abbr> TrueOrFalse0222
+                </address>
+            </div>
+            <div class="col-lg-4">
+                <p class="text-color">
+                    我们将物流规划的业务模型开发成为数字化物流规划平台，供企业进行物流规划我们可以物流供应链咨询服务，也可以将平台提供给企业、院校或个人使用<br/>我们的团队在装备制造、化工、餐饮、零售、电器、通信、食品等多行业中有过物流咨询管理经验，与国内多家大型企业有过咨询服务合作<br/> Tel: 13551050190,
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <a href="mailto:test@email.com" class="btn btn-primary">向我们发送邮件</a>
+                <p class="m-t-sm">
+                    或者在微信上关注我们
+                </p>
+                <ul class="list-inline social-icon">
+                    <li><a href="#"><i class="fa fa-wechat"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg m-b-lg">
+                <p><strong>&copy; 2015 Company Name</strong><br/> consectetur adipisicing elit. Aut eaque, laboriosam veritatis, quos non quis ad perspiciatis, totam corporis ea, alias ut unde.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
+<script th:src="@{/js/loading/jquery-2.1.1.js}"></script>
+<script th:src="@{/js/loading/pace.min.js}"></script>
+<script th:src="@{/js/loading/bootstrap.min.js}"></script>
+<script th:src="@{/js/loading/classie.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+<script th:src="@{/js/jquery.qrcode.min.js}"></script>
+<script th:src="@{/js/loading/cbpAnimatedHeader.js}"></script>
+<script th:src="@{/js/loading/wow.min.js}"></script>
+<script th:src="@{/js/loading/inspinia.js}"></script>
+<script  th:inline="javascript">
+    window.onload = function () {
+        var obj = new WxLogin({
+            id: "weixin",//根据id显示位置
+            appid: "wxf6c9659d0d77eb14",
+            scope: "snsapi_login",//固定值
+            redirect_uri: "http://edu.glc360.com/wxlogin"
+        });
+    }
+
+        $("#pay_submit").click(function(){
+            buy('1',0.01);//传入VIP的ID号
+        });
+    function buy(productId,price) {
+        layer.open({
+            area: ['300px', '300px'],
+            type: 2,
+            closeBtn: false,
+            title: false,
+            shift: 2,
+            shadeClose: true,
+            content:'/system/wxorder/addOrder?type=' + productId + '&amp;price=' +price,
+        });
+
+        //重复执行某个方法
+
+        // var t1 = window.setInterval("getPayState('" + productId + "')",1500);
+
+    }
+    // function getPayState(productId){
+    //
+    //     var url = '../user/hadPay.do?productId=' + productId;
+    //
+    //     //轮询是否已经付费
+    //
+    //     $.ajax({
+    //
+    //         type:'post',
+    //
+    //         url:url,
+    //
+    //         data:{productId:productId},
+    //
+    //         cache:false,
+    //
+    //         async:true,
+    //
+    //         success:function(json){
+    //
+    //             if(json.result == 0){
+    //
+    //                 location.href = '/result.jsp';
+    //
+    //             }
+    //
+    //         },
+    //
+    //         error:function(){
+    //
+    //             layer.msg("执行错误！", 8);
+    //
+    //         }
+    //
+    //     });
+    //
+    // }
+</script>
+</body>
+</html>

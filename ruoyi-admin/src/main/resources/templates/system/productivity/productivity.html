@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <th:block th:include="include :: header('表单向导')" />
+    <th:block th:include="include :: jquery-smartwizard-css" />
+    <style type="text/css">
+        /* 如果要让工具栏固定在页面底部,使用下面的样式,不需要的可以注释 */
+        /*.sw>.toolbar-bottom{*/
+        /*    z-index: 100;*/
+        /*    bottom: 0px;*/
+        /*    left: 0;*/
+        /*    width: 100%;*/
+        /*    position: fixed;*/
+        /*    text-align: right;*/
+        /*    background: #fff;*/
+        /*    box-shadow: 0 -2px 6px 1px hsla(223,8%,83%,.5);*/
+        /*    border-top: 1px solid #e3e4e8;*/
+        /*}*/
+        /* 如果设置了是否自动调节高度为false,需要加滚动条 */
+        /*.sw>.tab-content{*/
+        /*    overflow-x: hidden;*/
+        /*    overflow-y: auto;*/
+        /*}*/
+    </style>
+</head>
+<body class="gray-bg" onload="la()">
+<div class="wrapper wrapper-content animated fadeInRight" style="height: 100%;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>
+                        第<big id="num1">1</big>页，
+                        <h5>共<big id="num2"></big>页</h5>
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row select-list" style="padding-left: 15px; margin-bottom: 10px;">
+                        <ul>
+                            <li>
+                                选择样式：
+                                <select id="theme-selector">
+                                    <option value="default">Default</option>
+                                    <option value="arrows" selected>Arrows</option>
+                                    <option value="dots">Dots</option>
+                                    <option value="progress">Progress</option>
+                                </select>
+                            </li>
+                            <!-- 快速操作栏按钮 -->
+                            <li>
+                                <div class="btn-group-sm" role="group">
+                                    <a class="btn btn-info" id="prev-btn"> 上一步 </a>
+                                    <a class="btn btn-success" id="next-btn"> 下一步 </a>
+                                    <a class="btn btn-danger" id="reset-btn"> 重置 </a>
+                                </div>
+                            </li>
+                        </ul>
+
+                    </div>
+                    <div id="smartwizard">
+                        <ul class="nav" id="page">
+
+                        </ul>
+                        <div class="tab-content" id="page1" style="height: 800px;">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: jquery-smartwizard-js" />
+<script>
+
+
+    function la() {
+        var prefix =  "/system/productivity";
+        $.post(prefix + "/productivity/bar1", function (result) {
+            var d = result.rows;
+            $('#num2').html(d.length);
+            for (var i = 1; i <d.length; i++) {
+                var dom = ' <li class="nav-item">' +
+                    '<a class="nav-link" href="#step-'+i+'" style="display: none"> 第'+i+'步 </a>' +
+                    '</li>';
+                $('#page').append(dom);
+                var dom1 = '<div id="step-'+i+'" class="tab-pane" role="tabpanel" aria-labelledby="step-'+i+'" style="height:700px;">';
+                dom1 += '<div class = "row">';
+                if (d[i].img != null) {
+                    dom1 += '<div class="col-sm-12" >';
+                    if (d[i].title != null) {
+                        dom1 += ' <h3 style="text-align: center">' + d[i].title + '</h3>';
+                    }
+                    dom1 += '<div  class="flot-chart m-b-xl" style="text-align:center;height: 250px;">';
+                    dom1 += '<img src="' + d[i].img + '" style="height: 250px;"/>';
+                    dom1 += '</div>';
+                    dom1 += '</div>';
+                    dom1 += '</div>';
+                }
+                dom1 += '<div class = "row">';
+                dom1 += '<div class="col-sm-6">';
+                dom1 += '<div class="flot-chart m-b-xl" style="margin-left: 10%">';
+                if (d[i].feature != null &&d[i].feature !='') {
+                    dom1 += '<h3  style="margin-top: 4%" "> 特征描述 </h3>';
+                    dom1 += '<blockquote style="text-align:left">' + d[0].feature + '</blockquote>';
+                }
+                if (d[i].issue != null&&d[i].issue !='') {
+                    dom1 += '<h3 style="margin-top: 4%"> 问题诊断 </h3>';
+                    dom1 += '<blockquote style="text-align:left">' + d[0].issue + '</blockquote>';
+                }
+                dom1 += '</div>';
+                dom1 += '</div>';
+                dom1 += '<div class="col-sm-6">';
+                dom1 += '<div class="flot-chart m-b-xl" style="margin-left: 10%">';
+                if (d[i].advice != null&&d[i].advice !='') {
+                    dom1 += '<h3 style="margin-top: 4%">优化建议</h3>';
+                    dom1 += '<blockquote>' + d[0].advice + '</blockquote>';
+                }
+                if (d[i].strategy != null&&d[i].strategy !='') {
+                    dom1 += '<h3 style="margin-top: 4%">管理策略</h3>';
+                    dom1 += '<blockquote>' + d[i].strategy + '</blockquote>';
+                }
+                dom1 += '</div>';
+                dom1 += '</div>';
+                dom1 += '</div>';
+                $('#page1').append(dom1);
+            }
+            $(document).ready(function() {
+                // 工具栏按钮
+                var btnFinish = $('<a id="btn-finish"></a>').text('完成')
+                    .addClass('btn btn-info')
+                    .on('click', function(){ submit(); });
+                var btnCancel = $('<a id="btn-cancel"></a>').text('取消')
+                    .addClass('btn btn-danger')
+                    .on('click', function(){ $('#smartwizard').smartWizard("reset");  $('#num1').html(1);});
+                // 下面两个按钮是为了因为插件默认的是botton,这里换成<a>,也可以选择用样式替换,或者不替换
+                var btnNext = $('<a id="btn-next"></a>').text('下一步')
+                    .addClass('btn btn-info')
+                    .on('click', function(){ $('#smartwizard').smartWizard("next");  $('#num1').html(parseInt($('#num1').html())+1);});
+                var btnPrev = $('<a id="btn-prev"></a>').text('上一步')
+                    .addClass('btn btn-success disabled')
+                    .on('click', function(){ $('#smartwizard').smartWizard("prev"); $('#num1').html(parseInt($('#num1').html())-1);});
+                // 初始化表单向导组件
+                $('#smartwizard').smartWizard({
+                    theme: 'arrows', // default, arrows, dots, progress
+                    autoAdjustHeight : false, // 自动调整高度, 默认true
+                    enableURLhash:false, //开启URL hash,开启后点击浏览器前进后退按钮会执行下一步和上一步操作
+                    transition: {
+                        animation: 'slide-horizontal', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
+                    },
+                    toolbarSettings: {
+                        showNextButton: false,// 因为上面自定义了下一步按钮, 所以隐藏掉插件自带的按钮, 如果不使用自定义按钮, 需要改为true或者去掉该属性
+                        showPreviousButton: false,// 因为上面自定义了上一步按钮, 所以隐藏掉插件自带的按钮, 如果不使用自定义按钮, 需要改为true或者去掉该属性
+                        toolbarExtraButtons: [btnCancel,btnPrev,btnNext,btnFinish]// 扩展的按钮集合
+                    }
+                });
+            });
+        });
+    }
+
+
+    function submit(){
+        var data = {};
+        $('.form').each(function (index, form){
+            // 这里可以使用$.common.formToJSON(formId);  需要在form上加id
+            $.each($(form).serializeArray(), function(i, field) {
+                if(data[field.name]) {
+                    data[field.name] += ("," + field.value);
+                } else {
+                    data[field.name] = field.value;
+                }
+            });
+        });
+    }
+    // 显示步骤时将触发事件
+    $("#smartwizard").on("showStep", function(e, anchorObject, stepNumber, stepDirection, stepPosition) {
+        // 下面按钮是快速操作栏的
+        $("#prev-btn").removeClass('disabled');
+        $("#next-btn").removeClass('disabled');
+        // 下面按钮是工具栏的
+        $("#btn-prev").removeClass('disabled');
+        $("#btn-next").removeClass('disabled');
+        $("#btn-finish").removeClass('disabled');
+        if(stepPosition === 'first') {
+            $("#prev-btn").addClass('disabled');// 快速操作栏（演示用）
+            $("#btn-prev").addClass('disabled');
+            $("#btn-finish").addClass('disabled');
+        } else if(stepPosition === 'last') {
+            $("#next-btn").addClass('disabled');// 快速操作栏（演示用）
+            $("#btn-next").addClass('disabled');
+        } else {
+            $("#prev-btn").removeClass('disabled');// 快速操作栏（演示用）
+            $("#next-btn").removeClass('disabled');// 快速操作栏（演示用）
+            $("#btn-prev").removeClass('disabled');
+            $("#btn-next").removeClass('disabled');
+            $("#btn-finish").addClass('disabled');
+        }
+    });
+
+    // 该事件在离开某个步骤之前触发
+    $("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepNumber, nextStepNumber, stepDirection) {
+        if(stepDirection == 'forward'){
+            var form = $("#step-" + (currentStepNumber + 1)).find('.form');
+            if(form.length > 0){
+                return form.validate().form();
+            }
+            return true;
+        }
+        return true;
+    });
+
+    $("#theme-selector").on("change", function() {
+        // Change theme
+        var options = {
+            theme : $(this).val()
+        };
+        $('#smartwizard').smartWizard("setOptions", options);
+        return true;
+    });
+
+    $("#reset-btn").on("click", function() {
+        // Reset wizard
+        $('#smartwizard').smartWizard("reset");
+        $('#num1').html(1);
+        return true;
+    });
+
+    $("#prev-btn").on("click", function() {
+        // Navigate previous
+
+        $('#num1').html($('#num1').html()-1);
+        $('#smartwizard').smartWizard("prev");
+        return true;
+    });
+
+    $("#next-btn").on("click", function() {
+        // Navigate next
+        $('#num1').val($('#num1').val()+1);
+        $('#smartwizard').smartWizard("next");
+
+        return true;
+    });
+
+</script>
+</body>
+</html>

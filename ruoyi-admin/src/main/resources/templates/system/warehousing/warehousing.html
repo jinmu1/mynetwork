@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('EIQ分析')" />
+<!--    <link href="../static/css/bootstrap-chosen.css" th:href="@{/css/bootstrap-chosen.css}" rel="stylesheet"/>-->
+<!--    <link href="../static/css/select2.min.css" th:href="@{/css/select2.min.css}" rel="stylesheet"/>-->
+    <script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script  th:src="@{/ajax/libs/artTemplate/template.min.js}"></script>
+    <script src="../static/js/lang.core.js" th:src="@{/js/lang.core.js}"></script>
+    <script src="../static/js/bootstrap-datepicker.js" th:src="@{/js/bootstrap-datepicker.js}"></script>
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: bootstrap-select-css" />
+
+</head>
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header">
+    </div>
+    <div class="wrapper wrapper-content fadeInRight">
+        <div class="p-w-md m-t-sm">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>人均处理入库量（每小时）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-2" style="margin-top: 50px">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>峰值</big>
+                                                    <h3 class="no-margins" id="max"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>均值</big>
+                                                    <h3 class="no-margins" id="avg"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>谷值</big>
+                                                    <h3 class="no-margins " id="min"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>振幅</big>
+                                                    <h3 class="no-margins" id="amplitude"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>上浮</big>
+                                                    <h3 class="no-margins" id="up"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>下浮</big>
+                                                    <h3 class="no-margins " id="down"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-10" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo" style="height: 300px"></div>
+                                        <div class="text-center">
+                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('人均处理入库量（每小时）','demo')">分析</a>
+                                        </div>
+                                        <div id="modal-form" class="modal fade" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-body">
+                                                        <div class="ibox" style="width: 100%">
+                                                            <div class="ibox-title">
+                                                                <h5 id="title" style="text-align: center"></h5>
+                                                                <div class="ibox-tools">
+                                                                    <a class="collapse-link">
+                                                                        <i class="fa fa-chevron-up"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content" style="width: 100%">
+                                                                <div style="display: none" id="newimg"></div>
+                                                                <div class="row" style="width: 100%">
+                                                                    <form role="form" style="width: 100%">
+                                                                        <div class="form-group  row" style="margin-top: 10px">
+                                                                            <label class="col-sm-2 col-form-label">填写特征</label>
+                                                                            <div class="col-sm-6"><div  id="feature" class="view"></div></div>
+                                                                            <div class="col-sm-2">
+                                                                                <a class="btn btn-primary" onclick="submit(this)" >确定</a>
+                                                                            </div>
+                                                                            <div class="col-sm-2">
+                                                                                <a class="btn btn-primary"  onclick="change(this)">修改</a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group" style="margin-top:3%">
+                                                                            <label class="font-normal" >流程选择</label>
+                                                                            <select  id="type" data-none-selected-text="选择选择流程"  class="form-control noselect2 selectpicker" multiple tabindex="9">
+                                                                                <option value="卸货">卸货</option>
+                                                                                <option value="分拣">分拣</option>
+                                                                                <option value="理货">理货</option>
+                                                                                <option value="上架">上架</option>
+                                                                                <option value="打包">打包</option>
+                                                                                <option value="装车">装车</option>
+                                                                                <option value="拣货">拣货</option>
+                                                                                <option value="补货">补货</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group  row" style="margin-top: 10px"><label class="col-sm-2 col-form-label">填写问题</label>
+                                                                            <div class="col-sm-6"><div  id="issue" class="view"></div></div>
+                                                                            <div class="col-sm-2">
+                                                                                <a class="btn btn-primary" onclick="submit1(this)" >确定</a>
+                                                                            </div>
+                                                                            <div class="col-sm-2">
+                                                                                <a class="btn btn-primary"  onclick="change1(this)">修改</a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group  row" style="margin-top: 10px"><label class="col-sm-2 col-form-label">填写建议</label>
+                                                                            <div class="col-sm-6"><div  id="advice" class="view"></div></div>
+                                                                            <div class="col-sm-2">
+                                                                                <a class="btn btn-primary" onclick="submit2(this)" >确定</a>
+                                                                            </div>
+                                                                            <div class="col-sm-2">
+                                                                                <a class="btn btn-primary"  onclick="change2(this)">修改</a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group  row" style="margin-top: 10px"><label class="col-sm-2 col-form-label">填写策略</label>
+                                                                            <div class="col-sm-6"><div  id="strategy" class="view"></div></div>
+                                                                            <div class="col-sm-2">
+                                                                                <a class="btn btn-primary" onclick="submit3(this)" >确定</a>
+                                                                            </div>
+                                                                            <div class="col-sm-2">
+                                                                                <a class="btn btn-primary"  onclick="change3(this)">修改</a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div style="margin-top: 10px" >
+                                                                            <button class="btn btn-sm btn-primary float-right m-t-n-xs col-sm-4 " style="margin-left: 30%" onclick="insert()" type="button"><strong>提交</strong></button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>每小时入库效率</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-2" style="margin-top: 50px">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>峰值</big>
+                                                    <h3 class="no-margins" id="max1"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>均值</big>
+                                                    <h3 class="no-margins" id="avg1"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>谷值</big>
+                                                    <h3 class="no-margins " id="min1"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>振幅</big>
+                                                    <h3 class="no-margins" id="amplitude1"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>上浮</big>
+                                                    <h3 class="no-margins" id="up1"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>下浮</big>
+                                                    <h3 class="no-margins " id="down1"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-10" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example1">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo1" style="height: 300px"></div>
+                                        <div class="text-center">
+                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('每小时入库效率','demo1')">分析</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+<!--            <div class="row">-->
+<!--                <div class="col-lg-12">-->
+<!--                    <div class="ibox ">-->
+<!--                        <div class="ibox-title">-->
+<!--                            <h5>入库车辆峰值（库区.日）</h5>-->
+<!--                            <div class="ibox-tools">-->
+<!--                                <a class="collapse-link">-->
+<!--                                    <i class="fa fa-chevron-up"></i>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="ibox-content" style="position: relative;height: 400px" >-->
+<!--                            <div class="row">-->
+<!--                                <div class="col-lg-3" style="margin-top: 50px">-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-lg-7">-->
+<!--                                            <ul class="stat-list">-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值最大值(常温+冷藏)</small>-->
+<!--                                                    <small class="no-margins" id="maxa1"></small>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值平均值(常温+冷藏)</small>-->
+<!--                                                    <small class="no-margins" id="avga1"></small>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值最小值(常温+冷藏)</small>-->
+<!--                                                    <small class="no-margins " id="mina1"></small>-->
+<!--                                                </li>-->
+<!--                                            </ul>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-lg-5">-->
+<!--                                            <ul class="stat-list">-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值最大值(冷冻)</small>-->
+<!--                                                    <small class="no-margins" id="maxa2"></small>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值平均值(冷冻)</small>-->
+<!--                                                    <small class="no-margins" id="avga2"></small>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值最小值(冷冻)</small>-->
+<!--                                                    <small class="no-margins " id="mina2"></small>-->
+<!--                                                </li>-->
+<!--                                            </ul>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-lg-7">-->
+<!--                                            <ul class="stat-list">-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值率最大值(常温+冷藏)</small>-->
+<!--                                                    <small class="no-margins" id="maxa3"></small>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值率平均值(常温+冷藏)</small>-->
+<!--                                                    <small class="no-margins" id="avga3"></small>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值率最小值(常温+冷藏)</small>-->
+<!--                                                    <small class="no-margins " id="mina3"></small>-->
+<!--                                                </li>-->
+<!--                                            </ul>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-lg-5">-->
+<!--                                            <ul class="stat-list">-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值率最大值(冷冻)</small>-->
+<!--                                                    <small class="no-margins" id="maxa4"></small>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值率平均值(冷冻)</small>-->
+<!--                                                    <small class="no-margins" id="avga4"></small>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>峰值率最小值(冷冻)</small>-->
+<!--                                                    <small class="no-margins " id="mina4"></small>-->
+<!--                                                </li>-->
+<!--                                            </ul>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="col-lg-9" >-->
+<!--                                    <div class="flot-chart">-->
+<!--                                        <div class="spiner-example1">-->
+<!--                                            <div class="sk-spinner sk-spinner-wave">-->
+<!--                                                <div class="sk-rect1"></div>-->
+<!--                                                <div class="sk-rect2"></div>-->
+<!--                                                <div class="sk-rect3"></div>-->
+<!--                                                <div class="sk-rect4"></div>-->
+<!--                                                <div class="sk-rect5"></div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="del" id="demoa2" style="height: 300px"></div>-->
+<!--                                        <div class="text-center">-->
+<!--                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('入库车辆峰值（库区.日）','demoa2')">分析</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row">-->
+<!--                <div class="col-lg-12">-->
+<!--                    <div class="ibox ">-->
+<!--                        <div class="ibox-title">-->
+<!--                            <h5>入库车辆数量（库区.日）</h5>-->
+<!--                            <div class="ibox-tools">-->
+<!--                                <a class="collapse-link">-->
+<!--                                    <i class="fa fa-chevron-up"></i>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="ibox-content" style="position: relative;height: 400px" >-->
+<!--                            <div class="row">-->
+<!--                                <div class="col-lg-9" >-->
+<!--                                    <div class="flot-chart">-->
+<!--                                        <div class="spiner-example2">-->
+<!--                                            <div class="sk-spinner sk-spinner-wave">-->
+<!--                                                <div class="sk-rect1"></div>-->
+<!--                                                <div class="sk-rect2"></div>-->
+<!--                                                <div class="sk-rect3"></div>-->
+<!--                                                <div class="sk-rect4"></div>-->
+<!--                                                <div class="sk-rect5"></div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="del" id="demo2" style="height: 300px"></div>-->
+<!--                                        <div class="text-center">-->
+<!--                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('入库车辆数量（库区.日）','demo2')">分析</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="col-lg-3" style="margin-top: 50px">-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-lg-7">-->
+<!--                                            <ul class="stat-list">-->
+<!--                                                <li>-->
+<!--                                                    <small>最大值(常温+冷藏)</small>-->
+<!--                                                    <h2 class="no-margins" id="maxs1"></h2>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>平均值(常温+冷藏)</small>-->
+<!--                                                    <h2 class="no-margins" id="avgs1"></h2>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>最小值(常温+冷藏)</small>-->
+<!--                                                    <h2 class="no-margins " id="mins1"></h2>-->
+<!--                                                </li>-->
+<!--                                            </ul>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-lg-5">-->
+<!--                                            <ul class="stat-list">-->
+<!--                                                <li>-->
+<!--                                                    <small>最大值(冷冻)</small>-->
+<!--                                                    <h2 class="no-margins" id="maxs2"></h2>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>平均值(冷冻)</small>-->
+<!--                                                    <h2 class="no-margins" id="avgs2"></h2>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>最小值(冷冻)</small>-->
+<!--                                                    <h2 class="no-margins " id="mins2"></h2>-->
+<!--                                                </li>-->
+<!--                                            </ul>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row">-->
+<!--                <div class="col-lg-12">-->
+<!--                    <div class="ibox ">-->
+<!--                        <div class="ibox-title">-->
+<!--                            <h5>月台紧缺率（日）</h5>-->
+<!--                            <div class="ibox-tools">-->
+<!--                                <a class="collapse-link">-->
+<!--                                    <i class="fa fa-chevron-up"></i>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="ibox-content" style="position: relative;height: 400px" >-->
+<!--                            <div class="row">-->
+<!--                                <div class="col-lg-9" >-->
+<!--                                    <div class="flot-chart">-->
+<!--                                        <div class="spiner-example3">-->
+<!--                                            <div class="sk-spinner sk-spinner-wave">-->
+<!--                                                <div class="sk-rect1"></div>-->
+<!--                                                <div class="sk-rect2"></div>-->
+<!--                                                <div class="sk-rect3"></div>-->
+<!--                                                <div class="sk-rect4"></div>-->
+<!--                                                <div class="sk-rect5"></div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="del" id="demo3" style="height: 300px"></div>-->
+<!--                                        <div class="text-center">-->
+<!--                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('月台紧缺率（日）','demo3')">分析</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="col-lg-3" style="margin-top: 50px">-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-lg-7">-->
+<!--                                            <ul class="stat-list">-->
+<!--                                                <li>-->
+<!--                                                    <small>最大值(常温+冷藏)</small>-->
+<!--                                                    <h2 class="no-margins" id="maxs3"></h2>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>平均值(常温+冷藏)</small>-->
+<!--                                                    <h2 class="no-margins" id="avgs3"></h2>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>最小值(常温+冷藏)</small>-->
+<!--                                                    <h2 class="no-margins " id="mins3"></h2>-->
+<!--                                                </li>-->
+<!--                                            </ul>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-lg-5">-->
+<!--                                            <ul class="stat-list">-->
+<!--                                                <li>-->
+<!--                                                    <small>最大值(冷冻)</small>-->
+<!--                                                    <h2 class="no-margins" id="maxs4"></h2>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>平均值(冷冻)</small>-->
+<!--                                                    <h2 class="no-margins" id="avgs4"></h2>-->
+<!--                                                </li>-->
+<!--                                                <li>-->
+<!--                                                    <small>最小值(冷冻)</small>-->
+<!--                                                    <h2 class="no-margins " id="mins4"></h2>-->
+<!--                                                </li>-->
+<!--                                            </ul>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>卸货处理能力曲线（周期）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-12" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example4">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo4" style="height: 300px"></div>
+                                        <div class="text-center">
+                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('卸货处理能力曲线（周期）','demo4')">分析</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>卸货人员繁忙率</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-12" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example5">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo5" style="height: 300px"></div>
+                                        <div class="text-center">
+                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('卸货人员繁忙率','demo5')">分析</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>卸货设备繁忙率</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-12" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example6">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo6" style="height: 300px"></div>
+                                        <div class="text-center">
+                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('卸货设备繁忙率','demo6')">分析</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>通道拥堵率（小时.周期）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-2" style="margin-top: 50px">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>峰值</big>
+                                                    <h3 class="no-margins" id="max7"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>均值</big>
+                                                    <h3 class="no-margins" id="avg7"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>谷值</big>
+                                                    <h3 class="no-margins " id="min7"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul class="stat-list">
+                                                <li>
+                                                    <big>振幅</big>
+                                                    <h3 class="no-margins" id="amplitude7"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>上浮</big>
+                                                    <h3 class="no-margins" id="up7"></h3>
+                                                </li>
+                                                <li>
+                                                    <big>下浮</big>
+                                                    <h3 class="no-margins " id="down7"></h3>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-10" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo7" style="height: 300px"></div>
+                                        <div class="text-center">
+                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('通道拥堵率（小时.周期）','demo7')">分析</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>上架处理能力曲线（周期）</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-12" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example1">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo8" style="height: 300px"></div>
+                                        <div class="text-center">
+                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('上架处理能力曲线（周期）','demo8')">分析</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>上架人员繁忙率</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-12" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example9">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo9" style="height: 300px"></div>
+                                        <div class="text-center">
+                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('上架人员繁忙率','demo9')">分析</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>上架设备忙闲</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="position: relative;height: 400px" >
+                            <div class="row">
+                                <div class="col-lg-12" >
+                                    <div class="flot-chart">
+                                        <div class="spiner-example10">
+                                            <div class="sk-spinner sk-spinner-wave">
+                                                <div class="sk-rect1"></div>
+                                                <div class="sk-rect2"></div>
+                                                <div class="sk-rect3"></div>
+                                                <div class="sk-rect4"></div>
+                                                <div class="sk-rect5"></div>
+                                            </div>
+                                        </div>
+                                        <div class="del" id="demo10" style="height: 300px"></div>
+                                        <div class="text-center">
+                                            <a data-toggle="modal" class="btn btn-primary" onclick="show('上架设备忙闲','demo10')">分析</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: echarts-js" />
+    <th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: bootstrap-select-js" />
+    <script  th:inline="javascript">
+
+        var ctx = [[@{/}]];
+           var report = ctx + "system/report";
+            var prefix = ctx + "system/warehousing";
+            var demo = echarts.init(document.getElementById('demo'));
+            var demo1 = echarts.init(document.getElementById('demo1'));
+            // var demo2 = echarts.init(document.getElementById('demo2'));
+            // var demo3 = echarts.init(document.getElementById('demo3'));
+            var demo4 = echarts.init(document.getElementById('demo4'));
+            var demo5 = echarts.init(document.getElementById('demo5'));
+            var demo6 = echarts.init(document.getElementById('demo6'));
+            var demo7 = echarts.init(document.getElementById('demo7'));
+            var demo8 = echarts.init(document.getElementById('demo8'));
+            var demo9 = echarts.init(document.getElementById('demo9'));
+            var demo10 = echarts.init(document.getElementById('demo10'));
+            function show(a,b){
+                if(b=='demo'){
+                    $("#newimg").html(demo.getDataURL());
+                }else if(b=='demo1'){
+                    $("#newimg").html(demo1.getDataURL());
+                }else if(b=='demo4'){
+                    $("#newimg").html(demo4.getDataURL());
+                }else if(b=='demo5'){
+                    $("#newimg").html(demo5.getDataURL());
+                }else if(b=='demo6'){
+                    $("#newimg").html(demo6.getDataURL());
+                }else if(b=='demo7'){
+                    $("#newimg").html(demo7.getDataURL());
+                }else if(b=='demo8'){
+                    $("#newimg").html(demo8.getDataURL());
+                }else if(b=='demo9'){
+                    $("#newimg").html(demo9.getDataURL());
+                }
+                $("#title").html(a);
+                $("#modal-form").modal('show');
+                $.post(report + "/getReport",{"title": a} ,function(result) {
+                        var d = result.rows[0];
+                        $("#feature").empty();
+                        $("#feature_property1").val("");
+                        $("#feature_property2").val("");
+                        $("#feature_property3").val("");
+                        $("#feature_property4").val("");
+                        $("#issue").html("");
+                        $("#issue_property1").val("");
+                        $("#issue_property2").val("");
+                        $("#issue_property3").val("");
+                        $("#issue_property4").val("");
+                        $("#variable").html("");
+                        $("#advice").html("") ;
+                        $("#advice_property1").val("");
+                        $("#advice_property2").val("");
+                        $("#advice_property3").val("");
+                        $("#advice_property4").val("");
+                        $("#strategy").html("");
+                        $("#strategy_property1").val("");
+                        $("#strategy_property2").val("");
+                        $("#strategy_property3").val("");
+                        $("#strategy_property4").val("");
+                        if(d!=null) {
+                            if(d.feature!=null&&d.feature!='') {
+                                $("#feature").html(d.feature);
+                            }else {
+                                $("#feature").empty();
+                            }
+
+                            if(d.feature_property1!=null&&d.feature_property1!='') {
+                                $("#feature_property1").val(d.feature_property1);
+                            }else {
+                                $("#feature_property1").val("")
+                            }
+
+                            if(d.feature_property2!=null&&d.feature_property2!='') {
+                                $("#feature_property2").val(d.data.feature_property2);
+                            }else {
+                                $("#feature_property2").val("");
+                            }
+                            if(d.feature_property3!=null&&d.feature_property3!='') {
+                                $("#feature_property3").val(d.data.feature_property3);
+                            }else {
+                                $("#feature_property3").val("");
+                            }
+                            if(d.feature_property4!=null&&d.feature_property4!='') {
+                                $("#feature_property4").val(d.feature_property4);
+                            }else {
+                                $("#feature_property4").val("");
+                            }
+                            if(d.issue!=null&&d.issue!='') {
+                                $("#issue").html(d.issue);
+                            }else {
+                                $("#issue").html("");
+                            }
+                            if(d.issue_property1!=null&&d.issue_property1!='') {
+                                $("#issue_property1").val(d.issue_property1);
+                            }
+                            if(d.issue_property2!=null&&d.issue_property2!='') {
+                                $("#issue_property2").val(d.issue_property2);
+                            }
+                            if(d.issue_property3!=null&&d.issue_property3!='') {
+                                $("#issue_property3").val(d.issue_property3);
+                            }
+                            if(d.issue_property4!=null&&d.issue_property4!='') {
+                                $("#issue_property4").val(d.issue_property4);
+                            }
+                            if(d.variable!=null&&d.variable!='') {
+                                $("#variable").html(d.variable);
+                            }
+                            if(d.advice!=null&&d.advice!='') {
+                                $("#advice").html(d.advice) ;
+                            }
+                            if(d.advice_property1!=null&&d.advice_property1!='') {
+                                $("#advice_property1").val(d.advice_property1);
+                            }
+                            if(d.advice_property2!=null&&d.advice_property2!='') {
+                                $("#advice_property2").val(d.advice_property2);
+                            }
+                            if(d.advice_property3!=null&&d.advice_property3!='') {
+                                $("#advice_property3").val(d.advice_property3);
+                            }
+                            if(d.advice_property4!=null&&d.advice_property4!='') {
+                                $("#advice_property4").val(d.advice_property4);
+                            }
+                            if(d.strategy!=null&&d.strategy!='') {
+                                $("#strategy").html(d.strategy);
+                            }
+                            if(d.strategy_property1!=null&&d.strategy_property1!='') {
+                                $("#strategy_property1").val(d.strategy_property1);
+                            }
+                            if(d.strategy_property2!=null&&d.strategy_property2!='') {
+                                $("#strategy_property2").val(d.strategy_property2);
+                            }
+                            if(d.strategy_property3&&d.strategy_property3!='') {
+                                $("#strategy_property3").val(d.strategy_property3);
+                            }
+                            if(d.strategy_property4!=null&&d.strategy_property4!=''){
+                                $("#strategy_property4").val(d.strategy_property4);
+                            }
+
+                        }
+
+                });
+            };
+            function change(obj) {
+                var text =  $("#feature").html();
+
+                if ($("#input").html()==null) {
+                    $("#feature").empty();
+                    var  input = $("<textarea style='width: 100%' id='input' type='text' value='" + text + "'/>");
+
+                    $("#feature").html(input);
+                    $("#input").val(text);
+                }
+            }
+            function submit(obj) {
+                var text =  $("#input").val();
+                $("#feature").empty();
+
+                $("#feature").html(text);
+            }
+            function change1(obj) {
+                var text = $("#issue").html();
+                if ($("#input1").html()==null){
+                    $("#issue").empty();
+                    var input = $("<textarea style='width: 100%' id='input1' type='text' value='" + text + "'/>");
+                    $("#issue").html(input);
+                    $("#input1").val(text);
+                }
+
+            }
+            function submit1() {
+                var text =  $("#input1").val();
+                $("#issue").empty();
+                $("#issue").html(text);
+            }
+            function change2() {
+                var text =  $("#advice").html();
+                if ($("#input2").html()==null) {
+                    $("#advice").empty();
+                    var input = $("<textarea style='width:100%' id='input2' type='text' />");
+                    $("#advice").html(input);
+                    $("#input2").val(text);
+                }
+            }
+            function submit2() {
+                var text =  $("#input2").val();
+                $("#advice").empty();
+                $("#advice").html(text);
+            }
+            function change3() {
+                var text =  $("#strategy").html();
+                if ($("#input3").html()==null) {
+                    $("#strategy").empty();
+                    var input = $("<textarea style='width: 100%' id='input3' type='text' value='" + text + "'/>");
+                    $("#strategy").html(input);
+                    $("#input3").val(text);
+                }
+            }
+            function submit3() {
+                var text =  $("#input3").val();
+                $("#strategy").empty();
+                $("#strategy").html(text);
+
+            }
+
+            function insert() {
+                var title = $("#title").html();
+                var img = $("#newimg").html();
+                $("#modal-form").modal('hide');
+                $.post(report + "/insertData",{"title": title,"img": img,"classes":"生产力","type":$("#type").find("option:selected").attr("value"),"feature": $("#feature").html(),"feature_property1": $("#feature_property1").find("option:selected").attr("value"),"feature_property2": $("#feature_property2").find("option:selected").attr("value"),"feature_property3": $("#feature_property3").find("option:selected").attr("value"),"feature_property4": $("#feature_property4").find("option:selected").attr("value"),"issue": $("#issue").html(),"issue_property1": $("#issue_property1").find("option:selected").attr("value"),"issue_property2": $("#issue_property2").find("option:selected").attr("value"),"issue_property3": $("#issue_property3").find("option:selected").attr("value"),"issue_property4": $("#issue_property4").find("option:selected").attr("value"),"variable": $("#variable").html(),"advice": $("#advice").html(),"advice_property1": $("#advice_property1").find("option:selected").attr("value"),"advice_property2": $("#advice_property2").find("option:selected").attr("value"),"advice_property3": $("#advice_property3").find("option:selected").attr("value"),"advice_property4": $("#advice_property4").find("option:selected").attr("value"),"strategy": $("#strategy").html(),"strategy_property1": $("#strategy_property1").find("option:selected").attr("value"),"strategy_property2": $("#strategy_property2").find("option:selected").attr("value"),"strategy_property3": $("#strategy_property3").find("option:selected").attr("value"),"strategy_property4": $("#strategy_property4").find("option:selected").attr("value")},function(result) {
+                    $.modal.alert("提交成功！");
+                });
+            }
+
+            $.post(prefix + "/warehousing/bar1",function(result) {
+                    var d = result.rows;
+                        var data1 =[];
+                        var data2 =[];
+                for(var i = 0;i<d.length;i++){
+                    data1.push(d[i].createTime);
+                    data2.push(d[i].goodsNum);
+                }
+                $("#max").html(Math.round(arrMaxNum2(data2)));
+                $("#avg").html(Math.round(arrAverageNum2(data2)));
+                $("#min").html(Math.round(arrMinNum2(data2)));
+                $("#amplitude").html(Math.round(((arrMaxNum2(data2)-arrMinNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                $("#up").html(Math.round(((arrMaxNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                $("#down").html(Math.round(((arrMinNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                        var   option = {
+                            backgroundColor:'rgba(255, 255, 255, 0)',
+                            dataZoom : {
+                                show : true,
+                                realtime : true
+                            },
+                            legend: [
+                                {
+                                    left:'left',
+                                    textStyle:{color:'#7f7f7f'},
+                                    data:['日入库订单分布']
+                                }
+                            ],
+                            toolbox: {
+                                show: true,
+                                feature : {
+                                    mark : {show: true},
+                                    dataView : {show: true, readOnly: false},
+                                    magicType : {show: true, type: ['line', 'bar']},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            xAxis:  {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: data1
+                            },
+                            yAxis: [{
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}'
+                                }
+                            }],
+                            series: [
+                                {
+                                    name:'日入库订单分布',
+                                    type:'bar',
+                                    data:data2,
+                                    smooth:true,
+                                    symbol:'none',
+                                    itemStyle : {
+                                        normal : {
+                                            color:'#39c7aa'
+                                        }
+                                    },
+                                    markPoint: {
+                                        color:'#39c7aa',
+                                        data: [
+                                            {type: 'max', name: '峰值'},
+                                            {type: 'min', name: '谷值'}
+                                        ]
+                                    },
+                                    markLine: {
+                                        data: [
+                                            {type: 'average', name: '均值'}
+                                        ]
+                                    }
+                                }
+                            ]
+                        };
+                        $('.spiner-example').hide();
+                        demo.setOption(option);
+
+            });
+            $.post(prefix + "/warehousing/bar2",function(result) {
+                var d = result.rows;
+                var data1 =[];
+                var data2 =[];
+                for(var i = 0;i<d.length;i++){
+                    data1.push(d[i].createTime);
+                    data2.push(d[i].goodsNum);
+                }
+                $("#max1").html(Math.round(arrMaxNum2(data2)));
+                $("#avg1").html(Math.round(arrAverageNum2(data2)));
+                $("#min1").html(Math.round(arrMinNum2(data2)));
+                $("#amplitude1").html(Math.round(((arrMaxNum2(data2)-arrMinNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                $("#up1").html(Math.round(((arrMaxNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                $("#down1").html(Math.round(((arrMinNum2(data2)-arrAverageNum2(data2))*100/arrAverageNum2(data2)))+"%");
+                var   option = {
+                    backgroundColor:'rgba(255, 255, 255, 0)',
+                    dataZoom : {
+                        show : true,
+                        realtime : true
+                    },
+                    legend: [
+                        {
+                            left:'left',
+                            textStyle:{color:'#7f7f7f'},
+                            data:['日入库订单分布']
+                        }
+                    ],
+                    toolbox: {
+                        show: true,
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    xAxis:  {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: data1
+                    },
+                    yAxis: [{
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }],
+                    series: [
+                        {
+                            name:'日入库订单分布',
+                            type:'bar',
+                            data:data2,
+                            smooth:true,
+                            symbol:'none',
+                            itemStyle : {
+                                normal : {
+                                    color:'#39c7aa'
+                                }
+                            },
+                            markPoint: {
+                                color:'#39c7aa',
+                                data: [
+                                    {type: 'max', name: '峰值'},
+                                    {type: 'min', name: '谷值'}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '均值'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+                $('.spiner-example1').hide();
+                demo1.setOption(option);
+
+            });
+            $.post(prefix + "/warehousing/bar3",function(result) {
+                var d = result.rows;
+                var data1 =[];
+                var data2 =[];
+                for(var i = 0;i<d.length;i++){
+                    data1.push(d[i].createTime);
+                    data2.push(d[i].goodsName);
+                }
+                var   option = {
+                    backgroundColor:'rgba(255, 255, 255, 0)',
+                    dataZoom : {
+                        show : true,
+                        realtime : true
+                    },
+                    legend: [
+                        {
+                            left:'left',
+                            textStyle:{color:'#7f7f7f'},
+                            data:['']
+                        }
+                    ],
+                    toolbox: {
+                        show: true,
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    xAxis:  {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: data1
+                    },
+                    yAxis: [{
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }],
+                    series: [
+                        {
+                            name:'',
+                            type:'bar',
+                            data:data2,
+                            smooth:true,
+                            symbol:'none',
+                            itemStyle : {
+                                normal : {
+                                    color:'#39c7aa'
+                                }
+                            },
+                            markPoint: {
+                                color:'#39c7aa',
+                                data: [
+                                    {type: 'max', name: '峰值'},
+                                    {type: 'min', name: '谷值'}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '均值'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+                $('.spiner-example4').hide();
+                demo4.setOption(option);
+
+            });
+            emp();
+            function emp() {
+                var data1 = [];
+                var data2 = [];
+                data1.push(34);
+                data2.push(66);
+                var  option = {
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    toolbox: {
+                        show : true,
+                        y: 'top',
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    calculable : true,
+                    legend: {
+                        data:['工作忙碌时间','工作休息时间']
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            splitLine : {show : false},
+                            data : ['时间数量(分钟)']
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            position: 'right'
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'工作忙碌时间',
+                            type:'bar',
+                            barCateGoryGap:20,
+                            barWidth : 50,//柱图宽度
+                            data: data1
+                        },
+                        {
+                            name:'工作休息时间',
+                            type:'bar',
+                            barCateGoryGap:20,
+                            barWidth : 50,//柱图宽度
+                            data:data2
+                        }, {
+                            name:'时间数量(分钟)',
+                            type:'pie',
+                            tooltip : {
+                                trigger: 'item',
+                                formatter: '{a} <br/>{b} : {c} ({d}%)'
+                            },
+                            center: [160,130],
+                            radius : [0, 50],
+                            itemStyle :　{
+                                normal : {
+                                    labelLine : {
+                                        length : 20
+                                    }
+                                }
+                            },
+                            data:[
+                                {value:data1, name:'工作忙碌时间'},
+                                {value:data2, name:'工作休息时间'}
+
+                            ]
+                        }
+                    ]
+                };
+                $('.spiner-example5').hide();
+                demo5.setOption(option);
+
+            }
+           eqm();
+            function eqm() {
+                var data1 = [];
+                var data2 = [];
+                data1.push(52);
+                data2.push(48);
+                var  option = {
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    toolbox: {
+                        show : true,
+                        y: 'top',
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    calculable : true,
+                    legend: {
+                        data:['工作忙碌时间','工作休息时间']
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            splitLine : {show : false},
+                            data : ['时间数量(分钟)']
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            position: 'right'
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'工作忙碌时间',
+                            type:'bar',
+                            barCateGoryGap:20,
+                            barWidth : 50,//柱图宽度
+                            data: data1
+                        },
+                        {
+                            name:'工作休息时间',
+                            type:'bar',
+                            barCateGoryGap:20,
+                            barWidth : 50,//柱图宽度
+                            data:data2
+                        }, {
+                            name:'时间数量(分钟)',
+                            type:'pie',
+                            tooltip : {
+                                trigger: 'item',
+                                formatter: '{a} <br/>{b} : {c} ({d}%)'
+                            },
+                            center: [160,130],
+                            radius : [0, 50],
+                            itemStyle :　{
+                                normal : {
+                                    labelLine : {
+                                        length : 20
+                                    }
+                                }
+                            },
+                            data:[
+                                {value:data1, name:'工作忙碌时间'},
+                                {value:data2, name:'工作休息时间'}
+
+                            ]
+                        }
+                    ]
+                };
+                $('.spiner-example6').hide();
+                demo6.setOption(option);
+
+            }
+            $.post(prefix + "/warehousing/bar3",function(result) {
+                var d = result.rows;
+                var data1 =[];
+                var data2 =[];
+                for(var i = 0;i<d.length;i++){
+                    data1.push(d[i].createTime);
+                    data2.push(d[i].goodsName/20);
+                }
+                var   option = {
+                    backgroundColor:'rgba(255, 255, 255, 0)',
+                    dataZoom : {
+                        show : true,
+                        realtime : true
+                    },
+                    legend: [
+                        {
+                            left:'left',
+                            textStyle:{color:'#7f7f7f'},
+                            data:['']
+                        }
+                    ],
+                    toolbox: {
+                        show: true,
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    xAxis:  {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: data1
+                    },
+                    yAxis: [{
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }],
+                    series: [
+                        {
+                            name:'',
+                            type:'bar',
+                            data:data2,
+                            smooth:true,
+                            symbol:'none',
+                            itemStyle : {
+                                normal : {
+                                    color:'#39c7aa'
+                                }
+                            },
+                            markPoint: {
+                                color:'#39c7aa',
+                                data: [
+                                    {type: 'max', name: '峰值'},
+                                    {type: 'min', name: '谷值'}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '均值'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+                $('.spiner-example7').hide();
+                demo7.setOption(option);
+
+            });
+            $.post(prefix + "/warehousing/bar4",function(result) {
+                var d = result.rows;
+                var data1 =[];
+                var data2 =[];
+                for(var i = 0;i<d.length;i++){
+                    data1.push(d[i].createTime);
+                    data2.push(d[i].goodsName/20);
+                }
+                var   option = {
+                    backgroundColor:'rgba(255, 255, 255, 0)',
+                    dataZoom : {
+                        show : true,
+                        realtime : true
+                    },
+                    legend: [
+                        {
+                            left:'left',
+                            textStyle:{color:'#7f7f7f'},
+                            data:['']
+                        }
+                    ],
+                    toolbox: {
+                        show: true,
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    xAxis:  {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: data1
+                    },
+                    yAxis: [{
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }],
+                    series: [
+                        {
+                            name:'',
+                            type:'line',
+                            data:data2,
+                            smooth:true,
+                            symbol:'none',
+                            itemStyle : {
+                                normal : {
+                                    color:'#39c7aa'
+                                }
+                            },
+                            markPoint: {
+                                color:'#39c7aa',
+                                data: [
+                                    {type: 'max', name: '峰值'},
+                                    {type: 'min', name: '谷值'}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '均值'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+                $('.spiner-example8').hide();
+                demo8.setOption(option);
+
+            });
+            emp1();
+            function emp1() {
+                var data1 = [];
+                var data2 = [];
+                data1.push(34);
+                data2.push(66);
+                var  option = {
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    toolbox: {
+                        show : true,
+                        y: 'top',
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    calculable : true,
+                    legend: {
+                        data:['工作忙碌时间','工作休息时间']
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            splitLine : {show : false},
+                            data : ['时间数量(分钟)']
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            position: 'right'
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'工作忙碌时间',
+                            type:'bar',
+                            barCateGoryGap:20,
+                            barWidth : 50,//柱图宽度
+                            data: data1
+                        },
+                        {
+                            name:'工作休息时间',
+                            type:'bar',
+                            barCateGoryGap:20,
+                            barWidth : 50,//柱图宽度
+                            data:data2
+                        }, {
+                            name:'时间数量(分钟)',
+                            type:'pie',
+                            tooltip : {
+                                trigger: 'item',
+                                formatter: '{a} <br/>{b} : {c} ({d}%)'
+                            },
+                            center: [160,130],
+                            radius : [0, 50],
+                            itemStyle :　{
+                                normal : {
+                                    labelLine : {
+                                        length : 20
+                                    }
+                                }
+                            },
+                            data:[
+                                {value:data1, name:'工作忙碌时间'},
+                                {value:data2, name:'工作休息时间'}
+
+                            ]
+                        }
+                    ]
+                };
+                $('.spiner-example9').hide();
+                demo9.setOption(option);
+
+            }
+            emp2();
+            function emp2() {
+                var data1 = [];
+                var data2 = [];
+                data1.push(26);
+                data2.push(74);
+                var  option = {
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    toolbox: {
+                        show : true,
+                        y: 'top',
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    calculable : true,
+                    legend: {
+                        data:['工作忙碌时间','工作休息时间']
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            splitLine : {show : false},
+                            data : ['时间数量(分钟)']
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            position: 'right'
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'工作忙碌时间',
+                            type:'bar',
+                            barCateGoryGap:20,
+                            barWidth : 50,//柱图宽度
+                            data: data1
+                        },
+                        {
+                            name:'工作休息时间',
+                            type:'bar',
+                            barCateGoryGap:20,
+                            barWidth : 50,//柱图宽度
+                            data:data2
+                        }, {
+                            name:'时间数量(分钟)',
+                            type:'pie',
+                            tooltip : {
+                                trigger: 'item',
+                                formatter: '{a} <br/>{b} : {c} ({d}%)'
+                            },
+                            center: [160,130],
+                            radius : [0, 50],
+                            itemStyle :　{
+                                normal : {
+                                    labelLine : {
+                                        length : 20
+                                    }
+                                }
+                            },
+                            data:[
+                                {value:data1, name:'工作忙碌时间'},
+                                {value:data2, name:'工作休息时间'}
+
+                            ]
+                        }
+                    ]
+                };
+                $('.spiner-example10').hide();
+                demo10.setOption(option);
+
+            }
+            function arrMaxNum2(arr) {
+                return Math.max.apply(null, arr);
+            }
+            function arrMinNum2(arr) {
+                return Math.min.apply(null, arr);
+            }
+            function arrAverageNum2(arr) {
+                var len = arr.length;
+                var sum = 0;
+                for(var i = 0;i<len;i++){
+                    sum +=parseFloat(arr[i]);
+                }
+                return Math.round(sum/len,1);
+            }
+            function formatDate(data) {
+                return Date.format(new Date(data), "yyyy-MM-dd");
+            }
+            function formatTime(data) {
+                return Date.format(new Date(data), "h:m:s");
+            }
+    </script>
+
+</body>
+</html>

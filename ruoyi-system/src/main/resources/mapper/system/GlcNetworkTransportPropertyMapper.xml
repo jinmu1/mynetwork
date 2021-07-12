@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GlcNetworkTransportPropertyMapper">
+    
+    <resultMap type="GlcNetworkTransportProperty" id="GlcNetworkTransportPropertyResult">
+        <result property="id"    column="id"    />
+        <result property="batchId"    column="batch_id"    />
+        <result property="startingPoint"    column="starting_point"    />
+        <result property="endPoint"    column="end_point"    />
+        <result property="goodName"    column="good_name"    />
+        <result property="transport"    column="transport"    />
+        <result property="shippingMethod"    column="shipping_method"    />
+        <result property="transportRate"    column="transport_rate"    />
+        <result property="type"    column="type"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectGlcNetworkTransportPropertyVo">
+        select id, batch_id, starting_point, end_point, good_name, transport, shipping_method, transport_rate, type, operator_id, create_time from glc_network_transport_property
+    </sql>
+
+    <select id="selectGlcNetworkTransportPropertyList" parameterType="GlcNetworkTransportProperty" resultMap="GlcNetworkTransportPropertyResult">
+        <include refid="selectGlcNetworkTransportPropertyVo"/>
+        <where>  
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="startingPoint != null  and startingPoint != ''"> and starting_point = #{startingPoint}</if>
+            <if test="endPoint != null  and endPoint != ''"> and end_point = #{endPoint}</if>
+            <if test="goodName != null  and goodName != ''"> and good_name like concat('%', #{goodName}, '%')</if>
+            <if test="transport != null  and transport != ''"> and transport = #{transport}</if>
+            <if test="shippingMethod != null  and shippingMethod != ''"> and shipping_method = #{shippingMethod}</if>
+            <if test="transportRate != null "> and transport_rate = #{transportRate}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="operatorId != null "> and operator_id = #{operatorId}</if>
+        </where>
+    </select>
+    
+    <select id="selectGlcNetworkTransportPropertyById" parameterType="Long" resultMap="GlcNetworkTransportPropertyResult">
+        <include refid="selectGlcNetworkTransportPropertyVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGlcNetworkTransportProperty" parameterType="GlcNetworkTransportProperty" useGeneratedKeys="true" keyProperty="id">
+        insert into glc_network_transport_property
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">batch_id,</if>
+            <if test="startingPoint != null">starting_point,</if>
+            <if test="endPoint != null">end_point,</if>
+            <if test="goodName != null">good_name,</if>
+            <if test="transport != null">transport,</if>
+            <if test="shippingMethod != null">shipping_method,</if>
+            <if test="transportRate != null">transport_rate,</if>
+            <if test="type != null">type,</if>
+            <if test="operatorId != null">operator_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">#{batchId},</if>
+            <if test="startingPoint != null">#{startingPoint},</if>
+            <if test="endPoint != null">#{endPoint},</if>
+            <if test="goodName != null">#{goodName},</if>
+            <if test="transport != null">#{transport},</if>
+            <if test="shippingMethod != null">#{shippingMethod},</if>
+            <if test="transportRate != null">#{transportRate},</if>
+            <if test="type != null">#{type},</if>
+            <if test="operatorId != null">#{operatorId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGlcNetworkTransportProperty" parameterType="GlcNetworkTransportProperty">
+        update glc_network_transport_property
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="batchId != null">batch_id = #{batchId},</if>
+            <if test="startingPoint != null">starting_point = #{startingPoint},</if>
+            <if test="endPoint != null">end_point = #{endPoint},</if>
+            <if test="goodName != null">good_name = #{goodName},</if>
+            <if test="transport != null">transport = #{transport},</if>
+            <if test="shippingMethod != null">shipping_method = #{shippingMethod},</if>
+            <if test="transportRate != null">transport_rate = #{transportRate},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="operatorId != null">operator_id = #{operatorId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGlcNetworkTransportPropertyById" parameterType="Long">
+        delete from glc_network_transport_property where id = #{id}
+    </delete>
+
+    <delete id="deleteGlcNetworkTransportPropertyByIds" parameterType="String">
+        delete from glc_network_transport_property where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteNetworkTransportByUserId" parameterType="Long">
+        delete from glc_network_transport_property where batch_id =  #{userId}
+    </delete>
+
+    <insert id="insertGlcNetworkTransportPropertyList" parameterType="GlcNetworkTransportProperty" >
+        insert into glc_network_transport_property(batch_id,starting_point,end_point,good_name,transport,shipping_method,transport_rate,type,create_time)
+        values
+        <foreach item="networkTransportProperty" collection="list" separator=",">
+            (#{networkTransportProperty.batchId},#{networkTransportProperty.startingPoint},#{networkTransportProperty.endPoint},#{networkTransportProperty.goodName},#{networkTransportProperty.transport},#{networkTransportProperty.shippingMethod},#{networkTransportProperty.transportRate},#{networkTransportProperty.type},#{networkTransportProperty.createTime})
+        </foreach>
+    </insert>
+</mapper>

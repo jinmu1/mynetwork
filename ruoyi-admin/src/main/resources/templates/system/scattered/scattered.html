@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('拆零分析')" />
+</head>
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header">
+        <div style="font-size:26px;text-align: center">拆零分析</div>
+        <div style="height: 17px;"></div>
+        <div style="line-height: 33px;">拆零作业是指配送中心在拣选出库时将整件物料拆散、选取一件或多件散件进行出货的作业。判断拆零作业的多寡主要衡量拆零的比例，也就是散件出库占总出库的比例。该比例可以通过品种数目、订单量、出库量等综合判断得出。</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▷&nbsp;&nbsp;&nbsp;&nbsp;拆零量表示拆零物流活动在数量上的程度，在物流设计中的具体作用包括：</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.	帮助确定拣选作业模式。</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.	帮助确定零货作业区域的设备。</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▷&nbsp;&nbsp;&nbsp;&nbsp;拆零物料品种比例在物流设计中具有重要的作用，包括：</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.	确定是否需要设置拆零拣货区。</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.	帮助确定拣选点数目。</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▷&nbsp;&nbsp;&nbsp;&nbsp;拆零订单数量表明拆零的频繁程度，拆零订单越多，则拆零活动发生越频繁，所以拆零物料品种比例在物流设计中的作用包括：</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.	帮助确定零货的分拣方式。</div>
+        <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.	确定零货包装台的数目。</div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>拆零量下拉选择：</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content"  style="height:600px">
+                        <div class="panel panel-bordered">
+
+                            <div>
+                                <p>整件出库件数</p>
+                                <select  onchange="reloadI1()" name="total" id="total" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option value="1">订单数据中物料出库量的合计。</option>
+                                    <option value="2">以拆零形式出库的折合件数的合计。折合件数为零货与整件的包装换算关系。</option>
+                                    <option value="3">以整件形式出库的件数的合计。</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>拆零出库折算件数</p>
+                                <select onchange="reloadI1()"  name="single" id="single"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="1">订单数据中物料出库量的合计。</option>
+                                    <option value="2">以拆零形式出库的折合件数的合计。折合件数为零货与整件的包装换算关系。</option>
+                                    <option value="3">以整件形式出库的件数的合计。</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>总件数</p>
+                                <select  onchange="reloadI1()" name="all" id="all" type="text"  class="form-control"  >
+                                    <option value="1">按日期升序</option>
+                                    <option value="2">按日期降序</option>
+                                    <option value="3">按订单行数降序</option>
+                                    <option value="4">按订单行数升序</option>
+                                </select>
+                            </div>
+                        </div>
+                   </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>拆零量表格:</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table" >
+                            <thead style="background-color: #d9d9d9;">
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: echarts-js" />
+    <script  th:inline="javascript">
+
+        var ctx = [[@{/}]];
+        var prefix = ctx + "system/eoq";
+            function reloadI1(){
+                var total=$("#total option:selected").val();
+                var single=$("#single option:selected").val();
+                var all=$("#all option:selected").val();
+                if(total=="3。"&&single=="2"){
+                    alert(1);
+                    loadbar2();
+                    loadbar3();
+                }
+            }
+    </script>
+
+</body>
+</html>

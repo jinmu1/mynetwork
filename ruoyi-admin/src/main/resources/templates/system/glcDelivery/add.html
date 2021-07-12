@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增原始出库数据')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-delivery-add">
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">工厂代码：</label>
+                <div class="col-sm-8">
+                    <input name="factoryCode" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">客户代码：</label>
+                <div class="col-sm-8">
+                    <input name="customerCode" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">送达方代码：</label>
+                <div class="col-sm-8">
+                    <input name="shipToParty" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">交货日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="deliveryDate" class="form-control" placeholder="yyyy-MM-dd" type="text" required>
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">订单编号：</label>
+                <div class="col-sm-8">
+                    <input name="orderCode" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">物料编号：</label>
+                <div class="col-sm-8">
+                    <input name="goodsCode" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">物料描述：</label>
+                <div class="col-sm-8">
+                    <input name="goodsName" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">销售单价：</label>
+                <div class="col-sm-8">
+                    <input name="stockPrice" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">过账数量：</label>
+                <div class="col-sm-8">
+                    <input name="goodsNum" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">单位名称：</label>
+                <div class="col-sm-8">
+                    <input name="unitName" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">单位代码：</label>
+                <div class="col-sm-8">
+                    <input name="unitCode" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">过账数量：</label>
+                <div class="col-sm-8">
+                    <input name="goodsNum1" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">过账数量：</label>
+                <div class="col-sm-8">
+                    <input name="goodsNum2" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">规格：</label>
+                <div class="col-sm-8">
+                    <input name="specification" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">一级分类：</label>
+                <div class="col-sm-8">
+                    <input name="classify1" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">二级分类：</label>
+                <div class="col-sm-8">
+                    <input name="classify2" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">三级分类：</label>
+                <div class="col-sm-8">
+                    <input name="classify3" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">托盘装件数：</label>
+                <div class="col-sm-8">
+                    <input name="palletCapacity" class="form-control" type="text" required>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/glcDelivery"
+        $("#form-delivery-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-delivery-add').serialize());
+            }
+        }
+
+        $("input[name='deliveryDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

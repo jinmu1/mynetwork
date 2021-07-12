@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GlcNetworkSupplyChainMapper">
+    
+    <resultMap type="GlcNetworkSupplyChain" id="GlcNetworkSupplyChainResult">
+        <result property="id"    column="id"    />
+        <result property="batchId"    column="batch_id"    />
+        <result property="orderType"    column="order_type"    />
+        <result property="orderQuantity"    column="order_quantity"    />
+        <result property="saleDafang"    column="sale_dafang"    />
+        <result property="saleId"    column="sale_id"    />
+        <result property="saleLng"    column="sale_lng"    />
+        <result property="saleLat"    column="sale_lat"    />
+        <result property="productGroup"    column="product_group"    />
+        <result property="material"    column="material"    />
+        <result property="primarySales"    column="primary_sales"    />
+        <result property="secondaryMarketing"    column="secondary_marketing"    />
+        <result property="branchCenter"    column="branch_center"    />
+        <result property="branchId"    column="branch_id"    />
+        <result property="branchLng"    column="branch_lng"    />
+        <result property="branchLat"    column="branch_lat"    />
+        <result property="deliveryCenter"    column="delivery_center"    />
+        <result property="deliveryId"    column="delivery_id"    />
+        <result property="deliveryLng"    column="delivery_lng"    />
+        <result property="deliveryLat"    column="delivery_lat"    />
+        <result property="factoryName"    column="factory_name"    />
+        <result property="requestArrival"    column="request_arrival"    />
+        <result property="promiseArrival"    column="promise_arrival"    />
+        <result property="preparationCar"    column="preparation_car"    />
+        <result property="pickUp"    column="pick_up"    />
+        <result property="vehicleSchedule"    column="vehicle_schedule"    />
+        <result property="actualArrivalVehicle"    column="actual_arrival_vehicle"    />
+        <result property="numberVehicles"    column="number_vehicles"    />
+        <result property="actualStartLoading"    column="actual_start_loading"    />
+        <result property="actualEndLoading"    column="actual_end_loading"    />
+        <result property="loadingQuantity"    column="loading_quantity"    />
+        <result property="actualShipment"    column="actual_shipment"    />
+        <result property="actualDelivery"    column="actual_delivery"    />
+        <result property="expectedCentre"    column="expected_centre"    />
+        <result property="carArrive"    column="car_arrive"    />
+        <result property="unloadingQuantity"    column="unloading_quantity"    />
+        <result property="storageGoods"    column="storage_goods"    />
+        <result property="centresPosting"    column="centres_posting"    />
+        <result property="actualSignature"    column="actual_signature"    />
+        <result property="signQuantity"    column="sign_quantity"    />
+        <result property="returnQuantity"    column="return_quantity"    />
+        <result property="delayTransport"    column="delay_transport"    />
+        <result property="delayArrival"    column="delay_arrival"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectGlcNetworkSupplyChainVo">
+        select id, batch_id, order_type, order_quantity, sale_dafang, sale_id, sale_lng, sale_lat, product_group, material, primary_sales, secondary_marketing, branch_center, branch_id, branch_lng, branch_lat, delivery_center, delivery_id, delivery_lng, delivery_lat, factory_name, request_arrival, promise_arrival, preparation_car, pick_up, vehicle_schedule, actual_arrival_vehicle, number_vehicles, actual_start_loading, actual_end_loading, loading_quantity, actual_shipment, actual_delivery, expected_centre, car_arrive, unloading_quantity, storage_goods, centres_posting, actual_signature, sign_quantity, return_quantity, delay_transport, delay_arrival, operator_id, create_time from glc_network_supply_chain
+    </sql>
+
+    <select id="selectGlcNetworkSupplyChainList" parameterType="GlcNetworkSupplyChain" resultMap="GlcNetworkSupplyChainResult">
+        <include refid="selectGlcNetworkSupplyChainVo"/>
+        <where>  
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="orderType != null  and orderType != ''"> and order_type = #{orderType}</if>
+            <if test="orderQuantity != null "> and order_quantity = #{orderQuantity}</if>
+            <if test="saleDafang != null  and saleDafang != ''"> and sale_dafang = #{saleDafang}</if>
+            <if test="saleId != null "> and sale_id = #{saleId}</if>
+            <if test="saleLng != null  and saleLng != ''"> and sale_lng = #{saleLng}</if>
+            <if test="saleLat != null  and saleLat != ''"> and sale_lat = #{saleLat}</if>
+            <if test="productGroup != null  and productGroup != ''"> and product_group = #{productGroup}</if>
+            <if test="material != null  and material != ''"> and material = #{material}</if>
+            <if test="primarySales != null  and primarySales != ''"> and primary_sales = #{primarySales}</if>
+            <if test="secondaryMarketing != null  and secondaryMarketing != ''"> and secondary_marketing = #{secondaryMarketing}</if>
+            <if test="branchCenter != null  and branchCenter != ''"> and branch_center = #{branchCenter}</if>
+            <if test="branchId != null "> and branch_id = #{branchId}</if>
+            <if test="branchLng != null  and branchLng != ''"> and branch_lng = #{branchLng}</if>
+            <if test="branchLat != null  and branchLat != ''"> and branch_lat = #{branchLat}</if>
+            <if test="deliveryCenter != null  and deliveryCenter != ''"> and delivery_center = #{deliveryCenter}</if>
+            <if test="deliveryId != null "> and delivery_id = #{deliveryId}</if>
+            <if test="deliveryLng != null  and deliveryLng != ''"> and delivery_lng = #{deliveryLng}</if>
+            <if test="deliveryLat != null  and deliveryLat != ''"> and delivery_lat = #{deliveryLat}</if>
+            <if test="factoryName != null  and factoryName != ''"> and factory_name like concat('%', #{factoryName}, '%')</if>
+            <if test="requestArrival != null "> and request_arrival = #{requestArrival}</if>
+            <if test="promiseArrival != null "> and promise_arrival = #{promiseArrival}</if>
+            <if test="preparationCar != null "> and preparation_car = #{preparationCar}</if>
+            <if test="pickUp != null  and pickUp != ''"> and pick_up = #{pickUp}</if>
+            <if test="vehicleSchedule != null "> and vehicle_schedule = #{vehicleSchedule}</if>
+            <if test="actualArrivalVehicle != null "> and actual_arrival_vehicle = #{actualArrivalVehicle}</if>
+            <if test="numberVehicles != null "> and number_vehicles = #{numberVehicles}</if>
+            <if test="actualStartLoading != null "> and actual_start_loading = #{actualStartLoading}</if>
+            <if test="actualEndLoading != null "> and actual_end_loading = #{actualEndLoading}</if>
+            <if test="loadingQuantity != null "> and loading_quantity = #{loadingQuantity}</if>
+            <if test="actualShipment != null "> and actual_shipment = #{actualShipment}</if>
+            <if test="actualDelivery != null "> and actual_delivery = #{actualDelivery}</if>
+            <if test="expectedCentre != null "> and expected_centre = #{expectedCentre}</if>
+            <if test="carArrive != null "> and car_arrive = #{carArrive}</if>
+            <if test="unloadingQuantity != null "> and unloading_quantity = #{unloadingQuantity}</if>
+            <if test="storageGoods != null "> and storage_goods = #{storageGoods}</if>
+            <if test="centresPosting != null "> and centres_posting = #{centresPosting}</if>
+            <if test="actualSignature != null "> and actual_signature = #{actualSignature}</if>
+            <if test="signQuantity != null "> and sign_quantity = #{signQuantity}</if>
+            <if test="returnQuantity != null "> and return_quantity = #{returnQuantity}</if>
+            <if test="delayTransport != null "> and delay_transport = #{delayTransport}</if>
+            <if test="delayArrival != null "> and delay_arrival = #{delayArrival}</if>
+            <if test="operatorId != null "> and operator_id = #{operatorId}</if>
+        </where>
+    </select>
+    
+    <select id="selectGlcNetworkSupplyChainById" parameterType="Long" resultMap="GlcNetworkSupplyChainResult">
+        <include refid="selectGlcNetworkSupplyChainVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGlcNetworkSupplyChain" parameterType="GlcNetworkSupplyChain" useGeneratedKeys="true" keyProperty="id">
+        insert into glc_network_supply_chain
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">batch_id,</if>
+            <if test="orderType != null">order_type,</if>
+            <if test="orderQuantity != null">order_quantity,</if>
+            <if test="saleDafang != null">sale_dafang,</if>
+            <if test="saleId != null">sale_id,</if>
+            <if test="saleLng != null">sale_lng,</if>
+            <if test="saleLat != null">sale_lat,</if>
+            <if test="productGroup != null">product_group,</if>
+            <if test="material != null">material,</if>
+            <if test="primarySales != null">primary_sales,</if>
+            <if test="secondaryMarketing != null">secondary_marketing,</if>
+            <if test="branchCenter != null">branch_center,</if>
+            <if test="branchId != null">branch_id,</if>
+            <if test="branchLng != null">branch_lng,</if>
+            <if test="branchLat != null">branch_lat,</if>
+            <if test="deliveryCenter != null">delivery_center,</if>
+            <if test="deliveryId != null">delivery_id,</if>
+            <if test="deliveryLng != null">delivery_lng,</if>
+            <if test="deliveryLat != null">delivery_lat,</if>
+            <if test="factoryName != null">factory_name,</if>
+            <if test="requestArrival != null">request_arrival,</if>
+            <if test="promiseArrival != null">promise_arrival,</if>
+            <if test="preparationCar != null">preparation_car,</if>
+            <if test="pickUp != null">pick_up,</if>
+            <if test="vehicleSchedule != null">vehicle_schedule,</if>
+            <if test="actualArrivalVehicle != null">actual_arrival_vehicle,</if>
+            <if test="numberVehicles != null">number_vehicles,</if>
+            <if test="actualStartLoading != null">actual_start_loading,</if>
+            <if test="actualEndLoading != null">actual_end_loading,</if>
+            <if test="loadingQuantity != null">loading_quantity,</if>
+            <if test="actualShipment != null">actual_shipment,</if>
+            <if test="actualDelivery != null">actual_delivery,</if>
+            <if test="expectedCentre != null">expected_centre,</if>
+            <if test="carArrive != null">car_arrive,</if>
+            <if test="unloadingQuantity != null">unloading_quantity,</if>
+            <if test="storageGoods != null">storage_goods,</if>
+            <if test="centresPosting != null">centres_posting,</if>
+            <if test="actualSignature != null">actual_signature,</if>
+            <if test="signQuantity != null">sign_quantity,</if>
+            <if test="returnQuantity != null">return_quantity,</if>
+            <if test="delayTransport != null">delay_transport,</if>
+            <if test="delayArrival != null">delay_arrival,</if>
+            <if test="operatorId != null">operator_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">#{batchId},</if>
+            <if test="orderType != null">#{orderType},</if>
+            <if test="orderQuantity != null">#{orderQuantity},</if>
+            <if test="saleDafang != null">#{saleDafang},</if>
+            <if test="saleId != null">#{saleId},</if>
+            <if test="saleLng != null">#{saleLng},</if>
+            <if test="saleLat != null">#{saleLat},</if>
+            <if test="productGroup != null">#{productGroup},</if>
+            <if test="material != null">#{material},</if>
+            <if test="primarySales != null">#{primarySales},</if>
+            <if test="secondaryMarketing != null">#{secondaryMarketing},</if>
+            <if test="branchCenter != null">#{branchCenter},</if>
+            <if test="branchId != null">#{branchId},</if>
+            <if test="branchLng != null">#{branchLng},</if>
+            <if test="branchLat != null">#{branchLat},</if>
+            <if test="deliveryCenter != null">#{deliveryCenter},</if>
+            <if test="deliveryId != null">#{deliveryId},</if>
+            <if test="deliveryLng != null">#{deliveryLng},</if>
+            <if test="deliveryLat != null">#{deliveryLat},</if>
+            <if test="factoryName != null">#{factoryName},</if>
+            <if test="requestArrival != null">#{requestArrival},</if>
+            <if test="promiseArrival != null">#{promiseArrival},</if>
+            <if test="preparationCar != null">#{preparationCar},</if>
+            <if test="pickUp != null">#{pickUp},</if>
+            <if test="vehicleSchedule != null">#{vehicleSchedule},</if>
+            <if test="actualArrivalVehicle != null">#{actualArrivalVehicle},</if>
+            <if test="numberVehicles != null">#{numberVehicles},</if>
+            <if test="actualStartLoading != null">#{actualStartLoading},</if>
+            <if test="actualEndLoading != null">#{actualEndLoading},</if>
+            <if test="loadingQuantity != null">#{loadingQuantity},</if>
+            <if test="actualShipment != null">#{actualShipment},</if>
+            <if test="actualDelivery != null">#{actualDelivery},</if>
+            <if test="expectedCentre != null">#{expectedCentre},</if>
+            <if test="carArrive != null">#{carArrive},</if>
+            <if test="unloadingQuantity != null">#{unloadingQuantity},</if>
+            <if test="storageGoods != null">#{storageGoods},</if>
+            <if test="centresPosting != null">#{centresPosting},</if>
+            <if test="actualSignature != null">#{actualSignature},</if>
+            <if test="signQuantity != null">#{signQuantity},</if>
+            <if test="returnQuantity != null">#{returnQuantity},</if>
+            <if test="delayTransport != null">#{delayTransport},</if>
+            <if test="delayArrival != null">#{delayArrival},</if>
+            <if test="operatorId != null">#{operatorId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGlcNetworkSupplyChain" parameterType="GlcNetworkSupplyChain">
+        update glc_network_supply_chain
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="batchId != null">batch_id = #{batchId},</if>
+            <if test="orderType != null">order_type = #{orderType},</if>
+            <if test="orderQuantity != null">order_quantity = #{orderQuantity},</if>
+            <if test="saleDafang != null">sale_dafang = #{saleDafang},</if>
+            <if test="saleId != null">sale_id = #{saleId},</if>
+            <if test="saleLng != null">sale_lng = #{saleLng},</if>
+            <if test="saleLat != null">sale_lat = #{saleLat},</if>
+            <if test="productGroup != null">product_group = #{productGroup},</if>
+            <if test="material != null">material = #{material},</if>
+            <if test="primarySales != null">primary_sales = #{primarySales},</if>
+            <if test="secondaryMarketing != null">secondary_marketing = #{secondaryMarketing},</if>
+            <if test="branchCenter != null">branch_center = #{branchCenter},</if>
+            <if test="branchId != null">branch_id = #{branchId},</if>
+            <if test="branchLng != null">branch_lng = #{branchLng},</if>
+            <if test="branchLat != null">branch_lat = #{branchLat},</if>
+            <if test="deliveryCenter != null">delivery_center = #{deliveryCenter},</if>
+            <if test="deliveryId != null">delivery_id = #{deliveryId},</if>
+            <if test="deliveryLng != null">delivery_lng = #{deliveryLng},</if>
+            <if test="deliveryLat != null">delivery_lat = #{deliveryLat},</if>
+            <if test="factoryName != null">factory_name = #{factoryName},</if>
+            <if test="requestArrival != null">request_arrival = #{requestArrival},</if>
+            <if test="promiseArrival != null">promise_arrival = #{promiseArrival},</if>
+            <if test="preparationCar != null">preparation_car = #{preparationCar},</if>
+            <if test="pickUp != null">pick_up = #{pickUp},</if>
+            <if test="vehicleSchedule != null">vehicle_schedule = #{vehicleSchedule},</if>
+            <if test="actualArrivalVehicle != null">actual_arrival_vehicle = #{actualArrivalVehicle},</if>
+            <if test="numberVehicles != null">number_vehicles = #{numberVehicles},</if>
+            <if test="actualStartLoading != null">actual_start_loading = #{actualStartLoading},</if>
+            <if test="actualEndLoading != null">actual_end_loading = #{actualEndLoading},</if>
+            <if test="loadingQuantity != null">loading_quantity = #{loadingQuantity},</if>
+            <if test="actualShipment != null">actual_shipment = #{actualShipment},</if>
+            <if test="actualDelivery != null">actual_delivery = #{actualDelivery},</if>
+            <if test="expectedCentre != null">expected_centre = #{expectedCentre},</if>
+            <if test="carArrive != null">car_arrive = #{carArrive},</if>
+            <if test="unloadingQuantity != null">unloading_quantity = #{unloadingQuantity},</if>
+            <if test="storageGoods != null">storage_goods = #{storageGoods},</if>
+            <if test="centresPosting != null">centres_posting = #{centresPosting},</if>
+            <if test="actualSignature != null">actual_signature = #{actualSignature},</if>
+            <if test="signQuantity != null">sign_quantity = #{signQuantity},</if>
+            <if test="returnQuantity != null">return_quantity = #{returnQuantity},</if>
+            <if test="delayTransport != null">delay_transport = #{delayTransport},</if>
+            <if test="delayArrival != null">delay_arrival = #{delayArrival},</if>
+            <if test="operatorId != null">operator_id = #{operatorId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGlcNetworkSupplyChainById" parameterType="Long">
+        delete from glc_network_supply_chain where id = #{id}
+    </delete>
+
+    <delete id="deleteGlcNetworkSupplyChainByIds" parameterType="String">
+        delete from glc_network_supply_chain where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteGlcNetworkSupplyChainByBatchId" parameterType="Long">
+        delete from glc_network_supply_chain where batch_id = #{userId}
+    </delete>
+
+    <insert id="insertGlcNetworkSupplyChainList" parameterType="GlcNetworkSupplyChain" >
+        insert into glc_network_supply_chain(batch_id,order_type,order_quantity,sale_dafang,sale_id,sale_lng,sale_lat,product_group,material,primary_sales,secondary_marketing,branch_center,branch_id,branch_lng,branch_lat,delivery_center,delivery_id,delivery_lng,delivery_lat,factory_name,request_arrival,promise_arrival,preparation_car,pick_up,vehicle_schedule,actual_arrival_vehicle,number_vehicles,actual_start_loading,actual_end_loading,loading_quantity,actual_shipment,actual_delivery,expected_centre,car_arrive,unloading_quantity,storage_goods,centres_posting,actual_signature,sign_quantity,return_quantity,delay_transport,delay_arrival,operator_id,create_time)
+        values
+        <foreach item="networkSupply" collection="list" separator=",">
+            (#{networkSupply.batchId},#{networkSupply.orderType},#{networkSupply.orderQuantity},#{networkSupply.saleDafang},#{networkSupply.saleId},#{networkSupply.saleLng},#{networkSupply.saleLat},#{networkSupply.productGroup},#{networkSupply.material},#{networkSupply.primarySales},#{networkSupply.secondaryMarketing},#{networkSupply.branchCenter},#{networkSupply.branchId},#{networkSupply.branchLng},#{networkSupply.branchLat},#{networkSupply.deliveryCenter},#{networkSupply.deliveryId},#{networkSupply.deliveryLng},#{networkSupply.deliveryLat},#{networkSupply.factoryName},#{networkSupply.requestArrival},#{networkSupply.promiseArrival},#{networkSupply.preparationCar},#{networkSupply.pickUp},#{networkSupply.vehicleSchedule},#{networkSupply.actualArrivalVehicle},#{networkSupply.numberVehicles},#{networkSupply.actualStartLoading},#{networkSupply.actualEndLoading},#{networkSupply.loadingQuantity},#{networkSupply.actualShipment},#{networkSupply.actualDelivery},#{networkSupply.expectedCentre},#{networkSupply.carArrive},#{networkSupply.unloadingQuantity},#{networkSupply.storageGoods},#{networkSupply.centresPosting},#{networkSupply.actualSignature},#{networkSupply.signQuantity},#{networkSupply.returnQuantity},#{networkSupply.delayTransport},#{networkSupply.delayArrival},#{networkSupply.operatorId},#{networkSupply.createTime})
+        </foreach>
+    </insert>
+</mapper>

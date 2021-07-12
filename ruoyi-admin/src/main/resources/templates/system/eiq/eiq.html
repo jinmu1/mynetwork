@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('EIQ分析')" />
+</head>
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header">
+        <div class="col-sm-12">
+            <div>
+                <div style="font-size:26px;text-align: center">EIQ</div>
+                <div style="height: 17px;"></div>
+                <div style="line-height: 33px;">EIQ分析从客户订单的品类、数量与订购次数等观点出发进行出货特征的分析并利用“E”、“I”、“Q”三个关键要素来进行出货特征的分析。其中,E——订单,order entry；I——品项，item；Q——数量，quantity。EIQ分析的主要内容是对订单数据的统计，并以图形的方式表现出来，从中得出订单的特征与物流活动的特征作为物流规划设计的依据。</div>
+                <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▷&nbsp;&nbsp;&nbsp;&nbsp;EN分析是针对每张订单对应的订单行数进行分析，也称为每张订单的订货品项数量分析， EN分析的结果可以帮助判断拣选点的拣货方式以及分拣设备。</div>
+                <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▷&nbsp;&nbsp;&nbsp;&nbsp;EQ分析时针对每张订单的订货数量进行分析，通过EQ分析可以了解每张订单的订货量的分布情况，从而可以决定处理订单的原则、拣货系统的设计、发货方式和发货区的设计等。</div>
+                <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▷&nbsp;&nbsp;&nbsp;&nbsp;IQ分析针对每个物料的订货数量进行分析，通过对品种数量IQ分析，可以知道各种物料发货量的分布情况，有利于分析物料的重要性，从而决定仓储系统的规划选用、储位空间的估算、拣选方式及拣货区设计。</div>
+                <div style="line-height: 33px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▷&nbsp;&nbsp;&nbsp;&nbsp;IK分析主要对每种物料的出货次数进行分析，对于了解每种物料的出货频率有很大的帮助，主要功能可配合IQ分析决定仓储与拣货系统的选择。</div>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>I分析字段选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content"  style="height:600px">
+                        <div >
+                            <p>I分析</p>
+                            <select  onchange="reloadI1()" name="i1" id="i1" type="text"  class="form-control" >
+                                <option>选择</option>
+                                <option>给定数据内每个品种在订单中出现的次数</option>
+                                <option>给定数据内每个订单对应的品种数</option>
+                                <option value="给定数据内每天的品种总数">给定数据内每天的品种总数</option>
+                            </select>
+                        </div>
+                        <div>
+                            <p>数据</p>
+                            <select onchange="reloadI1()"  name="data1" id="data1"  type="text"  class="form-control" >
+                                <option>选择</option>
+                                <option value="日期、品种数量">日期、品种数量</option>
+                                <option value="">序号、订单编号、品种数</option>
+                                <option value="">日期、订单行数</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>I分析数据表</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table" >
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>I分析图横纵坐标选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div>
+                            <p>横坐标</p>
+                            <select onchange="reloadI2()"  name="x1" id="x1"  type="text"  class="form-control" >
+                                <option>选择</option>
+                                <option value="天">日期</option>
+                                <option value="">序号</option>
+                            </select>
+                        </div>
+                        <div>
+                            <p>纵坐标</p>
+                            <select  onchange="reloadI2()" name="y1" id="y1" type="text"  class="form-control"  >
+                                <option>选择</option>
+                                <option value="">日期</option>
+                                <option value="">每张订单对应的订单行数</option>
+                                <option value="每天的品种总数">每天的品种总数</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>I分析图</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="echarts" id="i"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EI分析数据选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div>
+                            <p>EI分析</p>
+                            <select  onchange="reloadEI1()" name="ei1" id="ei1" type="text"  class="form-control"  >
+                                <option>选择</option>
+                                <option value="">给定数据内每天订单总数</option>
+                                <option value="">给定数据内每个订单所对应的订单行数</option>
+                                <option value="">给定数据内每天的品种总数</option>
+                                <option value="给定数据内每个订单对应的品种数">给定数据内每个订单对应的品种数</option>
+                            </select>
+                        </div>
+                        <div>
+                            <p>数据</p>
+                            <select onchange="reloadEI1()"  name="data2" id="data2"  type="text"  class="form-control" >
+                                <option>选择</option>
+                                <option value="序号、订单编号、品种数">序号、订单编号、品种数</option>
+                                <option value="">序号、物料编号、出现次数</option>
+                                <option value="">序号、订单编号、出库数</option>
+                                <option value="">序号、物料编号、出库总数</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EI分析数据表</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table1" >
+
+                            </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EI分析图横纵坐标选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div>
+                            <p>横坐标</p>
+                            <select onchange="reloadEI2()"  name="x2" id="x2"  type="text"  class="form-control" >
+                                <option value="">日期</option>
+                                <option value="">订单数量</option>
+                                <option value="序号">订单编号</option>
+                            </select>
+                        </div>
+                        <div>
+                            <p>纵坐标</p>
+                            <select  onchange="reloadEI2()" name="y2" id="y2" type="text"  class="form-control"  >
+                                <option value="">日期</option>
+                                <option value="每张订单对应的品种数">每张订单对应的品种数</option>
+                                <option value="">每个品种在订单中出现的次数</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EI分析图</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="echarts" id="ei"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>E分析图横纵坐标选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div class="panel panel-bordered">
+                            <div>
+                                <p>E分析</p>
+                                <select  onchange="reloadE1()" name="e1" id="e1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option value="给定数据内每天订单总数">给定数据内每天订单总数</option>
+                                    <option value="">给定数据内每天的品种总数</option>
+                                    <option value="">给定数据内每个订单对应的品种数</option>
+                                    <option value="">给定数据内每个品种在订单中出现的次数</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>数据</p>
+                                <select onchange="reloadE1()"  name="datam1" id="datam1"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="">日期、订单行数</option>
+                                    <option value="日期,订单数量">日期、订单数量</option>
+                                    <option value="">序号、订单编号、订单行数</option>
+                                    <option value="">日期、品种数量</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>E分析图</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table2" >
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>E分析图横纵坐标选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="panel panel-bordered">
+                            <div>
+                                <p>横坐标</p>
+                                <select onchange="reloadE2()"  name="xe1" id="xe1"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="天">日期</option>
+                                    <option value="序号">序号</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>纵坐标</p>
+                                <select  onchange="reloadE2()" name="ye1" id="ye1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option value="每天的订单总数">每天的订单总数</option>
+                                    <option value="">每天的订单行总数</option>
+                                    <option value="">每天的品种总数</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>E分析图</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="echarts" id="e"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>N分析数据选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div class="panel panel-bordered">
+
+                            <div>
+                                <p>N分析</p>
+                                <select  onchange="reloadN1()" name="n1" id="n1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option value="">给定数据内每个订单所对应的订单行数</option>
+                                    <option value="给定数据内每天订单行数的总数">给定数据内每天订单行数的总数</option>
+                                    <option value="">给定数据内每天的品种总数</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>数据</p>
+                                <select onchange="reloadN1()"  name="dataN2" id="dataN2"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="日期,订单行数">日期、订单行数</option>
+                                    <option value="">日期、订单数量</option>
+                                    <option value="">序号、订单编号、订单行数</option>
+                                    <option value="">日期、品种数量</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>N分析数据表</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table3" >
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>N分析图横纵坐标选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="panel panel-bordered">
+                            <div>
+                                <p>横坐标</p>
+                                <select onchange="reloadN2()"  name="xn2" id="xn2"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="天">天</option>
+                                    <option value="">序号</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>纵坐标</p>
+                                <select  onchange="reloadN2()" name="yn2" id="yn2" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option value="">日期</option>
+                                    <option value="每天的订单行总数">每天的订单行总数</option>
+                                    <option value="">每张订单对应的订单行数</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>N分析图</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="echarts" id="n"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EN分析字段选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div class="panel panel-bordered">
+                            <div>
+                                <p>EN分析</p>
+                                <select  onchange="reloadEn1()" name="en1" id="en1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option>给定数据内每天订单行数的总数</option>
+                                    <option>给定数据内每天的品种总数</option>
+                                    <option value="给定数据内每个订单所对应的订单行数">给定数据内每个订单所对应的订单行数</option>
+                                    <option>给定数据内每张订单对应的出库总件数</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>数据</p>
+                                <select onchange="reloadEn1()"  name="data3" id="data3"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="序号、订单编号、订单行数">序号、订单编号、订单行数</option>
+                                    <option value="">日期、订单行数</option>
+                                    <option value="">日期、品种数量</option>
+                                    <option value="">序号、订单编号、品种数</option>
+                                </select>
+                            </div>
+                            <!--    <div>-->
+                            <!--        <p>排序</p>-->
+                            <!--        <select  onchange="reloadEn1()" name="order3" id="order3" type="text"  class="form-control"  >-->
+                            <!--            <option>选择</option>-->
+                            <!--            <option value="按日期升序">按日期升序</option>-->
+                            <!--            <option value="按日期降序">按日期降序</option>-->
+                            <!--            <option value="按订单行数降序">按订单行数降序</option>-->
+                            <!--            <option value="按订单行数升序">按订单行数升序</option>-->
+                            <!--        </select>-->
+                            <!--    </div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EN分析数据表</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table4" >
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EN分析图横纵坐标选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="panel panel-bordered">
+                            <div>
+                                <p>横坐标</p>
+                                <select onchange="reloadEN2()"  name="x3" id="x3"  type="text"  class="form-control" >
+                                    <option value="选择" selected>选择</option>
+                                    <option value="序号">订单编号</option>
+                                    <option value="">天</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>纵坐标</p>
+                                <select  onchange="reloadEN2()" name="y3" id="y3" type="text"  class="form-control"  >
+                                    <option value="" selected>选择</option>
+                                    <option value="">每天的品种总数</option>
+                                    <option value="">订单数量</option>
+                                    <option value="每张订单对应的订单行数">每张订单对应的订单行数</option>
+                                    <option value="">每天的订单总数</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EN分析图</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="echarts" id="en"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Q分析字段选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div class="panel panel-bordered">
+
+                            <div>
+                                <p>Q分析</p>
+                                <select  onchange="reloadQ1()" name="q1" id="q1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option>给定数据内每个品种在订单中出现的次数</option>
+                                    <option>给定数据内每个订单对应的品种数</option>
+                                    <option value="给定数据内每张订单对应的出库总件数">给定数据内每天物料的出库件数</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>数据</p>
+                                <select onchange="reloadQ1()"  name="dataQ1" id="dataQ1"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="序号、订单编号、出库数">日期、出库数</option>
+                                    <option value="">序号、订单编号、品种数</option>
+                                    <option value="">日期、订单行数</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Q分析数据表</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table5" >
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Q分析图横纵坐标选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="panel panel-bordered">
+
+
+                            <div>
+                                <p>横坐标</p>
+                                <select onchange="reloadEQ2()"  name="xq1" id="xq1"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="">订单编号</option>
+                                    <option value="天">日期</option>
+                                    <option value="">物料名称</option>
+                                    <option value="">序号</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>纵坐标</p>
+                                <select  onchange="reloadEQ2()" name="yq1" id="yq1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option value="">每天的品种总数</option>
+                                    <option value="">每张订单对应的品种数</option>
+                                    <option value="">每个品种在订单中出现的次数</option>
+                                    <option value="每天的出库总数">每天的出库总数</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Q分析图</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="echarts" id="q"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EQ分析字段选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div class="panel panel-bordered">
+
+                            <div>
+                                <p>EQ分析</p>
+                                <select  onchange="reloadEQ1()" name="eqq1" id="eqq1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option>给定数据内每天订单行数的总数</option>
+                                    <option>给定数据内每天的品种总数</option>
+                                    <option >给定数据内每天订单总数</option>
+                                    <option value="给定数据内每张订单对应的出库总件数">给定数据内每张订单对应的出库总件数</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>数据</p>
+                                <select onchange="reloadEQ1()"  name="dataq2" id="dataq2"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option >日期、总数</option>
+                                    <option value="序号、订单编号、出库数">序号、订单编号、出库数</option>
+                                    <option >日期、总数、整数、零数</option>
+                                    <option >序号、订单编号、品种数</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EQ分析数据表</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table6" >
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EQ分析图横纵坐标选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="panel panel-bordered">
+
+
+                            <div>
+                                <p>横坐标</p>
+                                <select onchange="reloadEQ7()"  name="x12" id="x12"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="订单编号">订单编号</option>
+                                    <option value="">天</option>
+                                    <option value="">物料名称</option>
+                                    <option value="">订单数量</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>纵坐标</p>
+                                <select  onchange="reloadEQ7()" name="y12" id="y12" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option value="每张订单对应的出库总数">每张订单对应的出库总数</option>
+                                    <option value="">每天的出库总数</option>
+                                    <option value="">每张订单对应的品种数</option>
+                                    <option value="">订单数量</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>EQ分析图</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="echarts" id="eq"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>IK分析字段选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div class="panel panel-bordered">
+
+                            <div>
+                                <p>IK分析</p>
+                                <select  onchange="reloadIK1()" name="ik1" id="ik1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option>给定数据内每天的出库整件数、零货折合件数、总件数的小计</option>
+                                    <option>给定数据内每张订单对应的出库总件数</option>
+                                    <option>给定数据内每个品种对应的出库总数</option>
+                                    <option value="给定数据内每个品种在订单中出现的次数">给定数据内每个品种在订单中出现的次数</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>数据</p>
+                                <select onchange="reloadIK1()"  name="datak1" id="datak1"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="">序号、订单编号、品种数</option>
+                                    <option value="">日期、品种数量</option>
+                                    <option value="序号、物料编号、出现次数">序号、物料编号、出现次数</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>IK分析数据表</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table7" >
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>IK分析图横纵坐标选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="panel panel-bordered">
+                            <div>
+                                <p>横坐标</p>
+                                <select onchange="reloadIK2()"  name="xk1" id="xk1"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="物料名称">物料名称</option>
+                                    <option value="">天</option>
+                                    <option value="">序号</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>纵坐标</p>
+                                <select  onchange="reloadIK2()" name="yk1" id="yk1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option value="">每张订单对应的品种数</option>
+                                    <option value="">每天的品种总数</option>
+                                    <option value="每个品种在订单中出现的次数">每个品种在订单中出现的次数</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>IK分析图</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="echarts" id="ik"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>IQ分析字段选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <div class="panel panel-bordered">
+
+                            <div>
+                                <p>IQ分析</p>
+                                <select  onchange="reloadIQ1()" name="iq1" id="iq1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option >给定数据内每天订单总数</option>
+                                    <option>给定数据内每张订单对应的出库总件数</option>
+                                    <option value="给定数据内每个品种对应的出库总数">给定数据内每个品种对应的出库总数</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>数据</p>
+                                <select onchange="reloadIQ1()"  name="dataiq1" id="dataiq1"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option >日期</option>
+                                    <option>序号、订单编号、出库数</option>
+                                    <option value="序号、物料编号、出库总数">序号、物料编号、出库总数</option>
+                                    <option >序号、物料编号、出现次数</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>IQ分析数据表</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:600px">
+                        <table class="col-sm-12 select-table table-striped"
+                               id="bootstrap-table8" >
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>IQ分析图横纵坐标选择</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="panel panel-bordered">
+                            <div>
+                                <p>横坐标</p>
+                                <select onchange="reloadIQ2()"  name="iq2" id="iq2"  type="text"  class="form-control" >
+                                    <option>选择</option>
+                                    <option value="物料名称">物料名称</option>
+                                    <option value="">订单编号</option>
+                                    <option>天</option>
+                                    <option>序号</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p>纵坐标</p>
+                                <select  onchange="reloadIQ2()" name="yiq1" id="yiq1" type="text"  class="form-control"  >
+                                    <option>选择</option>
+                                    <option value="">每个品种在订单中出现的次数</option>
+                                    <option value="每个品种对应的出库总数">每个品种对应的出库总数</option>
+                                    <option value="">每张订单对应的品种数</option>
+                                    <option value="">每天的订单行总数</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>IQ分析图</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a>
+                                </li>
+                                <li><a href="#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:300px">
+                        <div class="echarts" id="iq"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: echarts-js" />
+    <script  th:inline="javascript">
+        function reloadI1(){
+            var i1=$("#i1 option:selected").val();
+            var data1=$("#data1 option:selected").val();
+            if(i1=="给定数据内每天的品种总数"&&data1=="日期、品种数量"){
+                $.modal.msgSuccess('选择正确！');
+                loadbar2();
+            }
+        }
+        var ctx = [[@{/}]];
+           var prefix = ctx + "system/eiq";
+        function loadbar2() {
+            var options = {
+                url: prefix + "/eiq/i",
+                showFooter: true,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+
+                footerStyle: footerStyle,
+                columns: [{
+                    checkbox: false
+                },
+                    {
+                        field : 'date',
+                        title : '日期'
+                    },
+                    {
+                        field : 'category_number',
+                        title : '品种数'
+                    }]
+            };
+            $.table.init(options);
+        }
+        function footerStyle(column) {
+            return {
+//         	    userBalance: {
+//         	        classes: 'class'
+//         	    },
+                userBalance: {
+                    css: { color: 'red', 'font-weight': 'normal' }
+                }
+            }[column.field]
+        }
+        function reloadI2(){
+            var x1=$("#x1 option:selected").val();
+            var y1=$("#y1 option:selected").val();
+            if(x1=="天"&&y1=="每天的品种总数"){
+                $.modal.msgSuccess('选择正确！')
+                loadbar4();
+            }
+        }
+        function reloadEI1(){
+                var ei1=$("#ei1 option:selected").val();
+                var data2=$("#data2 option:selected").val();
+                if(ei1=="给定数据内每个订单对应的品种数"&&data2=="序号、订单编号、品种数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbar6();
+                }
+
+        }
+        function reloadEI2(){
+                var x2=$("#x2 option:selected").val();
+                var y2=$("#y2 option:selected").val();
+                if(x2=="序号"&&y2=="每张订单对应的品种数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbar8();
+                }
+            }
+        function loadbar4(){
+            var myChart = echarts.init(document.getElementById('i'), 'macarons');
+            $.post(prefix + "/eiq/i", function(result) {
+                var d = result.rows;
+                var arr1=[];
+                var arr2=[];
+                for(var i=0;i<result.total;i++){
+                    arr1.push(d[i].date);
+                    arr2.push(d[i].category_number);
+                }
+
+                var   option = {
+                    backgroundColor:'rgba(255, 255, 255, 0)',
+                    tooltip: {
+                        trigger: 'axis'
+
+                    },
+                    legend: [
+                        {
+                            left:'left',
+                            data:['订单编号']
+                        }
+                    ],
+                    dataZoom : {
+                        show : true,
+                        realtime : true
+                    },
+                    toolbox: {
+                        show: true,
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    xAxis:  {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: arr1
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
+                        },
+                        splitLine:{
+                            show: false
+
+                        }
+                    },
+                    series: [
+                        {
+                            name:'订单品种数',
+                            type:'line',
+                            data:arr2,
+
+                            itemStyle : {
+                                normal : {
+                                    color:'#39c7aa'
+                                }
+                            },
+                            markPoint: {
+                                data: [
+                                    {type: 'max', name: '最大值'},
+                                    {type: 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
+                            }
+
+                        }
+                    ]
+                };
+                        myChart.setOption(option);
+                })
+        }
+        function loadbar6() {
+            $("#bootstrap-table1").bootstrapTable('destroy');
+
+            $('#bootstrap-table1').bootstrapTable({
+                url: prefix + "/eiq/ei",
+                method: 'post',
+                showFooter: true,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                pagination: true,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber:1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                footerStyle: footerStyle,
+                columns: [{
+                    checkbox: false
+                }, {
+                    field : 'anInt',
+                    title : '序号'
+                }, {
+                    field : 'order_code',
+                    title : '订单编号'
+                }, {
+                    field : 'category_number',
+                    title : '物料数'
+                }]
+            });
+        }
+        function loadbar8(){
+            var myChart1 = echarts.init(document.getElementById('ei'), 'macarons');
+            $.post(prefix + "/eiq/ei", function(result) {
+                var d = result.rows;
+                var arr1=[];
+                var arr2=[];
+                for(var i=0;i<result.total;i++){
+                    arr1.push(d[i].order_code);
+                    arr2.push(d[i].category_number);
+                }
+
+                var   option = {
+                    backgroundColor:'rgba(255, 255, 255, 0)',
+                    tooltip: {
+                        trigger: 'axis'
+
+                    },
+                    legend: [
+                        {
+                            left:'left',
+                            data:['订单编号']
+                        }
+                    ],
+                    dataZoom : {
+                        show : true,
+                        realtime : true
+                    },
+                    toolbox: {
+                        show: true,
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            magicType : {show: true, type: ['line', 'bar']},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    xAxis:  {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: arr1
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}种'
+                        },
+                        splitLine:{
+                            show: false
+
+                       }
+                    },
+                    series: [
+                        {
+                            name:'订单品种数',
+                            type:'line',
+                            data:arr2,
+
+                            itemStyle : {
+                                normal : {
+                                    color:'#39c7aa'
+                                }
+                            },
+                            markPoint: {
+                                data: [
+                                    {type: 'max', name: '最大值'},
+                                    {type: 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
+                            }
+
+                        }
+                    ]
+                };
+                myChart1.setOption(option);
+            })
+        };
+        function reloadE1(){
+                var e1=$("#e1 option:selected").val();
+                var data1=$("#datam1 option:selected").val();
+                if(e1=="给定数据内每天订单总数"&&data1=="日期,订单数量"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbarE2();
+                }
+        }
+        function loadbarE2() {
+            $("#bootstrap-table2").bootstrapTable('destroy');
+
+            $('#bootstrap-table2').bootstrapTable({
+                url: prefix + "/eiq/e",
+                method: 'post',
+                showFooter: true,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                pagination: true,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber:1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                footerStyle: footerStyle,
+                columns: [{
+                    checkbox: false
+                }, {
+                    field : 'date',
+                    title : '时间'
+                }, {
+                    field : 'order_num',
+                    title : '订单数量'
+                }]
+            });
+        }
+        function reloadE2(){
+                var x1=$("#xe1 option:selected").val();
+                var y1=$("#ye1 option:selected").val();
+                if(x1=="天"&&y1=="每天的订单总数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbarE3();
+                }
+            }
+            function loadbarE3(){
+                var myChart1 = echarts.init(document.getElementById('e'), 'macarons');
+                $.post(prefix + "/eiq/e", function(result) {
+                    var d = result.rows;
+                    var arr1=[];
+                    var arr2=[];
+                    for(var i=0;i<result.total;i++){
+                        arr1.push(d[i].date);
+                        arr2.push(d[i].order_num);
+                    }
+
+                    var   option = {
+                        backgroundColor:'rgba(255, 255, 255, 0)',
+                        tooltip: {
+                            trigger: 'axis'
+
+                        },
+                        legend: [
+                            {
+                                left:'left',
+                                data:['订单编号']
+                            }
+                        ],
+                        dataZoom : {
+                            show : true,
+                            realtime : true
+                        },
+                        toolbox: {
+                            show: true,
+                            feature : {
+                                mark : {show: true},
+                                dataView : {show: true, readOnly: false},
+                                magicType : {show: true, type: ['line', 'bar']},
+                                restore : {show: true},
+                                saveAsImage : {show: true}
+                            }
+                        },
+                        xAxis:  {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: arr1
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value}'
+                            },
+                            splitLine:{
+                                show: false
+
+                            }
+                        },
+                        series: [
+                            {
+                                name:'订单品种数',
+                                type:'line',
+                                data:arr2,
+
+                                itemStyle : {
+                                    normal : {
+                                        color:'#39c7aa'
+                                    }
+                                },
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+
+                            }
+                        ]
+                    };
+                    myChart1.setOption(option);
+                })
+
+
+        }
+        function reloadN1(){
+                var n1=$("#n1 option:selected").val();
+                var data2=$("#dataN2 option:selected").val();
+                if(n1=="给定数据内每天订单行数的总数"&&data2=="日期,订单行数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbarN6();
+                }
+            }
+            function loadbarN6(){
+                $("#bootstrap-table3").bootstrapTable('destroy');
+                $('#bootstrap-table3').bootstrapTable({
+                    url: prefix + "/eiq/n",
+                    method: 'post',
+                    showFooter: true,
+                    showSearch: false,
+                    showRefresh: false,
+                    showToggle: false,
+                    showColumns: false,
+                    pagination: true,
+                    sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber:1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    footerStyle: footerStyle,
+                    columns: [{
+                        checkbox: false
+                    }, {
+                        field : 'date',
+                        title : '时间'
+                    }, {
+                        field : 'order_num1',
+                        title : '订单数量'
+                    }]
+                });
+        }
+            function reloadN2(){
+                var x2=$("#xn2 option:selected").val();
+                var y2=$("#yn2 option:selected").val();
+                if(x2=="天"&&y2=="每天的订单行总数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbarN2();
+                }
+            }
+         function loadbarN2() {
+             var myChart1 = echarts.init(document.getElementById('n'), 'macarons');
+             $.post(prefix + "/eiq/n", function(result) {
+                 var d = result.rows;
+                 var arr1=[];
+                 var arr2=[];
+                 for(var i=0;i<result.total;i++){
+                     arr1.push(d[i].date);
+                     arr2.push(d[i].order_num1);
+                 }
+
+                 var   option = {
+                     backgroundColor:'rgba(255, 255, 255, 0)',
+                     tooltip: {
+                         trigger: 'axis'
+
+                     },
+                     legend: [
+                         {
+                             left:'left',
+                             data:['订单编号']
+                         }
+                     ],
+                     dataZoom : {
+                         show : true,
+                         realtime : true
+                     },
+                     toolbox: {
+                         show: true,
+                         feature : {
+                             mark : {show: true},
+                             dataView : {show: true, readOnly: false},
+                             magicType : {show: true, type: ['line', 'bar']},
+                             restore : {show: true},
+                             saveAsImage : {show: true}
+                         }
+                     },
+                     xAxis:  {
+                         type: 'category',
+                         boundaryGap: false,
+                         data: arr1
+                     },
+                     yAxis: {
+                         type: 'value',
+                         axisLabel: {
+                             formatter: '{value}'
+                         },
+                         splitLine:{
+                             show: false
+
+                         }
+                     },
+                     series: [
+                         {
+                             name:'订单品种数',
+                             type:'line',
+                             data:arr2,
+
+                             itemStyle : {
+                                 normal : {
+                                     color:'#39c7aa'
+                                 }
+                             },
+                             markPoint: {
+                                 data: [
+                                     {type: 'max', name: '最大值'},
+                                     {type: 'min', name: '最小值'}
+                                 ]
+                             },
+                             markLine: {
+                                 data: [
+                                     {type: 'average', name: '平均值'}
+                                 ]
+                             }
+
+                         }
+                     ]
+                 };
+                 myChart1.setOption(option);
+             })
+         }
+            function reloadEn1(){
+                var en1=$("#en1 option:selected").val();
+                var data3=$("#data3 option:selected").val();
+                if(en1=="给定数据内每个订单所对应的订单行数"&&data3=="序号、订单编号、订单行数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbar10();
+                }
+            }
+            function loadbar10(){
+                $("#bootstrap-table4").bootstrapTable('destroy');
+                $('#bootstrap-table4').bootstrapTable({
+                    url: prefix + "/eiq/en",
+                    method: 'post',
+                    showFooter: true,
+                    showSearch: false,
+                    showRefresh: false,
+                    showToggle: false,
+                    showColumns: false,
+                    pagination: true,
+                    sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber:1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    footerStyle: footerStyle,
+                    columns: [{
+                        checkbox: false
+                    }, {
+                        field : 'anInt',
+                        title : '序号'
+                    }, {
+                        field : 'order_code',
+                        title : '订单编号'
+                    }, {
+                        field : 'times',
+                        title : '次数'
+                    }]
+                });
+            }
+            function reloadEN2(){
+                var x3=$("#x3 option:selected").val();
+                var y3=$("#y3 option:selected").val();
+                if(x3=="序号"&&y3=="每张订单对应的订单行数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbar12();
+                }
+            }
+            function loadbar12(){
+                var myChart1 = echarts.init(document.getElementById('en'), 'macarons');
+                $.post(prefix + "/eiq/en", function(result) {
+                    var d = result.rows;
+                    var arr1=[];
+                    var arr2=[];
+                    for(var i=0;i<result.total;i++){
+                        arr1.push(d[i].order_code);
+                        arr2.push(d[i].times);
+                    }
+
+                    var   option = {
+                        backgroundColor:'rgba(255, 255, 255, 0)',
+                        tooltip: {
+                            trigger: 'axis'
+
+                        },
+                        legend: [
+                            {
+                                left:'left',
+                                data:['订单编号']
+                            }
+                        ],
+                        dataZoom : {
+                            show : true,
+                            realtime : true
+                        },
+                        toolbox: {
+                            show: true,
+                            feature : {
+                                mark : {show: true},
+                                dataView : {show: true, readOnly: false},
+                                magicType : {show: true, type: ['line', 'bar']},
+                                restore : {show: true},
+                                saveAsImage : {show: true}
+                            }
+                        },
+                        xAxis:  {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: arr1
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value}'
+                            },
+                            splitLine:{
+                                show: false
+
+                            }
+                        },
+                        series: [
+                            {
+                                name:'订单品种数',
+                                type:'line',
+                                data:arr2,
+
+                                itemStyle : {
+                                    normal : {
+                                        color:'#39c7aa'
+                                    }
+                                },
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+
+                            }
+                        ]
+                    };
+                    myChart1.setOption(option);
+                })
+
+        }
+            function reloadQ1(){
+                var q1=$("#q1 option:selected").val();
+                var data1=$("#dataQ1 option:selected").val();
+                if(q1=="给定数据内每张订单对应的出库总件数"&&data1=="序号、订单编号、出库数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbarQ2();
+                }
+            }
+            function loadbarQ2() {
+                $("#bootstrap-table5").bootstrapTable('destroy');
+                $('#bootstrap-table5').bootstrapTable({
+                    url: prefix + "/eiq/q",
+                    method: 'post',
+                    showFooter: true,
+                    showSearch: false,
+                    showRefresh: false,
+                    showToggle: false,
+                    showColumns: false,
+                    pagination: true,
+                    sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber:1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    footerStyle: footerStyle,
+                    columns: [{
+                        checkbox: false
+                    }, {
+                        field : 'date',
+                        title : '日期'
+                    }, {
+                        field : 'total_num',
+                        title : '总箱数'
+                    }, {
+                        field : 'delivery_num',
+                        title : '出库总箱数'
+                    }, {
+                        field : 'delivery_num',
+                        title : '拆零折合箱数'
+                    }]
+                });
+            }
+            function reloadEQ2(){
+                var x1=$("#xq1 option:selected").val();
+                var y1=$("#yq1 option:selected").val();
+                if(x1=="天"&&y1=="每天的出库总数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbarq4();
+                }
+            }
+            function loadbarq4() {
+                var myChart1 = echarts.init(document.getElementById('q'), 'macarons');
+                $.post(prefix + "/eiq/q", function(result) {
+                    var d = result.rows;
+                    var arr1=[];
+                    var arr2=[];
+                    for(var i=0;i<result.total;i++){
+                        arr1.push(d[i].date);
+                        arr2.push(d[i].total_num);
+                    }
+
+                    var   option = {
+                        backgroundColor:'rgba(255, 255, 255, 0)',
+                        tooltip: {
+                            trigger: 'axis'
+
+                        },
+                        legend: [
+                            {
+                                left:'left',
+                                data:['订单编号']
+                            }
+                        ],
+                        dataZoom : {
+                            show : true,
+                            realtime : true
+                        },
+                        toolbox: {
+                            show: true,
+                            feature : {
+                                mark : {show: true},
+                                dataView : {show: true, readOnly: false},
+                                magicType : {show: true, type: ['line', 'bar']},
+                                restore : {show: true},
+                                saveAsImage : {show: true}
+                            }
+                        },
+                        xAxis:  {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: arr1
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value}'
+                            },
+                            splitLine:{
+                                show: false
+
+                            }
+                        },
+                        series: [
+                            {
+                                name:'订单品种数',
+                                type:'line',
+                                data:arr2,
+
+                                itemStyle : {
+                                    normal : {
+                                        color:'#39c7aa'
+                                    }
+                                },
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+
+                            }
+                        ]
+                    };
+                    myChart1.setOption(option);
+                })
+            }
+            function reloadEQ1(){
+                var eq1=$("#eqq1 option:selected").val();
+                var data2=$("#dataq2 option:selected").val();
+
+                if(eq1=="给定数据内每张订单对应的出库总件数"&&data2=="序号、订单编号、出库数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbarQ6();
+                }
+            }
+            function loadbarQ6() {
+                $("#bootstrap-table6").bootstrapTable('destroy');
+                $('#bootstrap-table6').bootstrapTable({
+                    url: prefix + "/eiq/eq",
+                    method: 'post',
+                    showFooter: true,
+                    showSearch: false,
+                    showRefresh: false,
+                    showToggle: false,
+                    showColumns: false,
+                    pagination: true,
+                    sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber:1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    footerStyle: footerStyle,
+                    columns: [{
+                        checkbox: false
+                    }, {
+                        field : 'anInt',
+                        title : '序号'
+                    }, {
+                        field : 'order_code',
+                        title : '订单编号'
+                    }, {
+                        field : 'total_num',
+                        title : '总箱数'
+                    }]
+                });
+            }
+            function reloadEQ7(){
+                var x2=$("#x12 option:selected").val();
+                var y2=$("#y12 option:selected").val();
+                if(x2=="订单编号"&&y2=="每张订单对应的出库总数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbarQ8();
+                }
+            }
+            function loadbarQ8() {
+                var myChart1 = echarts.init(document.getElementById('eq'), 'macarons');
+                $.post(prefix + "/eiq/eq", function(result) {
+                    var d = result.rows;
+                    var arr1=[];
+                    var arr2=[];
+                    for(var i=0;i<result.total;i++){
+                        arr1.push(d[i].order_code);
+                        arr2.push(d[i].total_num);
+                    }
+
+                    var   option = {
+                        backgroundColor:'rgba(255, 255, 255, 0)',
+                        tooltip: {
+                            trigger: 'axis'
+
+                        },
+                        legend: [
+                            {
+                                left:'left',
+                                data:['订单编号']
+                            }
+                        ],
+                        dataZoom : {
+                            show : true,
+                            realtime : true
+                        },
+                        toolbox: {
+                            show: true,
+                            feature : {
+                                mark : {show: true},
+                                dataView : {show: true, readOnly: false},
+                                magicType : {show: true, type: ['line', 'bar']},
+                                restore : {show: true},
+                                saveAsImage : {show: true}
+                            }
+                        },
+                        xAxis:  {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: arr1
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value}'
+                            },
+                            splitLine:{
+                                show: false
+
+                            }
+                        },
+                        series: [
+                            {
+                                name:'订单品种数',
+                                type:'line',
+                                data:arr2,
+
+                                itemStyle : {
+                                    normal : {
+                                        color:'#39c7aa'
+                                    }
+                                },
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+
+                            }
+                        ]
+                    };
+                    myChart1.setOption(option);
+                })
+            }
+            function reloadIK1(){
+                var ik1=$("#ik1 option:selected").val();
+                var data1=$("#datak1 option:selected").val();
+                if(ik1=="给定数据内每个品种在订单中出现的次数"&&data1=="序号、物料编号、出现次数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbark2();
+                }
+            }
+            function loadbark2() {
+                $("#bootstrap-table7").bootstrapTable('destroy');
+                $('#bootstrap-table7').bootstrapTable({
+                    url: prefix + "/eiq/ik",
+                    method: 'post',
+                    showFooter: true,
+                    showSearch: false,
+                    showRefresh: false,
+                    showToggle: false,
+                    showColumns: false,
+                    pagination: true,
+                    sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber:1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    footerStyle: footerStyle,
+                    columns: [{
+                        checkbox: false
+                    }, {
+                        field : 'anInt',
+                        title : '序号'
+                    }, {
+                        field : 'goods_name',
+                        title : '商品名称'
+                    }, {
+                        field : 'times',
+                        title : '次数'
+                    }]
+                });
+            }
+            function reloadIK2(){
+                var x1=$("#xk1 option:selected").val();
+                var y1=$("#yk1 option:selected").val();
+                if(x1=="物料名称"&&y1=="每个品种在订单中出现的次数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbark4();
+                }
+            }
+            function loadbark4(){
+                var myChart1 = echarts.init(document.getElementById('ik'), 'macarons');
+                $.post(prefix + "/eiq/ik", function(result) {
+                    var d = result.rows;
+                    var arr1=[];
+                    var arr2=[];
+                    for(var i=0;i<result.total;i++){
+                        arr1.push(d[i].goods_name);
+                        arr2.push(d[i].times);
+                    }
+
+                    var   option = {
+                        backgroundColor:'rgba(255, 255, 255, 0)',
+                        tooltip: {
+                            trigger: 'axis'
+
+                        },
+                        legend: [
+                            {
+                                left:'left',
+                                data:['订单编号']
+                            }
+                        ],
+                        dataZoom : {
+                            show : true,
+                            realtime : true
+                        },
+                        toolbox: {
+                            show: true,
+                            feature : {
+                                mark : {show: true},
+                                dataView : {show: true, readOnly: false},
+                                magicType : {show: true, type: ['line', 'bar']},
+                                restore : {show: true},
+                                saveAsImage : {show: true}
+                            }
+                        },
+                        xAxis:  {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: arr1
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value}'
+                            },
+                            splitLine:{
+                                show: false
+
+                            }
+                        },
+                        series: [
+                            {
+                                name:'订单品种数',
+                                type:'line',
+                                data:arr2,
+
+                                itemStyle : {
+                                    normal : {
+                                        color:'#39c7aa'
+                                    }
+                                },
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+
+                            }
+                        ]
+                    };
+                    myChart1.setOption(option);
+                })
+        }
+            function reloadIQ1(){
+                var iq1=$("#iq1 option:selected").val();
+                var data1=$("#dataiq1 option:selected").val();
+                if(iq1=="给定数据内每个品种对应的出库总数"&&data1=="序号、物料编号、出库总数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbariq2();
+                }
+            }
+            function loadbariq2() {
+                $("#bootstrap-table8").bootstrapTable('destroy');
+                $('#bootstrap-table8').bootstrapTable({
+                    url: prefix + "/eiq/iq",
+                    method: 'post',
+                    showFooter: true,
+                    showSearch: false,
+                    showRefresh: false,
+                    showToggle: false,
+                    showColumns: false,
+                    pagination: true,
+                    sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber:1,                       //初始化加载第一页，默认第一页
+                    pageSize: 10,                       //每页的记录行数（*）
+                    pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                    footerStyle: footerStyle,
+                    columns: [{
+                        checkbox: false
+                    }, {
+                        field : 'anInt',
+                        title : '序号'
+                    }, {
+                        field : 'goods_code',
+                        title : '物料编码'
+                    }, {
+                        field : 'total_num',
+                        title : '总箱数'
+                    }]
+                });
+            }
+            function reloadIQ2(){
+                var x1=$("#iq2 option:selected").val();
+                var y1=$("#yiq1 option:selected").val();
+                if(x1=="物料名称"&&y1=="每个品种对应的出库总数"){
+                    $.modal.msgSuccess('选择正确！')
+                    loadbariq4();
+                }
+            }
+            function loadbariq4() {
+                var myChart1 = echarts.init(document.getElementById('iq'), 'macarons');
+                $.post(prefix + "/eiq/iq", function(result) {
+                    var d = result.rows;
+                    var arr1=[];
+                    var arr2=[];
+                    for(var i=0;i<result.total;i++){
+                        arr1.push(d[i].goods_code);
+                        arr2.push(d[i].total_num);
+                    }
+
+                    var   option = {
+                        backgroundColor:'rgba(255, 255, 255, 0)',
+                        tooltip: {
+                            trigger: 'axis'
+
+                        },
+                        legend: [
+                            {
+                                left:'left',
+                                data:['订单编号']
+                            }
+                        ],
+                        dataZoom : {
+                            show : true,
+                            realtime : true
+                        },
+                        toolbox: {
+                            show: true,
+                            feature : {
+                                mark : {show: true},
+                                dataView : {show: true, readOnly: false},
+                                magicType : {show: true, type: ['line', 'bar']},
+                                restore : {show: true},
+                                saveAsImage : {show: true}
+                            }
+                        },
+                        xAxis:  {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: arr1
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value}'
+                            },
+                            splitLine:{
+                                show: false
+
+                            }
+                        },
+                        series: [
+                            {
+                                name:'订单品种数',
+                                type:'line',
+                                data:arr2,
+
+                                itemStyle : {
+                                    normal : {
+                                        color:'#39c7aa'
+                                    }
+                                },
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+
+                            }
+                        ]
+                    };
+                    myChart1.setOption(option);
+                })
+            }
+    </script>
+
+</body>
+</html>

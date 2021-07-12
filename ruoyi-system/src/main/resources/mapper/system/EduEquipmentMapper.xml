@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.EduEquipmentMapper">
+    
+    <resultMap type="EduEquipment" id="EduEquipmentResult">
+        <result property="id"    column="id"    />
+        <result property="batchId"    column="batch_id"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="equipmentNum"    column="equipment_num"    />
+        <result property="equipmentAbility"    column="equipment_ability"    />
+        <result property="equipmentFunction"    column="equipment_function"    />
+        <result property="equipmentPrice"    column="equipment_price"    />
+    </resultMap>
+
+    <sql id="selectEduEquipmentVo">
+        select id, batch_id, equipment_name, equipment_num, equipment_ability, equipment_function, equipment_price from edu_equipment
+    </sql>
+
+    <select id="selectEduEquipmentList" parameterType="EduEquipment" resultMap="EduEquipmentResult">
+        <include refid="selectEduEquipmentVo"/>
+        <where>  
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="equipmentName != null  and equipmentName != ''"> and equipment_name like concat('%', #{equipmentName}, '%')</if>
+            <if test="equipmentNum != null  and equipmentNum != ''"> and equipment_num = #{equipmentNum}</if>
+            <if test="equipmentAbility != null  and equipmentAbility != ''"> and equipment_ability = #{equipmentAbility}</if>
+            <if test="equipmentFunction != null  and equipmentFunction != ''"> and equipment_function = #{equipmentFunction}</if>
+            <if test="equipmentPrice != null  and equipmentPrice != ''"> and equipment_price = #{equipmentPrice}</if>
+        </where>
+    </select>
+    
+    <select id="selectEduEquipmentById" parameterType="Long" resultMap="EduEquipmentResult">
+        <include refid="selectEduEquipmentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEduEquipment" parameterType="EduEquipment" useGeneratedKeys="true" keyProperty="id">
+        insert into edu_equipment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">batch_id,</if>
+            <if test="equipmentName != null">equipment_name,</if>
+            <if test="equipmentNum != null">equipment_num,</if>
+            <if test="equipmentAbility != null">equipment_ability,</if>
+            <if test="equipmentFunction != null">equipment_function,</if>
+            <if test="equipmentPrice != null">equipment_price,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">#{batchId},</if>
+            <if test="equipmentName != null">#{equipmentName},</if>
+            <if test="equipmentNum != null">#{equipmentNum},</if>
+            <if test="equipmentAbility != null">#{equipmentAbility},</if>
+            <if test="equipmentFunction != null">#{equipmentFunction},</if>
+            <if test="equipmentPrice != null">#{equipmentPrice},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEduEquipment" parameterType="EduEquipment">
+        update edu_equipment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="batchId != null">batch_id = #{batchId},</if>
+            <if test="equipmentName != null">equipment_name = #{equipmentName},</if>
+            <if test="equipmentNum != null">equipment_num = #{equipmentNum},</if>
+            <if test="equipmentAbility != null">equipment_ability = #{equipmentAbility},</if>
+            <if test="equipmentFunction != null">equipment_function = #{equipmentFunction},</if>
+            <if test="equipmentPrice != null">equipment_price = #{equipmentPrice},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEduEquipmentById" parameterType="Long">
+        delete from edu_equipment where id = #{id}
+    </delete>
+
+    <delete id="deleteEduEquipmentByIds" parameterType="String">
+        delete from edu_equipment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <insert id="insertEduEquipmentList" parameterType="EduEquipment" >
+        insert into edu_equipment(batch_id,equipment_name,equipment_num,equipment_ability,equipment_price,equipment_function)
+        values
+        <foreach item="equipment" collection="list" separator=",">
+            (#{equipment.batchId},#{equipment.equipmentName},#{equipment.equipmentNum},#{equipment.equipmentAbility},#{equipment.equipmentPrice},#{equipment.equipmentFunction})
+        </foreach>
+    </insert>
+    <delete id="deleteEduEquipmentByUserId" parameterType="Long">
+        delete from edu_equipment where batch_id = #{userId}
+    </delete>
+</mapper>
