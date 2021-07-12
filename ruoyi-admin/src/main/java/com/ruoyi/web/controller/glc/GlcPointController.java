@@ -478,7 +478,6 @@ public class GlcPointController extends BaseController
                         }else {
                             result.setOrder_rate((NetworkUtils.random(94,100)));
                         }
-
                         result.setInventory_num(inventory);
                         result.setSales_account(transportNum * price);
                         result.setThroughput_num((emp * 365 * emp_quantity/2));
@@ -636,7 +635,7 @@ public class GlcPointController extends BaseController
         int emp_quantity = 50;//一天处理十二托
 
         double aging = (order/100)  *(12/times)*(0.5+goods_num/6000);
-        double aging1 = (order/100)*(times);
+        double aging1 = times;
         List<GlcPoint> list = glcPointService.selectGlcPointList(new GlcPoint(provinces));  //获取省份内城市
 
         double gdp =  0.0;
@@ -717,10 +716,10 @@ public class GlcPointController extends BaseController
                             transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) * 1.62 * (1 + 0.09) * 1.2 * 1 * gdps;//计算运输成本
                             carNum += gdps / Double.parseDouble(Car.valueOf(carLength).getCode()) / 365;
                             emp += gdps / 365 / emp_quantity*(1+aging+inventory_loss/100);//一天处理多少托需要多少人
-                            inventory += gdps / 365 * Math.sqrt(Math.sqrt(i))*(1+aging);
+                            inventory += gdps / 365 * Math.sqrt(i)*(1+aging);
                         }
                         emp = Math.ceil(emp + Math.sqrt(Math.sqrt(i)));
-                        storageCost = emp * warehousing;//需要的人员数量
+                        storageCost = emp * warehousing+managementFee;//需要的人员数量
                         double storage_area = 0.0;
                         if (inventory > 5) {
                             storage_area = AreaUtils.getHightStorage(inventory, emp * emp_quantity).getArea();
@@ -732,7 +731,7 @@ public class GlcPointController extends BaseController
                         double platform = AreaUtils.getPlatform(2 * emp * 60 / 2, carLength).getPlatform_area();
                         double area = tally + storage_area + platform;
                         double buildCost = area * 27 * 12;//先假设每平米面积为32元/月
-                        double price = (h_price * 5000 + m_price * 1000 + l_price * 100) / 100*5;
+                        double price = (h_price * 2000 + m_price * 1000 + l_price * 100) / 100*5;
                         if (inventory <= 1) {
                             inventory = 0;
                         }
@@ -740,7 +739,7 @@ public class GlcPointController extends BaseController
                         result.setCity(rdc);
                         result.setRange(range);
                         result.setArea(Math.round(area));
-                        result.setStorage(emp * emp_quantity * 365+managementFee);
+                        result.setStorage(emp * emp_quantity * 365+managementFee*((Math.pow(i,1.1)-i)/i));
                         result.setStorageCost(Math.round(storageCost));
                         result.setBuildCost(Math.round(buildCost));
                         result.setInventoryCost(Math.round(inventoryCost));

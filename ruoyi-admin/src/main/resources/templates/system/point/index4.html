@@ -120,8 +120,8 @@
                                                 <td style="height: 25px"> <select name="times" id="times" style="background:rgb(14, 108, 132); color: #000;color:#fff;"> <option value="12">12h</option> <option value="24">24h</option> <option value="48">48h</option> <option selected value="72">72h</option> <option value="96">96h</option> </select> </td>
                                             </tr>
                                             <tr>
-                                                <th>订单时效满足率</th>
-                                                <td style="height: 25px"> <input name="order" value="80" id="order" data-placement="right" title="请输入" th:type="text" style="background:rgb(14, 108, 132); color: #000;color:#fff;" required="" />%</td>
+                                                <th>服务水平</th>
+                                                <td style="height: 25px"> <select name="times" id="times" style="background:rgb(14, 108, 132); color: #000;color:#fff;"> <option value="90">90%</option> <option value="95">95%</option> <option value="97">97%</option> <option selected value="100">100</option> </select>  </td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -1118,7 +1118,7 @@
                         title: '仓储人数'
                     },
                     {
-                        field: 'rate',
+                        field: 'rate1',
                         halign: "center",
                         title: '物流费率',
                         formatter:function(value,row,index){
@@ -1141,30 +1141,30 @@
                             return parseInt(value)/100;
                         }
                     },
-                    {
-                        field: 'plat_storage',
-                        halign: "center",
-                        title: '单托仓储成本',
-                        formatter:function(value,row,index){
-                            return "¥"+int2str(parseInt(value*100)/100);
-                        }
-                    },
-                    {
-                        field: 'plat_transport',
-                        halign: "center",
-                        title: '单托配送成本',
-                        formatter:function(value,row,index){
-                            return "¥"+int2str(parseInt(value));
-                        }
-                    },
-                    {
-                        field: 'order_cost',
-                        halign: "center",
-                        title: '单托成本',
-                        formatter:function(value,row,index){
-                            return "¥"+int2str(parseInt(value));
-                        }
-                    },
+                    // {
+                    //     field: 'plat_storage',
+                    //     halign: "center",
+                    //     title: '单托仓储成本',
+                    //     formatter:function(value,row,index){
+                    //         return "¥"+int2str(parseInt(value*100)/100);
+                    //     }
+                    // },
+                    // {
+                    //     field: 'plat_transport',
+                    //     halign: "center",
+                    //     title: '单托配送成本',
+                    //     formatter:function(value,row,index){
+                    //         return "¥"+int2str(parseInt(value));
+                    //     }
+                    // },
+                    // {
+                    //     field: 'order_cost',
+                    //     halign: "center",
+                    //     title: '单托成本',
+                    //     formatter:function(value,row,index){
+                    //         return "¥"+int2str(parseInt(value));
+                    //     }
+                    // },
                     {
                         field: 'plat_cost',
                         halign: "center",

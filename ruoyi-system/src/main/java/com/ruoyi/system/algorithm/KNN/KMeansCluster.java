@@ -1,5 +1,7 @@
 package com.ruoyi.system.algorithm.KNN;
 
+import com.ruoyi.system.domain.mian.Storage;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,9 @@ public class KMeansCluster {
 
     // 中心点
     public List<Point> centers;
+
+    //仓储类输入
+    public List<Storage> storages;
 
 
 
@@ -131,10 +136,13 @@ public class KMeansCluster {
     private Point getRecPoint(double x, double y) {
         Point point =null;
         Double d = Double.MAX_VALUE;
+        Double n = Double.MAX_VALUE;
         for (int i=0;i<points.size();i++){
            double c = getDistance(x,y,points.get(i).getX(),points.get(i).getY());
-           if (c<d){
+           double time = getDistance(x,y,points.get(i).getX(),points.get(i).getY())/60+storages.get(i).getArea();
+           if (c<d&&time<n){
                d=c;
+               time = n;
                point=points.get(i);
            }
 

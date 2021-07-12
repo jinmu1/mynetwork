@@ -145,6 +145,11 @@ public class NetworkUtils {
         }
         return list;
     }
+//    public  static  List<Result> getStorageCost(){
+//
+//    }
+
+
     /**
      * 初始化物料价格
      * @param materialList
