@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.system.domain.mian.Car;
 import com.ruoyi.system.domain.mian.GlcPoint;
-import com.ruoyi.system.domain.network.City;
-import com.ruoyi.system.domain.network.Customer;
-import com.ruoyi.system.domain.network.Order;
-import com.ruoyi.system.domain.network.Material;
+import com.ruoyi.system.domain.network.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -93,7 +90,7 @@ public class NetworkUtils {
      * @param rangeNum
      * @return
      */
-    public static List<Material> createGoods(int rangeNum){
+    public static List<Material> createGoods(double rangeNum){
         List<Material> materialList = new ArrayList<>();
         Random random =new Random();
         for (int i=0;i<rangeNum;i++){
@@ -178,7 +175,7 @@ public class NetworkUtils {
 
 
     /**
-     * 选择城市 城市对应各城市
+     * 补货
      * @param rdcPoint
      * @param netPoint
      * @param
@@ -318,6 +315,18 @@ public class NetworkUtils {
         }
         return  orderList;
     }
+
+    public static List<Result> run(List<Order> orders, List<Customer> customerList, List<GlcPoint> pointList) {
+        List<Result> list = new ArrayList<>();
+
+
+        return list;
+    }
+
+
+
+
+
 
     /***
      * 计算运输成本
