@@ -1,4 +1,4 @@
-package com.ruoyi.network.network.network;
+package com.ruoyi.network.result;
 
 public class Plan {
     private String indicators;//指标
