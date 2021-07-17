@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.mian;
+package com.ruoyi.system.network.resource;
 
 /**
  * 自动化立库内容

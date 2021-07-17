@@ -1,13 +1,23 @@
-package com.ruoyi.system.domain.network;
+package com.ruoyi.system.network.network;
 
 public class Material {
        private String name;//物料名称
        private String code;//物料编码
        private double price;//物料价值
        private double volume;//物料体积
-       private double needNum;//物料需求量
+       private double needNum;//物料需求量-托
+       private double inventory;//库存量-托
+       private double orderNum;//订货量-数量
        private double frequency;//物料需求频次
 
+
+    public double getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(double orderNum) {
+        this.orderNum = orderNum;
+    }
 
     public double getPrice() {
         return price;
@@ -55,5 +65,13 @@ public class Material {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public double getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(double inventory) {
+        this.inventory = inventory;
     }
 }

@@ -2,9 +2,9 @@ package com.ruoyi.system.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.ruoyi.system.domain.mian.Car;
-import com.ruoyi.system.domain.mian.GlcPoint;
-import com.ruoyi.system.domain.network.*;
+import com.ruoyi.system.network.enumType.Car;
+import com.ruoyi.system.network.form.GlcPoint;
+import com.ruoyi.system.network.network.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -12,9 +12,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import javax.swing.*;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +45,61 @@ public class NetworkUtils {
      */
 
     public static double getNetWorkData(String carType,double  transportNum, List<GlcPoint> list){
+        double sale_accout = 0.0;
+        double gdp =  0.0;
+        for (GlcPoint city:list){
+            gdp+= Double.parseDouble(city.getGdp());
+        }
+        List<City> rdcPoint = new ArrayList<>();//rdc生成池
+        List<City> point = new ArrayList<>();
+        Map<String, List<GlcPoint>> listMap = list.stream().collect(Collectors.groupingBy(GlcPoint::getCity));//结果集合
+        for (String center:listMap.keySet()){
+            GlcPoint glcPoint = listMap.get(center).get(0);            //需求点
+            point.add(new City(glcPoint.getCity(),glcPoint.getLat(),glcPoint.getLng(), glcPoint.getGdp()));//备选带你
+        }
+        double max = Double.MAX_VALUE;
+        int number = 0;
+        for(int i=1;i<list.size();i++) {
+            List<List<City>> combinations = combinations(point, new Random(list.size()).nextInt());//已经遍历了该RDC数量下的所有RDC组合 k为备选点数量
+            List<City> cities = new ArrayList<>();
+            for (List<City> cityList : combinations) {
+                rdcPoint = new ArrayList<>();
+                for (City city : cityList) {
+                    rdcPoint.add(new City(city.getCity())); //将选取的备选点当做新增的RDC
+                }
+                // 开始计算
+                cities = chooseCity(rdcPoint, point);//选择城市
+                double transportCost = 0.0;
+                for (City city : cities) {
+                    double carCos = Double.parseDouble(Car.valueOf(carType).getCode()); //计算车辆类型
+                    double CarNum = Double.parseDouble(city.getGdp()) / gdp * transportNum * 1.2 * 1 * 1.5 / carCos;//计算车辆数量(总计)
+                    transportCost += Double.parseDouble(city.getDistance()) * 0.89 * 1.09 * transportNum * 1.2 * 1 * 1.5;//计算运输成本
+                }
+                if (transportCost<max){
+                    max = transportCost;
+                    number = i;
+                }
+
+            }
+        }
+            return max;
+    }
+
+    public static double getSaleAccount(double h_price,double m_price,double l_price,double transportNUm){
+        List<Material> list  = NetworkUtils.createGoods(6000); //创建物料
+        List<Material> list1 = NetworkUtils.initMaterialVolume(list,10,50,40);//创建体积
+        List<Material> list2 = NetworkUtils.initMaterialPrice(list1,h_price,m_price,l_price);//创建价值
+        List<Material> list3 = NetworkUtils.initMaterialNeedNum(list2,transportNUm);
+
+        double saleAccount = 0.0;
+        for (Material material:list3){
+            saleAccount +=material.getPrice() * material.getNeedNum();
+        }
+        return saleAccount;
+    }
+
+    public static double getNetWorkData1(String carType,double  transportNum, List<GlcPoint> list){
+        double sale_accout = 0.0;
         double gdp =  0.0;
         for (GlcPoint city:list){
             gdp+= Double.parseDouble(city.getGdp());
@@ -81,9 +136,8 @@ public class NetworkUtils {
 
             }
         }
-            return max;
+        return sale_accout;
     }
-
     /**
      * 为每个物料分配物料名称
      * @param
@@ -98,6 +152,7 @@ public class NetworkUtils {
                  material.setCode(RandomUtil.toFixdLengthString(random.nextInt(1000000),8));
                  materialList.add(material);
         }
+
         return materialList;
 
     }
@@ -111,19 +166,16 @@ public class NetworkUtils {
      * @return
      */
     public static List<Material> initMaterialVolume(List<Material> materialList,double b,double m,double s){
-        double b_volume = 5;//5立方
-        double m_volume = 0.5;//0.5立方
-        double s_volume = 0.05;//0.05立方
         double all = b + m + s;
         Random random = new Random();
         for (Material material : materialList){
              int i = random.nextInt((int)all*100);
              if (i<=s*100){
-                 material.setVolume(Math.abs(NormalDistribution(1,(float) 500))/10000);
+                 material.setVolume(initNormalDistribution(1,0.05)[0]);
              }else if (i<=(m+s)*100){
-                 material.setVolume(Math.abs(NormalDistribution(1,(float) 500))/1000);
+                 material.setVolume(initNormalDistribution(1,0.45)[0]+0.05);
              }else if (i<=(all*100)){
-                 material.setVolume(Math.abs(NormalDistribution(1,(float) 500))/100);
+                 material.setVolume(initNormalDistribution(1,4.5)[0]+0.5);
              }
         }
          return materialList;
@@ -136,19 +188,25 @@ public class NetworkUtils {
      * @return
      */
     public static List<Material> initMaterialNeedNum(List<Material> list,double total) {
-        double b = total*0.8;
-        double m = total*0.2;
-        Random random = new Random();
         for (Material material:list){
-            material.setNeedNum(Math.abs(NormalDistribution(1,(float) total*8)));
-            material.setFrequency(Math.abs(NormalDistribution(1,(float) total*8)));
+            material.setNeedNum(initNormalDistribution(1,total)[0]);
+            material.setOrderNum(material.getNeedNum()/material.getVolume());
+            material.setFrequency(initNormalDistribution(1,material.getNeedNum())[0]);
         }
         return list;
     }
-//    public  static  List<Result> getStorageCost(){
-//
-//    }
 
+    public static double[] initNormalDistribution(int length,double max){
+        double[] num = new double[length];
+        for (int i = 0;i<length;i+=1){
+            num[i] = Math.abs(NetworkUtils.NormalDistribution(1,(float)100));
+        }
+        double avg = MathUtils.sum(num);
+        for (int i = 0; i<num.length;i++){
+            num[i] = num[i]*max/avg;
+        }
+        return num;
+    }
 
     /**
      * 初始化物料价格
@@ -167,11 +225,11 @@ public class NetworkUtils {
             Random random = new Random();
             int i = random.nextInt((int)all*100);
             if (i<=s*100){
-                material.setPrice(Math.abs(NormalDistribution(1,(float) 5000))/100);
+                material.setPrice(initNormalDistribution(1,50)[0]);
             }else if (i<=(m+s)*100){
-                material.setPrice(Math.abs(NormalDistribution(1,(float) 5000))/10);
+                material.setPrice(initNormalDistribution(1,450)[0]+50);
             }else if (i<=(all*100)){
-                material.setPrice(Math.abs(NormalDistribution(1,(float) 5000))/3.33);
+                material.setPrice(initNormalDistribution(1,1000)[0]+500);
             }
         }
         return materialList;
@@ -225,9 +283,22 @@ public class NetworkUtils {
      * @param
      * @return
      */
-    public static List<Order> initOrders(List<Material> list,int orderLine) {
+    public static List<Order> initOrders(List<Material> list,int orderLine,double transportNum)  {
         List<Order> orderList = new ArrayList<>();
         Random random = new Random();
+        for (Material material:list) {
+            double num = material.getNeedNum();
+            for (int i = 0; i < material.getNeedNum()*10; i+=(int)random.nextInt(5) ) {
+                if(num>0) {
+//                    double num1 = num - new Random((num*1.1*1.25*1.5)/material.getVolume())
+                    Order order = new Order();
+                }
+
+            }
+        }
+
+
+
         for (int i=0;i<10000;i++){
                 String OrderCode = RandomUtil.toFixdLengthString(random.nextInt(1000000),11);
                 String orderDate = sdf1.format(randomDate("2021-01-01 08:00:00","2021-12-31 18:00:00"));
@@ -237,8 +308,13 @@ public class NetworkUtils {
                     if (m <= orderLine) {
                         Order order = new Order();
                         order.setOrderCode(OrderCode);
-                        order.setOrderDate(orderDate);
+                        try {
+                            order.setOrderDate(sdf1.parse(orderDate));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         int z = random.nextInt(list.size());
+
                         order.setGoodsCode(list.get(z).getCode());
                         order.setGoodsNum((int) list.get(z).getNeedNum() / list.get(z).getFrequency() / list.get(z).getVolume());
                         orderList.add(order);
@@ -275,7 +351,7 @@ public class NetworkUtils {
      * @return
      */
 
-    public static List<Customer> initCustomer(List<GlcPoint>cities,int customerNum) {
+    public static List<Customer> initCustomer(List<GlcPoint>cities, int customerNum) {
         Random random = new Random();
         List<Customer> customerList = new ArrayList<>();
         Double gdp = 0.0;
@@ -286,7 +362,7 @@ public class NetworkUtils {
             for (int i=0;i<=customerNum*Double.parseDouble(glcPoint.getGdp())/gdp;i++){
                 Customer customer = new Customer();
                 customer.setCustomerCode(RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
-                customer.setCity(glcPoint.getCity());
+                customer.setCity(new City(glcPoint.getCity(),glcPoint.getLat(),glcPoint.getLng(),glcPoint.getGdp()));
                 customerList.add(customer);
             }
         }
@@ -297,8 +373,8 @@ public class NetworkUtils {
 
 
     //普通正态随机分布
-//参数 u 均值
-//参数 v 方差
+    //参数 u 均值
+    //参数 v 方差
     public static double NormalDistribution(float u,float v){
         java.util.Random random = new java.util.Random();
         return Math.sqrt(v)*random.nextGaussian()+u;
@@ -314,7 +390,7 @@ public class NetworkUtils {
         Random random = new Random();
         for (Order order:orderList){
             int i = random.nextInt(customerList.size());
-            order.setCustomerCity(customerList.get(i).getCustomerCode());
+            order.setCustomerCode(customerList.get(i).getCustomerCode());
             order.setCustomerCity(customerList.get(i).getCity());
 
         }
@@ -328,9 +404,9 @@ public class NetworkUtils {
         return list;
     }
 
-
-
-
+    public static List<Supplier> initSupplier() {
+        return new ArrayList<>();
+    }
 
 
     /***

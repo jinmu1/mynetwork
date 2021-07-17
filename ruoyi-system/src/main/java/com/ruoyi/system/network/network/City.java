@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.network;
+package com.ruoyi.system.network.network;
 
 /**
  * 备选点城市
@@ -21,12 +21,19 @@ public class City {
 
     private String distance;
 
+    private double transportfee;
+
     private String gdp;
 
+    private double price;
 
 
+    public City(String lat, String lng) {
+        this.lat = lat;
+        this.lng = lng;
+    }
 
-    public City(String city,String lat, String lng,String gdp) {
+    public City(String city, String lat, String lng, String gdp) {
         this.lat = lat;
         this.lng = lng;
         this.city = city;
@@ -109,5 +116,22 @@ public class City {
 
     public void setGdp(String gdp) {
         this.gdp = gdp;
+    }
+
+    public double getTransportfee() {
+        return transportfee;
+    }
+
+    public void setTransportfee(double transportfee) {
+        this.transportfee = transportfee;
+    }
+
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

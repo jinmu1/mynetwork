@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.network;
+package com.ruoyi.system.network.network;
 
 public class Plan {
     private String indicators;//指标

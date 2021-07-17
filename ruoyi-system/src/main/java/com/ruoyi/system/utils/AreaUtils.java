@@ -1,9 +1,9 @@
 package com.ruoyi.system.utils;
 
-import com.ruoyi.system.domain.mian.*;
-import org.apache.poi.ss.formula.functions.T;
+import com.ruoyi.system.network.enumType.Car;
+import com.ruoyi.system.network.enumType.StorageType;
+import com.ruoyi.system.network.resource.*;
 
-import java.math.BigDecimal;
 
 public final class AreaUtils {
 
@@ -64,13 +64,10 @@ public final class AreaUtils {
      * @param
      * @return
      */
-    public static Platform getPlatform(double  total,String CarType){
+    public static Platform getPlatform(double  total, String CarType){
         double car_volumetric = Double.parseDouble(Car.valueOf(CarType).getCode());//计算车辆容积 通过车辆类型
-        if (CarType.equals("超大车17米5")){
-            platform_width = 2.4*1.25;
-        }else {
-            platform_width = 2.4;
-        }
+        platform_width = 3 * 1.25;
+
         double car_num = Math.ceil(total/volumetric_coefficient/car_volumetric);//计算车辆数量 通过车辆容积
         double platform_num =  Math.ceil(car_num*peak_rate*unloading_time/everyDay_unloading_time);//月台数量
         double platform_area = platform_num*platform_width*platform_length;//月台面积
@@ -125,7 +122,7 @@ public final class AreaUtils {
      * @param total
      * @return
      */
-    public static StereoStorage getStereoStorage(double total,double throughput,double height){
+    public static StereoStorage getStereoStorage(double total, double throughput, double height){
         int rows = 0;
         int line = 0;
         int layer = 0;
@@ -440,7 +437,7 @@ public final class AreaUtils {
      * 轻型货架区
      * @return
      */
-  public static LightStorage getLightStorage(double total,double throughput){
+  public static LightStorage getLightStorage(double total, double throughput){
       int rows = 0;
       int line = 0;
       int layer = 0;

@@ -1,6 +1,6 @@
 package com.ruoyi.system.algorithm.KNN;
 
-import com.ruoyi.system.domain.network.City;
+import com.ruoyi.system.network.network.City;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.network;
+package com.ruoyi.system.network.network;
 
 public class Target {
     private double storage;//仓储能力

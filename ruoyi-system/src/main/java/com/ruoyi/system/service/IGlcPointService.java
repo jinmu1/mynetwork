@@ -1,8 +1,8 @@
 package com.ruoyi.system.service;
 
-import java.util.List;
+import com.ruoyi.system.network.form.GlcPoint;
 
-import com.ruoyi.system.domain.mian.GlcPoint;
+import java.util.List;
 
 
 /**

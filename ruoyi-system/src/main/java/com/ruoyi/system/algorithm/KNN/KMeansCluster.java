@@ -1,6 +1,8 @@
 package com.ruoyi.system.algorithm.KNN;
 
-import com.ruoyi.system.domain.mian.Storage;
+
+
+import com.ruoyi.system.network.resource.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,7 +151,22 @@ public class KMeansCluster {
         }
         return point;
     }
+    private Point getRecPoint1(double x, double y) {
+        Point point =null;
+        Double d = Double.MAX_VALUE;
+        Double n = Double.MAX_VALUE;
+        for (int i=0;i<points.size();i++){
+            double c = getDistance(x,y,points.get(i).getX(),points.get(i).getY());
+//            double time = getDistance(x,y,points.get(i).getX(),points.get(i).getY())/60+storages.get(i).getArea();
+            if (c<d){
+                d=c;
 
+                point=points.get(i);
+            }
+
+        }
+        return point;
+    }
 
     /*划分点到某个簇中，欧式距离标准
      * 对传入的每个点，找到与其最近的簇中心点，将此点加入到簇

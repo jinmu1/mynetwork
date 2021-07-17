@@ -1,6 +1,6 @@
 package com.ruoyi.system.mapper;
 
-import com.ruoyi.system.domain.mian.GlcPoint;
+import com.ruoyi.system.network.form.GlcPoint;
 
 import java.util.List;
 

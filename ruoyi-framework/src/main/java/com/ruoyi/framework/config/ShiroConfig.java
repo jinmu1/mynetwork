@@ -293,6 +293,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/account/blog/open/post", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/get", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/get1", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/system/point/point/get2", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/network", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/network2", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/network1", "anon,captchaValidate");
@@ -311,6 +312,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/system/point/point/networkplan", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/networkplan1", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/networkLine", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/system/netWork/network", "anon,captchaValidate");
         filterChainDefinitionMap.put("/light", "anon,captchaValidate");
         filterChainDefinitionMap.put("/haier", "anon,captchaValidate");
         filterChainDefinitionMap.put("/wx", "anon,captchaValidate");

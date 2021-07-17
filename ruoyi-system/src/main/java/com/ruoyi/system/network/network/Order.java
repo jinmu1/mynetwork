@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.network;
+package com.ruoyi.system.network.network;
 
 import java.util.Date;
 
@@ -9,7 +9,7 @@ public class Order {
     //@TableField(value = "客户名称")
     private String customerName;
    // @TableField(value = "客户城市")
-    private String customerCity;
+    private City customerCity;
    // @TableField(value = "物料编码")
     private String goodsCode;
    // @TableField(value = "区域")
@@ -19,10 +19,24 @@ public class Order {
     //@TableField(value = "产品单价")
     private String goodsPrice;
    // @TableField(value = "下单日期")
-    private String orderDate;
+    private Date orderDate;
    // @TableField(value = "发货日期")
     private Date deliveryDate;
 
+
+    public Order() {
+    }
+
+    public Order(String goodsCode,  double goodsNum) {
+        this.goodsCode = goodsCode;
+        this.goodsNum = goodsNum;
+    }
+
+    public Order(Date orderDate, String goodsCode, double goodsNum) {
+        this.goodsCode = goodsCode;
+        this.goodsNum = goodsNum;
+        this.orderDate = orderDate;
+    }
 
     public String getOrderCode() {
         return orderCode;
@@ -48,11 +62,11 @@ public class Order {
         this.customerName = customerName;
     }
 
-    public String getCustomerCity() {
+    public City getCustomerCity() {
         return customerCity;
     }
 
-    public void setCustomerCity(String customerCity) {
+    public void setCustomerCity(City customerCity) {
         this.customerCity = customerCity;
     }
 
@@ -88,11 +102,11 @@ public class Order {
         this.goodsPrice = goodsPrice;
     }
 
-    public String getOrderDate() {
+    public Date getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(String orderDate) {
+    public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
 

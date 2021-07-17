@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.network;
+package com.ruoyi.system.network.network;
 
 import java.util.List;
 

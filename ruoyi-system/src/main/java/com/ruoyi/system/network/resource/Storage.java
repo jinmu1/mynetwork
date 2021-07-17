@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.mian;
+package com.ruoyi.system.network.resource;
 
 public class Storage {
      private String type;

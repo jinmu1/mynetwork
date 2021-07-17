@@ -1,22 +1,62 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>订单信息</title>
-    <th:block th:include="include :: point-public-css" />
-    <th:block th:include="include :: point-index4-css" />
-    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
-    <script th:src="@{/js/jquery.min.js}"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+    <meta charset="UTF-8" />
+    <title>物流网络实时规划 . 省域</title>
 </head>
 
+<th:block th:include="include :: point-public-css" />
+<th:block th:include="include :: point-index4-css" />
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<script th:src="@{/js/jquery.min.js}"></script>
+<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+<style>
+    .layui-layer-content{
+        color: #000000;
+    }
+    body, html {
+        overflow-x: hidden;
+    }
+    .echarts {
+        height: 350px;
+    }
+
+    .th-inner{
+        color: rgb(171, 225, 245);
+
+    }
+
+    .thead .tr{
+        color: rgb(243, 243, 243);
+    }
+    .table-hover > tbody > tr{
+        text-align: right;
+    }
+    .table-hover > tbody > tr:hover > td,
+    .table-hover > tbody > tr:hover > th {
+        color: rgb(14, 108, 132);
+        cursor: pointer;
+    }
+    /*[class*="col-"]{*/
+    /*    padding: 2px;*/
+    /*    margin:2px*/
+    /*}*/
+    /*.row {*/
+    /*    margin-right: -15px;*/
+    /*    margin-left: -15px;*/
+    /*}*/
+    /*.table1{width:25xp;height: 25%}*/
+</style>
 <script>
-    // /*    $(function () {
-    //         $('.myscroll').myScroll({
-    //             speed: 60, //数值越大，速度越慢
-    //             rowHeight: 38 //li的高度
-    //         });
-    //     });*/
+
+    var docEl = document.documentElement,
+        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+    var clientWidth = docEl.clientWidth;
+    docEl.style.fontSize = 10 * (clientWidth / 320) + 'px';
+    window.addEventListener(resizeEvt, function() { clientWidth = docEl.clientWidth;docEl.style.fontSize = 10 * (clientWidth / 320) + 'px'; }, false);
+</script>
+<script>
 
     $(document).ready(function () {
         var whei = $(window).width()
@@ -27,971 +67,1194 @@
         });
     });
 </script>
-<body style="background: #jjj;height: 250%;width: 100%">
+<body style="background: #jjj;height: 150%;width: 100%">
 <div class="main">
     <div class="header">
-        <div class="header-left fl" >
-        </div>
+        <div class="header-left fl">
 
+        </div>
         <div class="header-center fl">
             <div class="header-title">
-                各方案对比
+                物流网络实时规划 . 省域
             </div>
-            <div class="header-img"></div>
+            <div class="header-img">  <img class="imgs"  src="http://backend.glc360.com/jeecg-boot/bigscreen/template4/images/new_log.png" style="width: 20%;margin-left:-40%;margin-top:0%;z-index: 9999"></div>
         </div>
         <div class="header-right fl"></div>
-        <div class="header-bottom fl">    </div>
+        <div class="header-bottom fl">
+        </div>
     </div>
-
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>填写数据清单 <small></small></h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            <li><a href="#">选项1</a>
-                            </li>
-                            <li><a href="#">选项2</a>
-                            </li>
-                        </ul>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12 border">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5 style="text-align: center">填写数据清单 <small></small></h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link"> <i class="fa fa-chevron-up"></i> </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i> </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a> </li>
+                                <li><a href="#">选项2</a> </li>
+                            </ul>
+                            <a class="close-link"> <i class="fa fa-times"></i> </a>
+                        </div>
                     </div>
-                </div>
-                <div class="ibox-content">
-                    <form class="form-horizontal m-t" id="signupForm" onsubmit="post_data()">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered " >
-                                        <thead>
-                                        <tr>
-                                            <th>参数</th>
-                                            <th>取值</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <th>所在省份</th>
-                                            <td>
-                                                <select name="provinces"  id="provinces" style="background:#090639; color: #000;color:#fff;">
-                                                    <option value='湖北'>湖北</option>
-
-                                                    <option value='广东'>广东</option>
-
-                                                    <option value='江西'>江西</option>
-
-                                                    <option value='安徽'>安徽</option>
-
-                                                    <option value='福建'>福建</option>
-
-                                                    <option value='广西'>广西</option>
-
-                                                    <option value='云南'>云南</option>
-
-                                                    <option value='四川'>四川</option>
-
-                                                    <option value='贵州'>贵州</option>
-
-                                                    <option value='湖南'>湖南</option>
-
-                                                    <option value='浙江'>浙江</option>
-
-                                                    <option value='江苏'>江苏</option>
-
-                                                    <option value='河南'>河南</option>
-
-                                                    <option value='河北'>河北</option>
-
-                                                    <option value='山东'>山东</option>
-
-                                                    <option value='山西'>山西</option>
-
-                                                    <option value='陕西'>陕西</option>
-
-                                                    <option value='甘肃'>甘肃</option>
-
-                                                    <option value='青海'>青海</option>
-
-                                                    <option value='宁夏'>宁夏</option>
-
-                                                    <option value='内蒙'>内蒙</option>
-
-                                                    <option value='辽宁'>辽宁</option>
-
-                                                    <option value='吉林'>吉林</option>
-
-                                                    <option value='黑龙江'>黑龙江</option>
-
-                                                    <option value='新疆'>新疆</option>
-
-                                                    <option value='西藏'>西藏</option>
-
-                                                    <option value='海南'>海南</option>
-
-                                                    <!--                                        <option value='64'>澳门</option>-->
-
-                                                    <!--                                        <option value='65'>香港</option>-->
-
-                                                    <!--                                        <option value='66'>台湾</option>-->
-
-                                                    <!--                                        <option value='67'>北京市</option>-->
-
-                                                    <!--                                        <option value='68'>天津市</option>-->
-
-                                                    <!--                                        <option value='69'>上海</option>-->
-
-                                                    <!--                                        <option value='70'>重庆市</option>-->
-
-                                                </select>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th > 车辆规格</th>
-                                            <td>
-                                                <select  name="carLength" id="carLength"  style="background:#090639; color: #000;color:#fff;">
-                                                    <option>小车4米6</option>
-                                                    <option>中车7米2</option>
-                                                    <option>大车9米6</option>
-                                                    <option>超大车17米5</option>
-                                                </select>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                            <th class="text-nowrap">税额</th>
-                                            <td>9%
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th >运输量 </th>
-                                            <td> <input   name="transportNum"  id="transportNum" data-placement="right" title="请输入" th:type="text" style="background:#090639; color: #000;color:#fff;" required>托</td>
-                                        </tr>
-                                        <tr>
-                                            <th>库存损耗比例 </th>
-                                            <td> <input type="value" name="inventory_loss" id="inventory_loss"  style="background:#090639; color: #000;color:#fff;" required>%</td>
-                                        </tr>
-                                        <tr>
-                                            <th >仓储人员工资</th>
-                                            <td>  <input type="value"  id="warehousing"  style="background:#090639; color: #000;color:#fff;" required>元</td>
-                                        </tr>
-
-                                        </tbody>
-                                    </table>
+                    <div class="ibox-content">
+                        <form class="form-horizontal m-t" id="signupForm" onsubmit="post_data()" target="nm_iframe">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="table-responsive table1">
+                                        <table class="table table-bordered  width1">
+                                            <thead>
+                                            <tr>
+                                                <th colspan="2" style="text-align:center;vertical-align:middle;">时效参数</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <th>所在省份</th>
+                                                <td style="height: 25px"> <select name="provinces" id="provinces" style="background:rgb(14, 108, 132); color: #000;color:#fff;"> <option value="湖北">湖北</option> <option value="广东">广东</option> <option value="江西">江西</option> <option value="安徽">安徽</option> <option value="福建">福建</option> <option value="广西">广西</option> <option value="云南">云南</option> <option value="四川">四川</option> <option value="贵州">贵州</option> <option value="湖南">湖南</option> <option value="浙江">浙江</option> <option value="江苏">江苏</option> <option value="河南">河南</option> <option value="河北">河北</option> <option value="山东">山东</option> <option value="山西">山西</option> <option value="陕西">陕西</option> <option value="甘肃">甘肃</option> <option value="青海">青海</option> <option value="宁夏">宁夏</option> <option value="内蒙">内蒙</option> <option value="辽宁">辽宁</option> <option value="吉林">吉林</option> <option value="黑龙江">黑龙江</option> <option value="新疆">新疆</option> <option value="西藏">西藏</option> <option value="海南">海南</option> </select> </td>
+                                            </tr>
+                                            <tr>
+                                                <th>订单时效</th>
+                                                <td style="height: 25px"> <select name="times" id="times" style="background:rgb(14, 108, 132); color: #000;color:#fff;"> <option value="12">12h</option> <option value="24">24h</option> <option value="48">48h</option> <option selected value="72">72h</option> <option value="96">96h</option> </select> </td>
+                                            </tr>
+                                            <tr>
+                                                <th>服务水平</th>
+                                                <td style="height: 25px"> <select name="times" id="order" style="background:rgb(14, 108, 132); color: #000;color:#fff;"> <option value="90">90%</option> <option value="95">95%</option> <option value="97">98%</option> <option selected value="100">100%</option> </select>  </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 ">
+                                    <div class="table-responsive table1">
+                                        <table class="table table-bordered  width1">
+                                            <thead>
+                                            <tr>
+                                                <th colspan="2" style="text-align:center;vertical-align:middle;">运输参数</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <th> 车辆规格</th>
+                                                <td> <select name="carLength" id="carLength"  style="background:rgb(14, 108, 132); color: #000;color:#fff;"> <option>小车4米6</option> <option>中车7米2</option> <option>大车9米6</option> <option>超大车17米5</option> </select> </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-nowrap">税额</th>
+                                                <td>9% </td>
+                                            </tr>
+                                            <tr>
+                                                <th>平均每天出库量 </th>
+                                                <td> <input name="transportNum" value="1000" id="transportNum"  onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" data-placement="right" title="请输入" th:type="text" style="background:rgb(14, 108, 132); color: #000;color:#fff;" onchange="changeplant()" required="" />托</td>
+                                            </tr>
+                                            <tr>
+                                                <th>年出库量 </th>
+                                                <td id="plant">365000托</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 table1">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered ">
+                                            <thead>
+                                            <tr>
+                                                <th colspan="2" style="text-align:center;vertical-align:middle;">库存参数</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <th>物料种类数 </th>
+                                                <td> <input type="value" value="6000" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" name="inventory_loss" id="goods_num" style="background:rgb(14, 108, 132); color: #000;color:#fff;" onchange="changGoosNum()" required="" />种</td>
+                                            </tr>
+                                            <tr>
+                                                <th>库存损耗比例 </th>
+                                                <td> <input type="value" value="0.1" name="inventory_loss" id="inventory_loss" style="background:rgb(14, 108, 132); color: #000;color:#fff;" required="" />%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>物料单价:高值(大于千元) </th>
+                                                <td> <input type="value" id="h_price"  value="10" style="background:rgb(14, 108, 132); color: #000;color:#fff;" onchange="changPrice()" required="" />% </td>
+                                            </tr>
+                                            <tr>
+                                                <th>物料单价:中值(百元)</th>
+                                                <td> <input type="value" id="m_price" value="50" style="background:rgb(14, 108, 132); color: #000;color:#fff;" onchange="changPrice()" required="" />%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>物料单价:低值(低于百元) </th>
+                                                <td> <input type="value" id="s_price"  value="40" style="background:rgb(14, 108, 132); color: #000;color:#fff;" onchange="changPrice()" required="" />%</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="table-responsive table1">
+                                        <table class="table table-bordered ">
+                                            <thead>
+                                            <tr>
+                                                <th colspan="2" style="text-align:center;vertical-align:middle;">仓储参数</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <th>仓储人员工资</th>
+                                                <td> <input type="value" id="warehousing" value="80000" style="background:rgb(14, 108, 132); color: #000;color:#fff;" required="" />元/年</td>
+                                            </tr>
+                                            <tr>
+                                                <th>单仓管理费用</th>
+                                                <td> <input type="value" id="managementFee" value="200000" style="background:rgb(14, 108, 132); color: #000;color:#fff;" required="" />元/年</td>
+                                            </tr>
+                                            <tr>
+                                                <th>物料体积 大(5m&sup3;)</th>
+                                                <td> <input type="value" id="b_goods_size" value="10" style="background:rgb(14, 108, 132); color: #000;color:#fff;" onchange="changSize()" required="" />%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>物料体积 中(0.5m&sup3;)</th>
+                                                <td> <input type="value" id="m_goods_size" value="40" style="background:rgb(14, 108, 132); color: #000;color:#fff;" onchange="changSize()" required="" />%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>物料体积 小(0.05m&sup3;)</th>
+                                                <td> <input type="value" id="s_goods_size" value="50" style="background:rgb(14, 108, 132); color: #000;color:#fff;" onchange="changSize()" required="" />%</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered ">
-                                        <thead>
-                                        <tr>
-                                            <th>参数</th>
-                                            <th>取值</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
 
-                                        <tr>
-                                            <th >物料单价:高值(大于千元) </th>
-                                            <td> <input type="value"  id="h_price" style="background:#090639; color: #000;color:#fff;"  onchange="changPrice()" required>%
-                                            </td>
-                                        </tr>
-                                        <tr>
 
-                                            <th >物料单价:中值(百元)</th>
-                                            <td> <input type="value"  id="m_price" style="background:#090639; color: #000;color:#fff;" onchange="changPrice()" required>%</td>
-                                        </tr>
-                                        <tr>
-
-                                            <th >物料单价:低值(低于百元) </th>
-                                            <td> <input type="value"  id="s_price" style="background:#090639; color: #000;color:#fff;" onchange="changPrice()" required>%</td>
-                                        </tr>
-                                        <tr>
-                                            <th >物料体积 大(5m³)</th>
-                                            <td> <input type="value"  id="b_goods_size" style="background:#090639; color: #000;color:#fff;"  onchange="changSize()" required>%</td>
-                                        </tr>
-                                        <tr>
-                                            <th >物料体积 中(0.5m³)</th>
-                                            <td > <input type="value"  id="m_goods_size" style="background:#090639; color: #000;color:#fff;" onchange="changSize()" required>%</td>
-                                        </tr>
-                                        <tr>
-                                            <th >物料体积 大(0.05m³)</th>
-                                            <td> <input type="value"  id="s_goods_size" style="background:#090639; color: #000;color:#fff;" onchange="changSize()" required>%</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-sm-offset-5">
-                            <button  class="btn btn-primary" type="submit"  >保存内容</button>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="center">
-        <div class="center-left fl">
-            <div class="row">
-                <div class="col-sm-6" style="">
-                    <select class="form-control" id="times" style="margin-top: 60px;background:#090639; color: #000;color:#fff;" onchange="post_data1()">
-                        <option value="">--请选择方案--</option>
-
-                    </select>
-                </div>
-
-                <div class="left-top rightTop border">
-                    <div class="title">方案一</div>
-                    <div class="bottom-b1">
-                        <div id="chart_1" class="allnav"></div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="left-top rightTop border">
-                <div class="title">方案三</div>
-                <div class="bottom-b1">
-                    <div id="chart_2" class="allnav"></div>
-                </div>
-
-            </div>
-
-        </div>
-        <div class="center-mid fl">
-            <div class="mid-top rightTop border">
-                <div class="title">方案二</div>
-                <div class="bottom-b1">
-                    <div id="chart_4" class="allnav"></div>
-                </div>
-            </div>
-            <div class="mid-top rightTop border">
-                <div class="title">方案四</div>
-                <div class="bottom-b1">
-                    <div id="chart_5" class="allnav"></div>
-                </div>
-
-            </div>
-        </div>
-        <div class="center-cen fl">
-            <div class="cen-top rightTop border">
-                <div class="title">各方案指标分析</div>
-                <div class="bottom-b">
-                    <div class="col-sm-12 select-table table-striped">
-                        <table id="bootstrap-table"></table>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-4 fl" >
-            <div class="ibox float-e-margins">
+
+
+        <div class="row">
+            <div class="col-sm-6 border">
                 <div class="ibox-title">
-                    <h4>最优网络布局</h4>
+                    <h5 style="text-align: center;"> 不同订单时效下总成本变化</h5>
                 </div>
-                <div class="ibox-content">
-                    <div id="chart_6" class="allnav" style="height: 480px"></div>
+                <div class="ibox-content" >
+                    <div id="chart_1" class="echarts" ></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins" style="height: 60px">
+                            <button class="btn btn-primary" type="submit" onclick="loadLine()" style="margin-top: -2%;margin-left: 45%;z-index: 9999" >确认并提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 border">
+                <div class="ibox-title">
+                    <h5 style="text-align: center;"> 不同库存满足率下总成本变化</h5>
+                </div>
+                <div class="ibox-content" >
+                    <div id="chart_2" class="echarts" ></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins" style="height: 60px">
+                            <button class="btn btn-primary" onclick="loadOrder()" type="submit" style="margin-top: -2%;margin-left: 45%;z-index: 9999" >确认并提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 border">
+                <div class="ibox-title">
+                    <h5 style="text-align: center;"> 不同车型情况下总成本变化</h5>
+                </div>
+                <div class="ibox-content" >
+                    <div id="chart_3" class="echarts" ></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins" style="height: 60px">
+                            <button class="btn btn-primary" onclick="loadCar()" type="submit" style="margin-top: -2%;margin-left: 45%;z-index: 9999" >确认并提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 border">
+                <div class="ibox-title">
+                    <h5 style="text-align: center;"> 不同运输量下总成本变化</h5>
+                </div>
+                <div class="ibox-content" >
+                    <div id="chart_4" class="echarts" ></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins" style="height: 60px">
+                            <button class="btn btn-primary" onclick="loadTransport()" type="submit" style="margin-top: -2%;margin-left: 45%;z-index: 9999" >确认并提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 border">
+                <div class="ibox-title">
+                    <h5 style="text-align: center;"> 不同SKU数量下的成本变化</h5>
+                </div>
+                <div class="ibox-content" >
+                    <div id="chart_5" class="echarts" ></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins" style="height: 60px">
+                            <button class="btn btn-primary" onclick="loadGoodsNum()" type="submit" style="margin-top: -2%;margin-left: 45%;z-index: 9999" >确认并提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 border">
+                <div class="ibox-title">
+                    <h5 style="text-align: center;"> 不同物料价格比例下的总成本变化</h5>
+                </div>
+                <div class="ibox-content" >
+                    <div id="chart_6" class="echarts" ></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins" style="height: 60px">
+                            <button class="btn btn-primary" onclick="loadPrice()" type="submit" style="margin-top: -2%;margin-left: 45%;z-index: 9999" >确认并提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 border">
+                <div class="ibox-title">
+                    <h5 style="text-align: center;"> 不同单仓管理成本下的总成本变化</h5>
+                </div>
+                <div class="ibox-content" >
+                    <div id="chart_7" class="echarts" ></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins" style="height: 60px">
+                            <button class="btn btn-primary" onclick="loadMange()" type="submit" style="margin-top: -2%;margin-left: 45%;z-index: 9999" >确认并提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 border">
+                <div class="ibox-title">
+                    <h5 style="text-align: center;"> 不同物料体积比例下的总成本变化</h5>
+                </div>
+                <div class="ibox-content" >
+                    <div id="chart_8" class="echarts" ></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins" style="height: 60px">
+                            <button class="btn btn-primary" onclick="loadSize()" type="submit" style="margin-top: -2%;margin-left: 45%;z-index: 9999" >确认并提交</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-8">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h4>各网络节点数据</h4>
-                </div>
-                <div class="ibox-content">
-                    <div id="bootstrap-table1" class="allnav" style="height: 480px"></div>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
-
+<iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+<div class="modal fade" id="loadingModal">
+    <div style="width: 200px;height:20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
+        <div class="progress progress-striped active" style="margin-bottom: 0;">
+            <div class="progress-bar" style="width: 100%;"></div>
+        </div>
+        <h5>正在加载...</h5>
+    </div>
+</div>
 <!--</div>-->
-
 <th:block th:include="include :: echarts-js" />
-<!--<th:block th:include="include :: point-index4-js" />-->
+<th:block th:include="include :: echarts-gl-js" />
+<th:block th:include="include :: point-finereport-js" />
 <th:block th:include="include :: footer" />
 <script th:inline="javascript">
-
-    function changPrice(){
-        alert(1)
-        var i=0;
-        if ($("#b_goods_size").val() ==null || $("#b_goods_size").val() ==""){
-            i++;
+    var data1 = [
+        [],
+        [],
+        [],
+        [],
+        []
+    ]
+    // var XName1= [12,24,48,72,96];
+    var XName1= [];
+    for(var m=1;m<=96;m++){
+        XName1[m-1]=m
+    }
+    function loadLine(){
+        for(var s = 0;s<XName1.length;s++ ) {
+           loadM(s);
         }
-        var j=0;
-        if ( $("#m_goods_size").val() ==null || $("#m_goods_size").val() ==""){
-            j++;
-        }
-        var k =0;
-        if ( $("#s_goods_size").val() ==null || $("#s_goods_size").val() ==""){
-            k++;
-        }
-
-        if (i+j+k==1){
-            if (i+j==0){
-                var  num = 100-$("#b_goods_size").val()-$("#m_goods_size").val()
-                if (num>=0){
-                    $("#s_goods_size").val(num);
-                }else {
-                    layer.open( {title:"输入提示",content:"物料体积占比大于100%",color:"#000000"});
-                }
-            }else if(i+k==0){
-                var  num = 100-$("#b_goods_size").val()-$("#s_goods_size").val()
-                if (num>=0){
-                    $("#m_goods_size").val(num);
-                }else {
-                    layer.open( {title:"输入提示",content:"物料体积占比大于100%",color:"#000000"});
-                }
-            }else if(j+k==0) {
-                var num = 100 - $("#m_goods_size").val() - $("#s_goods_size").val()
-                if (num >= 0) {
-                    $("#b_goods_size").val(num);
-                } else {
-                    layer.open({title: "输入提示", content: "物料体积占比大于100%", color: "#000000"});
-                }
+    }
+    var data2  = [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+    ]
+    var XName2= [90,95,98,100];
+    function loadM(s){
+        $.post("/system/point/point/get1", {
+            "provinces": $("#provinces option:selected").val(),
+            "goods_num": $("#goods_num").val(),
+            "times": XName1[s] ,
+            "order": $("#order").val(),
+            "carLength": $("#carLength option:selected").val(),
+            "transportNum": parseInt($("#transportNum").val()) * 365,
+            "warehousing": $("#warehousing").val(),
+            "b_goods_size": $("#b_goods_size").val(),
+            "m_goods_size": $("#m_goods_size").val(),
+            "s_goods_size": $("#s_goods_size").val(),
+            "managementFee": $("#managementFee").val(),
+            "h_price": $("#h_price").val(),
+            "m_price": $("#m_price").val(),
+            "l_price": $("#l_price").val(),
+            "inventory_loss": $("#inventory_loss").val(),
+            "managementFee": $("#managementFee").val()
+        }, function (result) {
+            data1[0][parseInt(s)] = parseInt(parseInt(result.all) / 10000);
+            data1[1][parseInt(s)] = parseInt(parseInt(result.transportCost) / 10000);
+            data1[2][parseInt(s)] = parseInt(parseInt(result.storageCost) / 10000);
+            data1[3][parseInt(s)] = parseInt(parseInt(result.inventoryCost) / 10000);
+            // data1[5][parseInt(s)] = parseInt(parseInt(result.buildCost) / 10000);
+            data1[4][parseInt(s)] = parseInt(parseInt(result.order_rate)*100 );
+            if (s==4){
+                loadEcharts(XName1,data1,"chart_1");
+                loadNum(XName1,data1[0]);
             }
-        }
-
+        });
     }
+    function loadNum(XName,data){
+       var a = (data[data.length-1]-data[0]);
+       var b = data[0]-a*XName[0];
+       alert("y="+parseInt(a)+"x+"+parseInt(b));
+    }
+    function loadOrder(){
+        for(var s = 0;s<XName2.length;s++){
+            loadM2(s);
+        }
+    }
+    var l = 0;
+    function loadM2(s){
+        $.post("/system/point/point/get1", {
+            "provinces": $("#provinces option:selected").val(),
+            "goods_num": $("#goods_num").val(),
+            "times": $("#times").val() ,
+            "order": XName2[s],
+            "carLength": $("#carLength option:selected").val(),
+            "transportNum": parseInt($("#transportNum").val()) * 365,
+            "warehousing": $("#warehousing").val(),
+            "b_goods_size": $("#b_goods_size").val(),
+            "m_goods_size": $("#m_goods_size").val(),
+            "s_goods_size": $("#s_goods_size").val(),
+            "managementFee": $("#managementFee").val(),
+            "h_price": $("#h_price").val(),
+            "m_price": $("#m_price").val(),
+            "l_price": $("#l_price").val(),
+            "inventory_loss": $("#inventory_loss").val(),
+            "managementFee": $("#managementFee").val()
+        }, function (result) {
 
-    function changSize(){
-        var i=0;
-        if ($("#h_price").val() ==null || $("#h_price").val() ==""){
-            i++;
-        }
-        var j=0;
-        if ( $("#m_price").val() ==null || $("#m_price").val() ==""){
-            j++;
-        }
-        var k =0;
-        if ( $("#s_price").val() ==null || $("#s_price").val() ==""){
-            k++;
-        }
+            data2[0][parseInt(s)] = parseInt(parseInt(result.all) / 10000);
+            data2[1][parseInt(s)] = parseInt(result.rate*500);
+            data2[2][parseInt(s)] = parseInt(parseInt(result.storageCost) / 10000);
+            data2[3][parseInt(s)] = parseInt(parseInt(result.inventoryCost) / 10000);
+            data2[4][parseInt(s)] = parseInt(parseInt(result.buildCost) / 10000);
+            if (l==4){
 
-        if (i+j+k==1){
-            if (i+j==0){
-                var  num = 100-$("#h_price").val()-$("#m_price").val()
-                if (num>=0){
-                    $("#s_price").val(num);
-                }else {
-                    layer.open( {title:"输入提示",content:"物料单价占比大于100%",color:"#000000"});
-                }
-            }else if(i+k==0){
-                var  num = 100-$("#h_price").val()-$("#s_price").val()
-                if (num>=0){
-                    $("#m_price").val(num);
-                }else {
-                    layer.open( {title:"输入提示",content:"物料单价占比大于100%",color:"#000000"});
-                }
-            }else if(j+k==0) {
-                var num = 100 - $("#m_price").val() - $("#s_price").val()
-                if (num >= 0) {
-                    $("#h_price").val(num);
-                } else {
-                    layer.open({title: "输入提示", content: "物料单价占比大于100%", color: "#000000"});
-                }
+                loadEcharts(XName2,data2,"chart_2");
+                // loadNum(XName2,data2[0]);
+                // loadNum(XName2,data2[3]);
             }
+            l++;
+        });
+    }
+    var data3 = [
+        [],
+        [],
+        [],
+        [],
+        []
+    ]
+    var XName3 = ["小车4米6","中车7米2","大车9米6","超大车17米5"];
+
+   function loadCar(){
+       for(var s = 0;s<XName3.length;s++){
+           loadM3(s);
+       }
+   }
+   var  k=0;
+    function loadM3(s){
+        $.post("/system/point/point/get1", {
+            "provinces": $("#provinces option:selected").val(),
+            "goods_num": $("#goods_num").val(),
+            "times":$("#times option:selected").val() ,
+            "order": $("#order option:selected").val(),
+            "carLength": XName3[s],
+            "transportNum": parseInt($("#transportNum").val()) * 365,
+            "warehousing": $("#warehousing").val(),
+            "b_goods_size": $("#b_goods_size").val(),
+            "m_goods_size": $("#m_goods_size").val(),
+            "s_goods_size": $("#s_goods_size").val(),
+            "managementFee": $("#managementFee").val(),
+            "h_price": $("#h_price").val(),
+            "m_price": $("#m_price").val(),
+            "l_price": $("#l_price").val(),
+            "inventory_loss": $("#inventory_loss").val(),
+            "managementFee": $("#managementFee").val()
+        }, function (result) {
+
+            data3[0][parseInt(s)] = parseInt(parseInt(result.all) / 10000);
+            data3[1][parseInt(s)] = parseInt(parseInt(result.transportCost) / 10000);
+            data3[2][parseInt(s)] = parseInt(parseInt(result.storageCost) / 10000);
+            data3[3][parseInt(s)] = parseInt(parseInt(result.inventoryCost) / 10000);
+            data3[4][parseInt(s)] = parseInt(parseInt(result.buildCost) / 10000);
+            if (k==3){
+                loadEcharts(XName3,data3,"chart_3");
+                loadNum(XName3,data3[0]);
+            }
+            k++;
+        });
+    }
+    var data4 = [
+        [],
+        [],
+        [],
+        [],
+        []
+    ]
+    var XName4 = [1000,2000,3000,4000,5000,6000,7000,8000,9000,10000];
+    var dataa = [2,2,3,3,4,4,4,5,6,7];
+    var  q=0;
+    function loadTransport(){
+        for(var s = 0;s<XName4.length;s++){
+            loadM4(s);
         }
+    }
+    function loadM4(s){
+        $.post("/system/point/point/get1", {
+            "provinces": $("#provinces option:selected").val(),
+            "goods_num": $("#goods_num").val(),
+            "times":$("#times option:selected").val() ,
+            "order": $("#order option:selected").val(),
+            "carLength": $("#carLength option:selected").val(),
+            "transportNum": parseInt(XName4[s]) * 365,
+            "warehousing": $("#warehousing").val(),
+            "b_goods_size": $("#b_goods_size").val(),
+            "m_goods_size": $("#m_goods_size").val(),
+            "s_goods_size": $("#s_goods_size").val(),
+            "managementFee": $("#managementFee").val(),
+            "h_price": $("#h_price").val(),
+            "m_price": $("#m_price").val(),
+            "l_price": $("#l_price").val(),
+            "inventory_loss": $("#inventory_loss").val(),
+            "managementFee": $("#managementFee").val()
+        }, function (result) {
+            // data4[0][parseInt(s)] = parseInt(parseInt(result.all) / 10000);
+            data4[1][parseInt(s)] = dataa[s];
+            // data4[2][parseInt(s)] = parseInt(parseInt(result.storageCost) / 10000);
+            // data4[3][parseInt(s)] = parseInt(parseInt(result.inventoryCost) / 10000);
+            // data4[4][parseInt(s)] = parseInt(parseInt(result.buildCost) / 10000);
+            if (q==9){
+                alert(data4)
+                loadEcharts(XName4,data4,"chart_4");
+                // loadNum(XName4,datas[0]);
+            }
+            q++;
+        });
     }
 
 
-    function post_data(){
+    var data5 = [
+        [],
+        [],
+        [],
+        [],
+        []
+    ]
+    var XName5 = [500,1000,1500,2000,2500,3000,3500,4000,4500,5000];
 
-        if ( $("#transportNum").val() <=0 ){
-            layer.open({title: "输入提示", content: "请输入大于0的值", color: "#000000"});
-            return;
-        }else if($("#transportNum").val() >1000000000){
-            layer.open({title: "输入提示", content: "请输入小于100000000的值", color: "#000000"});
-            return;
+    var  z=0;
+    function loadGoodsNum(){
+        for(var s = 0;s<XName5.length;s++){
+            loadM5(s);
         }
-
-
-        var provinces = $("#provinces option:selected").val();
-        for (var i = 1; i < 890; i++) {
-            $("#times").append("<option value='" + i + "'>方案" + i + "</option>");
-        }
-        setOption(provinces, 10, "chart_1");
-        setOption(provinces, 8, "chart_2");
-        setOption(provinces, 6, "chart_4");
-        setOption(provinces, 4, "chart_5");
-        setOption(provinces, 1, "chart_6");
-        loadTable(provinces);
-
     }
-    function setOption(provinces,num,ids){
+    function loadM5(s){
+        $.post("/system/point/point/get1", {
+            "provinces": $("#provinces option:selected").val(),
+            "goods_num": XName5[s],
+            "times":$("#times option:selected").val() ,
+            "order": $("#order option:selected").val(),
+            "carLength": $("#carLength option:selected").val(),
+            "transportNum": parseInt($("#transportNum").val())*365,
+            "warehousing": $("#warehousing").val(),
+            "b_goods_size": $("#b_goods_size").val(),
+            "m_goods_size": $("#m_goods_size").val(),
+            "s_goods_size": $("#s_goods_size").val(),
+            "managementFee": $("#managementFee").val(),
+            "h_price": $("#h_price").val(),
+            "m_price": $("#m_price").val(),
+            "l_price": $("#l_price").val(),
+            "inventory_loss": $("#inventory_loss").val()
+        }, function (result) {
+            data5[0][parseInt(s)] = parseInt(parseInt(result.all) / 10000);
+            data5[1][parseInt(s)] = parseInt(parseInt(result.transportCost) / 10000);
+            data5[2][parseInt(s)] = parseInt(parseInt(result.storageCost) / 10000);
+            data5[3][parseInt(s)] = parseInt(parseInt(result.inventoryCost) / 10000);
+            data5[4][parseInt(s)] = parseInt(parseInt(result.buildCost) / 10000);
+            if (z==9){
+                loadEcharts(XName5,data5,"chart_5");
+                loadNum(XName5,data5[0]);
+            }
+            z++;
+        });
+    }
+
+    var datam =[];
+    var data6 = [
+        [],
+        [],
+        [],
+        [],
+        []
+    ]
+    var XName61 = [];
+    var XName62 = [];
+    var XName63 = [];
+    var XName6 = ["0:0:100","0:50:50","0:100:0","50:0:50","50:50:0","100:0:0"];
+    var  e=0;
+    var d=0;
+    for(var a=0;a<100;a+=10){
+        for(var b=0;b<100-a;b+=10){
+            XName61[d] = a;
+            XName62[d] = b;
+            XName63[d] = 100-a-b;
+            d++;
+        }
+    }
+    function loadPrice(){
+
+        for(var s = 0;s<XName61.length;s++){
+            loadM6(s);
+        }
+    }
+    function loadM6(s){
+        $.post("/system/point/point/get1", {
+            "provinces": $("#provinces option:selected").val(),
+            "goods_num":$("#goods_num").val(),
+            "times":$("#times option:selected").val() ,
+            "order": $("#order option:selected").val(),
+            "carLength": $("#carLength option:selected").val(),
+            "transportNum": parseInt($("#transportNum").val())*365,
+            "warehousing": $("#warehousing").val(),
+            "b_goods_size": $("#b_goods_size").val(),
+            "m_goods_size": $("#m_goods_size").val(),
+            "s_goods_size": $("#s_goods_size").val(),
+            "managementFee": $("#managementFee").val(),
+            "h_price": XName61[s],
+            "m_price": XName62[s],
+            "l_price": XName63[s],
+            "inventory_loss": $("#inventory_loss").val()
+        }, function (result) {
+            data6[0][parseInt(s)] = parseInt(parseInt(result.all) / 10000);
+            // data6[1][parseInt(s)] = parseInt(parseInt(result.transportCost) / 10000);
+            // data6[2][parseInt(s)] = parseInt(parseInt(result.storageCost) / 10000);
+            // data6[3][parseInt(s)] = parseInt(parseInt(result.inventoryCost) / 10000);
+            // data6[4][parseInt(s)] = parseInt(parseInt(result.buildCost) / 10000);
+
+
+            if (e==(XName61.length-1)){
+                for (var t = 0; t < XName61.length; t+=1) {
+                    var x = XName61[t];
+                    var y = XName63[t];
+                    var z =  data6[0][t];
+                    datam.push([x, y, z]);
+                }
+                loadEcharts1(datam,"chart_6");
+            }
+            e++;
+        });
+    }
+
+    var data7 = [
+        [],
+        [],
+        [],
+        [],
+        []
+    ]
+    var XName7 = [50000,100000,150000,200000,250000,300000,350000,400000,450000,500000];
+
+    var  j=0;
+    function loadMange(){
+        for(var s = 0;s<XName7.length;s++){
+            loadM7(s);
+        }
+    }
+    function loadM7(s){
+        $.post("/system/point/point/get1", {
+            "provinces": $("#provinces option:selected").val(),
+            "goods_num": $("#goods_num").val(),
+            "times":$("#times option:selected").val() ,
+            "order": $("#order option:selected").val(),
+            "carLength": $("#carLength option:selected").val(),
+            "transportNum": parseInt($("#transportNum").val())*365,
+            "warehousing": $("#warehousing").val(),
+            "b_goods_size": $("#b_goods_size").val(),
+            "m_goods_size": $("#m_goods_size").val(),
+            "s_goods_size": $("#s_goods_size").val(),
+            "managementFee": XName7[s],
+            "h_price": $("#h_price").val(),
+            "m_price": $("#m_price").val(),
+            "l_price": $("#l_price").val(),
+            "inventory_loss": $("#inventory_loss").val()
+        }, function (result) {
+            data7[0][parseInt(s)] = parseInt(parseInt(result.all) / 10000);
+            data7[1][parseInt(s)] = parseInt(parseInt(result.transportCost) / 10000);
+            data7[2][parseInt(s)] = parseInt(parseInt(result.storageCost) / 10000);
+            data7[3][parseInt(s)] = parseInt(parseInt(result.inventoryCost) / 10000);
+            data7[4][parseInt(s)] = parseInt(parseInt(result.buildCost) / 10000);
+            if (j==9){
+                loadEcharts(XName7,data7,"chart_7");
+                loadNum(XName7,data7[0]);
+            }
+            j++;
+        });
+    }
+
+
+    var data8 = [
+        [],
+        [],
+        [],
+        [],
+        []
+    ]
+    var XName81 = [];
+    var XName82 = [];
+    var XName83 = [];
+    var c =0;
+    for(var a=0;a<100;a+=10){
+        for(var b=0;b<100-a;b+=10){
+            XName81[c] = a;
+            XName82[c] = b;
+            XName83[c] = 100-a-b;
+            c++;
+        }
+    }
+    var datas = [];
+    // Parametric curve
+
+    var  h=0;
+    function loadSize(){
+        for(var s = 0;s<XName81.length;s++){
+            loadM8(s);
+        }
+    }
+    function loadM8(s){
+        $.post("/system/point/point/get1", {
+            "provinces": $("#provinces option:selected").val(),
+            "goods_num": $("#goods_num").val(),
+            "times":$("#times option:selected").val() ,
+            "order": $("#order option:selected").val(),
+            "carLength": $("#carLength option:selected").val(),
+            "transportNum": parseInt($("#transportNum").val())*365,
+            "warehousing": $("#warehousing").val(),
+            "b_goods_size": XName81[s],
+            "m_goods_size": XName82[s],
+            "s_goods_size": XName83[s],
+            "managementFee":  $("#managementFee").val(),
+            "h_price": $("#h_price").val(),
+            "m_price": $("#m_price").val(),
+            "l_price": $("#l_price").val(),
+            "inventory_loss": $("#inventory_loss").val()
+        }, function (result) {
+            data8[0][parseInt(s)] = parseInt(parseInt(result.all) / 10000);
+            data8[1][parseInt(s)] = parseInt(parseInt(result.transportCost) / 10000);
+            data8[2][parseInt(s)] = parseInt(parseInt(result.storageCost) / 10000);
+            data8[3][parseInt(s)] = parseInt(parseInt(result.inventoryCost) / 10000);
+            data8[4][parseInt(s)] = parseInt(parseInt(result.buildCost) / 10000);
+            if (h==XName81.length-1){
+                for (var t = 0; t < XName82.length; t+=1) {
+                    var x = XName81[t];
+                    var y = XName83[t];
+                    var z =  data8[0][t];
+                    datas.push([x, y, z]);
+                }
+              loadEcharts1(datas,"chart_8");
+            }
+            h++;
+        });
+    }
+
+    /**
+     * <p>
+     * 对X轴数据节点球平均值
+     * </p>
+     *
+     * @param x
+     *            存储X轴节点的数组
+     *            <p>
+     *            Date:2007-12-25 20:21 PM
+     *            </p>
+     * @author qingbao-gao
+     * @return 平均值
+     */
+    function average(x) {
+        var ave = 0;
+        var sum = 0;
+        if (x !== null) {
+            for (var i = 0; i < x.length; i++) {
+                sum += x[i];
+            }
+            ave = sum / x.length;
+        }
+        return ave;
+    }
+
+    function loadEcharts(XName,data1,ids){
         var myChart1 = echarts.init(document.getElementById(ids));
-        $.post("/system/point/point/network", {"provinces": provinces,"num":num,"carLength":$("#carLength option:selected").val(),"transportNum":$("#transportNum").val(),"warehousing":$("#warehousing").val(),"b_goods_size":$("#b_goods_size").val(),"m_goods_size":$("#m_goods_size").val(),"managementFee":$("#managementFee").val(),"h_price":$("#h_price").val(),"m_price":$("#m_price").val(),"l_price":$("#l_price").val(),"inventory_loss":$("#inventory_loss").val()}, function (result) {
-            var d = result.rows;
-            var data1 = "[";
-            var data2 = "[";
-            for (var i = 0; i <d.length; i++) {
-                if (i<d.length-1) {
-                    data1 += "{name: \"" + d[i].city + "\", value:" + d[i].gdp + "},";
-                    data2 += "{name: '"+d[i].city1+"', coord:["+d[i].lat1+","+d[i].lng1+"], itemStyle: {normal: {color: '#9D8589'}}},"
-                }else {
-                    data1 += "{name: \"" + d[i].city + "\", value:" + d[i].gdp + "}]";
-                    data2 += "{name: '"+d[i].city1+"', coord:["+d[i].lat1+","+d[i].lng1+"], itemStyle: {normal: {color: '#9D8589'}}}]"
+        //数据
+        const colorList = ["#d0fcff", "#9E87FF", '#9a6839', '#fe9a8b', '#F56948', '#9E87FF']
+        myChart1.setOption({
+            // backgroundColor:'rgba(128, 128, 128, 0.0)', //rgba设置透明度0.1
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
                 }
-            }
-            data1 = eval('(' + data1 + ')');
-            var data21 = eval('(' + data2 + ')');
-            var uploadedDataURL = "";
-            if (provinces=="江苏"){
-                uploadedDataURL = "../../js/point/jiangsu.json";
-            }else if(provinces=="浙江"){
-                uploadedDataURL = "../../js/point/zhejiang.json";
-            }else if(provinces=="山东"){
-                uploadedDataURL = "../../js/point/shandong.json";
-            }else if(provinces=="安徽"){
-                uploadedDataURL = "../../js/point/anhui.json";
-            }else if(provinces=="江西"){
-                uploadedDataURL = "../../js/point/jiangxi.json";
-            }else if(provinces=="湖北"){
-                uploadedDataURL = "../../js/point/hubei.json";
-            }else if(provinces=="湖南"){
-                uploadedDataURL = "../../js/point/hunan.json";
-            }else if(provinces=="福建"){
-                uploadedDataURL = "../../js/point/fujian.json";
-            }else if(provinces=="广东"){
-                uploadedDataURL = "../../js/point/guangdong.json";
-            }else if(provinces=="广西"){
-                uploadedDataURL = "../../js/point/guangxi.json";
-            }else if(provinces=="贵州"){
-                uploadedDataURL = "../../js/point/guizhou.json";
-            }else if(provinces=="四川"){
-                uploadedDataURL = "../../js/point/sichuan.json";
-            }else if(provinces=="云南"){
-                uploadedDataURL = "../../js/point/yunnan.json";
-            }else if(provinces=="河北"){
-                uploadedDataURL = "../../js/point/hebei.json";
-            }else if(provinces=="河南"){
-                uploadedDataURL = "../../js/point/henan.json";
-            }else if(provinces=="辽宁"){
-                uploadedDataURL = "../../js/point/liaoning.json";
-            }else if(provinces=="吉林"){
-                uploadedDataURL = "../../js/point/jining.json";
-            }else if(provinces=="黑龙江"){
-                uploadedDataURL = "../../js/point/heilongjiang.json";
-            }else if(provinces=="陕西"){
-                uploadedDataURL = "../../js/point/shanxisheng.json";
-            }else if(provinces=="青海"){
-                uploadedDataURL = "../../js/point/qinghai.json";
-            }else if(provinces=="新疆"){
-                uploadedDataURL = "../../js/point/xinjiang.json";
-            }else if(provinces=="西藏"){
-                uploadedDataURL = "../../js/point/xizang.json";
-            }else if(provinces=="内蒙"){
-                uploadedDataURL = "../../js/point/neimenggu.json";
-            }else if(provinces=="海南"){
-                uploadedDataURL = "../../js/point/hainan.json";
-            }else if(provinces=="山西"){
-                uploadedDataURL = "../../js/point/shanxi.json";
-            }else if(provinces=="宁夏"){
-                uploadedDataURL = "../../js/point/ningxia.json";
-            }else if(provinces=="甘肃"){
-                uploadedDataURL = "../../js/point/gansu.json";
-            }
-
-
-            $.getJSON(uploadedDataURL, function (geoJson) {
-                echarts.registerMap('guangzhou', geoJson);
-                myChart1.setOption({
-                    title: {
-                        // text           : '江苏某公司新增CDC节点最优成本下的布局图',
-                        // subtext        : '苏南仓 中央仓 苏北仓',
-                        left: 'center',
-                        top: 25,
-                        textStyle: {
-                            fontSize: '24',
-                            color: '#B03060'
-                        }
-                    },
-                    visualMap: {
-                        min: 0,
-                        max: 100,
-                        text: ['高', '低'],
-                        realtime: false,
-                        calculable: true,
-                        inRange: {
-                            color: ['#FFD8DE', '#b7d6f3', '#FDE6A2', '#3598c1', '#C6E3DE',]
-                        },
-                        textStyle: {
-                            color: '#fff'
-                        }
-                    },
-
-                    series: [{
-                        name: '地图数据',
-                        type: 'map',
-                        zoom: 1.05,
-                        roam: true, //是否开启鼠标缩放和平移漫游
-                        mapType: 'guangzhou', // 自定义扩展图表类型
-                        itemStyle: {
-                            normal: {
-                                borderColor: 'white',
-                            },
-                            emphasis: {
-                                label: {
-                                    show: true,
-                                    textStyle: {
-                                        color: 'darkslategray',
-                                    },
-
-                                },
-                                emphasis: {
-                                    textStyle: {
-                                        color: 'darkslategray',
-                                    },
-                                }
-                            }
-                        },
-                        data: data1,
-                        label: {//区域名样式
-                            normal: {
-                                show: true,
-                                textStyle: {
-                                    fontSize: 8,
-                                    left: 2,
-                                    color: 'black'
-                                }
-                            },
-                            emphasis: {
-                                textStyle: {
-                                    color: 'rgba(255,255,255,1)'
-                                }
-                            }
-                        },
-
-
-                    }, {
-                        name: '中国',
-                        type: 'map',
-                        mapType: 'guangzhou',
-                        selectedMode: 'multiple',
-                        label: {
-                            normal: {
-                                show: false
-
-                            },
-                            emphasis: {
-                                show: false
-                            }
-                        },
-                        data: [],
-                        markPoint: {
-                            symbol: 'pin',
-                            symbolSize: 100,
-                            itemStyle: {
-
-                                normal: {
-                                    borderColor: '#33CBFF',
-                                    color: '#33CBFF',
-                                    borderWidth: 0.2,            // 标注边线线宽，单位px，默认为1
-                                    label: {
-                                        show: true
-                                    }
-                                }
-                            },
-                            label: {
-                                normal: {
-                                    show: true,
-                                    formatter: function (d) {
-                                        return d.name
-                                    }
-                                }
-                            },
-                            data: data21
-                        }
-                    }]
-                });
-                window.addEventListener("resize", function () {
-                    myChart1.resize();
-                });
-
-            });
-        });
-
-
-    }
-
-    function post_data1() {
-
-        var provinces = $("#provinces option:selected").val();
-        var times = $("#times option:selected").val();
-        $.post("/system/point/point/network", {"provinces": provinces,"num":times}, function (result) {
-            var d = result.rows;
-            var myChart1 = echarts.init(document.getElementById('chart_1'));
-            var data1 = "[";
-            var data2 = "[";
-            for (var i = 0; i <d.length; i++) {
-                if (i<d.length-1) {
-                    data1 += "{name: \"" + d[i].city + "\", value:" + d[i].gdp + "},";
-                    data2 += "{name: '"+d[i].city1+"', coord:["+d[i].lat1+","+d[i].lng1+"], itemStyle: {normal: {color: '#9D8589'}}},"
-                }else {
-                    data1 += "{name: \"" + d[i].city + "\", value:" + d[i].gdp + "}]";
-                    data2 += "{name: '"+d[i].city1+"', coord:["+d[i].lat1+","+d[i].lng1+"], itemStyle: {normal: {color: '#9D8589'}}}]"
+            },
+            legend: {
+                icon: 'circle',
+                top: '2%',
+                itemWidth: 48,
+                itemGap: 40,
+                textStyle: {
+                    color: '#eceef3'
                 }
-            }
-            data1 = eval('(' + data1 + ')');
-            var data21 = eval('(' + data2 + ')');
-            var uploadedDataURL = "";
-            if (provinces=="江苏"){
-                uploadedDataURL = "../../js/point/jiangsu.json";
-            }else if(provinces=="浙江"){
-                uploadedDataURL = "../../js/point/zhejiang.json";
-            }else if(provinces=="山东"){
-                uploadedDataURL = "../../js/point/shandong.json";
-            }else if(provinces=="安徽"){
-                uploadedDataURL = "../../js/point/anhui.json";
-            }else if(provinces=="江西"){
-                uploadedDataURL = "../../js/point/jiangxi.json";
-            }else if(provinces=="湖北"){
-                uploadedDataURL = "../../js/point/hubei.json";
-            }else if(provinces=="湖南"){
-                uploadedDataURL = "../../js/point/hunan.json";
-            }else if(provinces=="福建"){
-                uploadedDataURL = "../../js/point/fujian.json";
-            }else if(provinces=="广东"){
-                uploadedDataURL = "../../js/point/guangdong.json";
-            }else if(provinces=="广西"){
-                uploadedDataURL = "../../js/point/guangxi.json";
-            }else if(provinces=="贵州"){
-                uploadedDataURL = "../../js/point/guizhou.json";
-            }else if(provinces=="四川"){
-                uploadedDataURL = "../../js/point/sichuan.json";
-            }else if(provinces=="云南"){
-                uploadedDataURL = "../../js/point/yunnan.json";
-            }else if(provinces=="河北"){
-                uploadedDataURL = "../../js/point/hebei.json";
-            }else if(provinces=="河南"){
-                uploadedDataURL = "../../js/point/henan.json";
-            }else if(provinces=="辽宁"){
-                uploadedDataURL = "../../js/point/liaoning.json";
-            }else if(provinces=="吉林"){
-                uploadedDataURL = "../../js/point/jining.json";
-            }else if(provinces=="黑龙江"){
-                uploadedDataURL = "../../js/point/heilongjiang.json";
-            }else if(provinces=="陕西"){
-                uploadedDataURL = "../../js/point/shanxisheng.json";
-            }else if(provinces=="青海"){
-                uploadedDataURL = "../../js/point/qinghai.json";
-            }else if(provinces=="新疆"){
-                uploadedDataURL = "../../js/point/xinjiang.json";
-            }else if(provinces=="西藏"){
-                uploadedDataURL = "../../js/point/xizang.json";
-            }else if(provinces=="内蒙"){
-                uploadedDataURL = "../../js/point/neimenggu.json";
-            }else if(provinces=="海南"){
-                uploadedDataURL = "../../js/point/hainan.json";
-            }
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function (params) {
+                    return '订单时效' + ' : ' + params[0].name + '<br/>'
+                        + params[0].seriesName + ' : ' + "¥" + formatNum(parseInt(params[0].value)) + '万<br/>'
+                        + params[1].seriesName + ':' + "¥" + formatNum(parseInt(params[1].value)) + '万<br/>'
+                        + params[2].seriesName + ':' + "¥" + formatNum(parseInt(params[2].value)) + '万<br/>'
+                        + params[3].seriesName + ':' + "¥" + formatNum(parseInt(params[3].value)) + '万<br/>'
+                        + params[4].seriesName + ':' + "¥" + formatNum(parseInt(params[4].value)) + '万';
+                },
+                axisPointer: {
+                    label: {
+                        show: true,
+                        backgroundColor: '#fff',
+                        color: '#e8e8e8',
+                        borderColor: 'rgba(0,0,0,0)',
+                        shadowColor: 'rgba(0,0,0,0)',
+                        shadowOffsetY: 0,
 
-            var option2 =null;
-            $.getJSON(uploadedDataURL, function (geoJson) {
-                // echarts.clear();
-                echarts.registerMap('guangzhou', geoJson);
-                option2 = {
-
-                    title: {
-                        // text           : '江苏某公司新增CDC节点最优成本下的布局图',
-                        // subtext        : '苏南仓 中央仓 苏北仓',
-                        left: 'center',
-                        top: 25,
-                        textStyle: {
-                            fontSize: '24',
-                            color: '#B03060'
-                        }
                     },
-                    visualMap: {
-                        min: 0,
-                        max: 100,
-                        text: ['高', '低'],
-                        realtime: false,
-                        calculable: true,
-                        inRange: {
-                            color: ['#FFD8DE', '#b7d6f3', '#FDE6A2', '#3598c1', '#C6E3DE',]
-                        },
-                        textStyle: {
-                            color: '#fff'
-                        }
+                    lineStyle: {
+                        width: 0
+                    }
+                },
+                backgroundColor: '#fff',
+                textStyle: {
+                    color: '#5c6c7c'
+                },
+
+                // formatter: "{a} : ¥{c}", // 这里是鼠标移上去的显示数据
+                padding: [10, 10],
+                extraCssText: 'box-shadow: 1px 0 2px 0 rgba(163,163,163,0.5)'
+            },
+            grid: {
+                top: "10%",
+                bottom: "15%"//也可设置left和right设置距离来控制图表的大小
+
+            },
+            xAxis: [{
+                type: 'category',
+                data: XName,
+                axisLine: {
+                    lineStyle: {
+                        color: '#DCE2E8'
+                    }
+                },
+                name: '仓库数量',
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    show: true,
+                    interval: 0,
+                    textStyle: {
+                        color: '#ebeef1'
                     },
 
-                    series: [{
-                        name: '地图数据',
-                        type: 'map',
-                        zoom: 1.05,
-                        roam: true, //是否开启鼠标缩放和平移漫游
-                        mapType: 'guangzhou', // 自定义扩展图表类型
-                        itemStyle: {
-                            normal: {
-                                borderColor: 'white',
-                            },
-                            emphasis: {
-                                label: {
-                                    show: true,
-                                    textStyle: {
-                                        color: 'darkslategray',
-                                    },
+                    // 默认x轴字体大小
+                    fontSize: 12,
+                    // margin:文字到x轴的距离
+                    margin: 15
+                },
+                axisPointer: {
+                    label: {
+                        // padding: [11, 5, 7],
+                        padding: [0, 0, 10, 0],
+                        /*
+        除了padding[0]建议必须是0之外，其他三项可随意设置
 
-                                },
-                                emphasis: {
-                                    textStyle: {
-                                        color: 'darkslategray',
-                                    },
-                                }
-                            }
+        和CSSpadding相同，[上，右，下，左]
+
+        如果需要下边线超出文字，设左右padding即可，注：左右padding最好相同
+
+        padding[2]的10:
+
+        10 = 文字距下边线的距离 + 下边线的宽度
+
+        如：UI图中文字距下边线距离为7 下边线宽度为2
+
+        则padding: [0, 0, 9, 0]
+
+                    */
+                        // 这里的margin和axisLabel的margin要一致!
+                        margin: 15,
+
+                        // 移入时的字体大小
+                        fontSize: 12,
+                        backgroundColor: {
+                            type: 'linear',
+                            x: 0,
+                            y: 0,
+                            x2: 0,
+                            y2: 1,
+
+                            colorStops: [{
+                                offset: 0,
+                                color: '#fff' // 0% 处的颜色
+                            }, {
+                                // offset: 0.9,
+                                offset: 0.86,
+                                /*
+    0.86 = （文字 + 文字距下边线的距离）/（文字 + 文字距下边线的距离 + 下边线的宽度）
+
+                            */
+                                color: '#fff' // 0% 处的颜色
+                            }, {
+                                offset: 0.86,
+                                color: '#33c0cd' // 0% 处的颜色
+                            }, {
+                                offset: 1,
+                                color: '#33c0cd' // 100% 处的颜色
+                            }],
+                            global: false // 缺省为 false
+                        }
+                    }
+                },
+                boundaryGap: false
+            }],
+            yAxis: [{
+                type: 'value',
+                axisTick: {
+                    show: false
+                },
+                name: '各细分成本（万元）',
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        color: '#DCE2E8'
+                    }
+                },
+
+                axisLabel: {
+                    show: true,
+                    formatter: "¥{value}万",
+                    textStyle: {
+                        color: '#e3e4ea'
+                    }
+                },
+                splitLine: {
+                    show: false
+                }
+            }, {
+                type: 'value',
+                name: '总成本（元）',
+                position: 'right',
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#e4e8e8'
+                    },
+                    show: true,
+                    formatter: "¥{value}万",
+                },
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        color: '#DCE2E8'
+                    },
+                    formatter: "¥{value}万",
+                },
+                splitLine: {
+                    show: false
+                }
+            }],
+            series: [{
+                name: '总成本',
+                type: 'line',
+                data: data1[0],
+                markPoint: {
+                    label: {
+                        show: true,
+                        formatter: function (params) {
+                            var data = params.data;
+                            var val = parseInt(data.value);
+                            return '￥' + formatNum(val) + '万'
                         },
-                        data: data1,
-                        label: {//区域名样式
-                            normal: {
-                                show: true,
-                                textStyle: {
-                                    fontSize: 8,
-                                    left: 2,
-                                    color: 'black'
-                                }
-                            },
-                            emphasis: {
-                                textStyle: {
-                                    color: 'rgba(255,255,255,1)'
-                                }
-                            }
-                        },
+                        borderWidth: 10,
+                        color: '#0eddfd',
+                        padding: 4,
 
+                    },
+                    data: [
+                        {
+                            type: 'min',//最小值
+                        }
+                    ]
+                },
+                symbolSize: 1,
+                yAxisIndex: 1,
+                symbol: 'circle',
+                smooth: true,
 
-                    }, {
-                        name: '中国',
-                        type: 'map',
-                        mapType: 'guangzhou',
-                        selectedMode: 'multiple',
+                showSymbol: false,
+                // lineStyle: {
+                //     width: 2,
+                //     color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                //         offset: 1,
+                //         color: "#9E87FF"
+                //     },
+                //         {
+                //             offset: 0,
+                //             color: '#fe9a8b'
+                //         }
+                //     ]),
+                //     shadowColor: 'rgba(254,154,139, 0.3)',
+                //     shadowBlur: 10,
+                //     shadowOffsetY: 20
+                // },
+                itemStyle: {
+                    normal: {
+                        color: colorList[1],
+                        borderColor: colorList[1],
                         label: {
-                            normal: {
-                                show: false
+                            show: true,
+                            formatter: '¥{c}万',
+                            borderWidth: 10,
+                            color: '#0eddfd',
+                            padding: 4,
 
-                            },
-                            emphasis: {
-                                show: false
-                            }
-                        },
-                        data: [],
-                        markPoint: {
-                            symbol: 'pin',
-                            symbolSize: 100,
-                            itemStyle: {
-
-                                normal: {
-                                    borderColor: '#33CBFF',
-                                    color: '#33CBFF',
-                                    borderWidth: 0.2,            // 标注边线线宽，单位px，默认为1
-                                    label: {
-                                        show: true
-                                    }
-                                }
-                            },
-                            label: {
-                                normal: {
-                                    show: true,
-                                    formatter: function (d) {
-                                        return d.name
-                                    }
-                                }
-                            },
-                            data: data21
                         }
-                    }]
-                };
-                myChart1.setOption(option2);
-                window.addEventListener("resize", function () {
-                    myChart1.resize();
-                });
-            });
-        });
+                    }
+                }
+            }, {
+                name: '运输成本',
+                type: 'line',
+                data: data1[1],
+                symbolSize: 1,
 
+                symbol: 'circle',
+                smooth: true,
+                yAxisIndex: 0,
+                showSymbol: false,
+                // lineStyle: {
+                //     width: 1,
+                //     color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [{
+                //         offset: 1,
+                //         color: '#9E87FF'
+                //     },
+                //         {
+                //             offset: 0,
+                //             color: '#9a6839'
+                //         }
+                //     ]),
+                //     shadowColor: 'rgba(158,135,255, 0.3)',
+                //     shadowBlur: 10,
+                //     shadowOffsetY: 20
+                // },
+                itemStyle: {
+                    normal: {
+                        color: colorList[2],
+                        borderColor: colorList[2]
+                    }
+                },
+            }, {
+                name: '仓储成本',
+                type: 'line',
+                data: data1[2],
+                symbolSize: 1,
+                symbol: 'circle',
+                smooth: true,
+                yAxisIndex: 0,
+                showSymbol: false,
+                // lineStyle: {
+                //     width: 1,
+                //     color: new echarts.graphic.LinearGradient(1, 1, 0, 0, [{
+                //         offset: 1,
+                //         color: '#fe9a8b'
+                //     },
+                //         {
+                //             offset: 0,
+                //             color: '#5389ea'
+                //         }
+                //     ]),
+                //     shadowColor: '#3daf5d',
+                //     shadowBlur: 10,
+                //     shadowOffsetY: 20
+                // },
+                itemStyle: {
+                    normal: {
+                        color: colorList[3],
+                        borderColor: colorList[3]
+                    }
+                }
+            },
+
+                {
+                    name: '库存持有成本',
+                    type: 'line',
+                    data: data1[3],
+                    symbolSize: 1,
+                    symbol: 'circle',
+                    smooth: true,
+                    yAxisIndex: 0,
+                    showSymbol: false,
+                    // lineStyle: {
+                    //     width: 1 ,
+                    //     color: new echarts.graphic.LinearGradient(1, 1, 0, 0, [{
+                    //         offset: 1,
+                    //         color: '#f56948'
+                    //     },
+                    //         {
+                    //             offset: 0,
+                    //             color: '#78ecc6'
+                    //         }
+                    //     ]),
+                    //     shadowColor: 'rgb(173,143,32)',
+                    //     shadowBlur: 10,
+                    //     shadowOffsetY: 20
+                    // },
+                    itemStyle: {
+                        normal: {
+                            color: colorList[4],
+                            borderColor: colorList[4]
+                        }
+                    }
+                },
+                {
+                    name: '仓库建设成本',
+                    type: 'line',
+                    data: data1[4],
+                    symbolSize: 1,
+                    symbol: 'circle',
+                    smooth: true,
+                    yAxisIndex: 0,
+                    showSymbol: false,
+                    // lineStyle: {
+                    //     width: 1,
+                    //     color: new echarts.graphic.LinearGradient(1, 1, 0, 0, [{
+                    //         offset: 0,
+                    //         color: '#d0fcff'
+                    //     },
+                    //         {
+                    //             offset: 1,
+                    //             color: '#e1b8f5'
+                    //         }
+                    //     ]),
+                    //     shadowColor: 'rgba(115,221,255, 0.3)',
+                    //     shadowBlur: 10,
+                    //     shadowOffsetY: 20
+                    // },
+                    itemStyle: {
+                        normal: {
+                            color: colorList[0],
+                            borderColor: colorList[0]
+                        }
+                    }
+                }
+            ]
+        });
+        return;
     }
-    function queryParams(params) { //配置参数
-        var temp = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
-
-        };
-        return temp;
+    function loadEcharts1(data,ids){
+        var myChart1 = echarts.init(document.getElementById(ids));
+        //数据
+        const colorList = ["#d0fcff", "#9E87FF", '#9a6839', '#fe9a8b', '#F56948', '#9E87FF']
+        myChart1.setOption( {
+            tooltip: {},
+            // backgroundColor: '#fff',
+            visualMap: {
+                show: false,
+                dimension: 2,
+                min: 0,
+                max: 30,
+                inRange: {
+                    color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+                }
+            },
+            xAxis3D: {
+                type: 'value'
+            },
+            yAxis3D: {
+                type: 'value'
+            },
+            zAxis3D: {
+                type: 'value'
+            },
+            grid3D: {
+                viewControl: {
+                    projection: 'orthographic'
+                }
+            },
+            series: [{
+                type: 'line3D',
+                data: data,
+                lineStyle: {
+                    width: 4
+                }
+            }]
+        });
+        return;
     }
-    function loadTable(provinces) {
-
-        $('#bootstrap-table').bootstrapTable('refresh');
-        $('#bootstrap-table').bootstrapTable({
-            method: 'post',
-            url: "/system/point/point/networkplan",
-            queryParams: {"provinces":$("#provinces option:selected").val(),
-                "carLength":$("#carLength option:selected").val(),
-                "transportNum":$("#transportNum").val(),
-                "warehousing":$("#warehousing").val(),
-                "b_goods_size":$("#b_goods_size").val(),
-                "m_goods_size":$("#m_goods_size").val(),
-                "managementFee":$("#managementFee").val(),
-                "h_price":$("#h_price").val(),
-                "m_price":$("#m_price").val(),
-                "l_price":$("#l_price").val(),
-                "inventory_loss":$("#inventory_loss").val()},
-            showLoading: false,
-            showSearch: false,
-            showRefresh: false,
-            showToggle: false,
-            showColumns: false,
-            showExport: false,
-            pageNumber: 1, // 初始化加载第一页
-            columns: [
-                {
-                    field: 'indicators',
-                    title: '指标'
-                },
-                {
-                    field: 'planA',
-                    title: '方案一'
-                },
-                {
-                    field: 'planB',
-                    title: '方案二'
-                },
-                {
-                    field: 'planC',
-                    title: '方案三'
-                },
-                {
-                    field: 'planD',
-                    title: '方案四'
-                }]
-        });
-
-        $('#bootstrap-table1').bootstrapTable('refresh');
-        $('#bootstrap-table1').bootstrapTable({
-            method: 'post',
-            url: "/system/point/point/networkplan1",
-            showLoading: false,
-            showSearch: false,
-            showRefresh: false,
-            showToggle: false,
-            showColumns: false,
-            showExport: false,
-            pageNumber: 1, // 初始化加载第一页
-            columns: [
-                {
-                    field: 'position',
-                    title: '仓库所在地址'
-                },
-                {
-                    field: 'cost',
-                    title: '物流成本'
-                },
-                {
-                    field: 'transportcost',
-                    title: '运输成本'
-                },
-                {
-                    field: 'storagecost',
-                    title: '仓储成本'
-                },
-                {
-                    field: 'buildcost',
-                    title: '仓库建设成本'
-                },
-                {
-                    field: 'inventorycost',
-                    title: '库存持有成本'
-                },
-                {
-                    field: 'storage',
-                    title: '仓储能力-吨'
-                },
-                {
-                    field: 'throughput',
-                    title: '日吞吐能力-吨'
-                },
-                {
-                    field: 'order_rate',
-                    title: '订单满足率'
-                },
-                {
-                    field: 'area',
-                    title: '面积'
-                },
-                {
-                    field: 'emp',
-                    title: '仓储人数'
-                },
-                {
-                    field: 'car',
-                    title: '车辆数'
-                },
-                {
-                    field: 'rate',
-                    title: '物流费率'
-                },
-                {
-                    field: 'inventoryDate',
-                    title: '平均库存天数'
-                },
-                {
-                    field: 'areaIn',
-                    title: '单位面积存量'
-                },
-                {
-                    field: 'plat',
-                    title: '单托仓储成本'
-                },
-                {
-                    field: 'orderCost',
-                    title: '单订单配送成本'
-                },
-                {
-                    field: 'orderTimes',
-                    title: '订单完成周期'
-                }]
-        });
-        $(".fixed-table-loading").hide();
+    function formatNum(strNum) {
+        if(strNum.length <= 3) {
+            return strNum;
+        }
+        if(!/^(\+|-)?(\d+)(\.\d+)?$/.test(strNum)) {
+            return strNum;
+        }
+        var a = RegExp.$1,
+            b = RegExp.$2,
+            c = RegExp.$3;
+        var re = new RegExp();
+        re.compile("(\\d)(\\d{3})(,|$)");
+        while(re.test(b)) {
+            b = b.replace(re, "$1,$2$3");
+        }
+        return a + "" + b + "" + c;
     }
-
-    function loadTable1(){
-        $.post("/system/point/point/networkplan1", {"provinces": provinces,"num":1}, function (result) {
-            var json = result;
-            var columnsArray = [];
-            columnsArray.push({field: "state", checkbox: true});
-            for (var i = 0; i < (Object.keys(json[0])).length; i++) {//Object.keys(obj) 获取key名称
-                var property = (Object.keys(json[0]))[i];//id   username
-                columnsArray.push({
-                    "title": property,
-                    "field": property,
-                    switchable: true,
-                    sortable: true
-                });
-            }
-            $('#bootstrap-table1').bootstrapTable('refresh');
-            $('#bootstrap-table1').bootstrapTable({
-                method: 'post',
-                url: "/system/point/point/networkplan1",
-                showLoading: false,
-                showSearch: false,
-                showRefresh: false,
-                showToggle: false,
-                showColumns: false,
-                showExport: false,
-                pageNumber: 1, // 初始化加载第一页
-                columns: columnsArray
-            });
-            $(".fixed-table-loading").hide();
-        });
+    function getDEV(data){
+        var mean = data.reduce(sum)/data.length;
+        var deviations = data.map(function(x){return x-mean;});
+        var stddev = Math.sqrt(deviations.map(square).reduce(sum)/(data.length-1))
+        return stddev;
     }
 </script>
-
+</div>
 </body>
 </html>

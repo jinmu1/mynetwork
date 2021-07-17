@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.mian;
+package com.ruoyi.system.network.enumType;
 
 public enum StorageType {
     地堆区域("1"),

@@ -1,16 +1,11 @@
 package com.ruoyi.system.test;
 
-import com.ruoyi.system.domain.mian.Car;
-import com.ruoyi.system.domain.mian.LightStorage;
-import com.ruoyi.system.domain.mian.StereoStorage;
-import com.ruoyi.system.utils.AreaUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.junit.Test;
+import com.ruoyi.system.network.enumType.Car;
 
-import java.io.FileOutputStream;
+import com.ruoyi.system.network.resource.LightStorage;
+import com.ruoyi.system.network.resource.StereoStorage;
+import com.ruoyi.system.utils.AreaUtils;
+import org.junit.Test;
 
 public class AreaTest {
 

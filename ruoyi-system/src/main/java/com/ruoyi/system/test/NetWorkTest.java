@@ -1,33 +1,22 @@
 package com.ruoyi.system.test;
 
-import com.ruoyi.system.domain.mian.GlcPoint;
-import com.ruoyi.system.domain.network.City;
-import com.ruoyi.system.domain.network.Customer;
-import com.ruoyi.system.domain.network.Material;
-import com.ruoyi.system.domain.network.Order;
+import com.ruoyi.system.network.form.GlcPoint;
 import com.ruoyi.system.service.IGlcPointService;
+import com.ruoyi.system.utils.MathUtils;
 import com.ruoyi.system.utils.NetworkUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.etsi.uri.x01903.v13.OCSPIdentifierType;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class NetWorkTest {
@@ -45,41 +34,18 @@ public class NetWorkTest {
     @Test
     public void getGoods(){
 
-        List<Material> list  = NetworkUtils.createGoods(10000); //创建物料
-        List<Material> list1 = NetworkUtils.initMaterialVolume(list,3,2,5);//创建体积
-        List<Material> list2 = NetworkUtils.initMaterialPrice(list1,3,2,5);//创建价值
-        List<Material> list3 = NetworkUtils.initMaterialNeedNum(list2,2000000);
-//        List<City> cities = new ArrayList<>();
-//        List<Customer> customerList = NetworkUtils.initCustomer(cities,500);
-//        List<Order>    orderList = NetworkUtils.initOrders(list3);
-        File file=new File("F:/取值数据.xlsx");
-        XSSFWorkbook workbook= null;
-        try {
-            workbook = new XSSFWorkbook(FileUtils.openInputStream(file));
-        } catch (IOException e) {
-            e.printStackTrace();
+        double total = 0.0;
+        double transportNum = 10000;
+        double[] num = new double[1000];
+        for (int i = 0;i<1000;i+=1){
+            num[i] = Math.abs(NetworkUtils.NormalDistribution(1,(float)1000));
         }
-        XSSFSheet sheet1= workbook.getSheetAt(1);
+        double avg = MathUtils.sum(num);
+        for (int i = 0; i<num.length;i++){
+            num[i] = num[i]*transportNum/avg;
+        }
+        System.out.println(MathUtils.sum(num));
 
-        for (int i=1;i<21;i++) {
-            double result[] = {42622200,1522412,6232550,5262420};
-            XSSFRow row = sheet1.getRow(i);
-//            for (int i=0;i<5;i++) {
-//                row.createCell(2).setCellValue(result[i]);
-//            }
-        }
-        System.out.println(getStringValue(sheet1,1,2));
-        FileOutputStream fileOut = null;
-        try {
-            fileOut = new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            workbook.write(fileOut);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -169,4 +135,8 @@ public class NetWorkTest {
         cell.setCellType(CellType.STRING);
         return cell.getStringCellValue();
     }
+
+
+
+
 }

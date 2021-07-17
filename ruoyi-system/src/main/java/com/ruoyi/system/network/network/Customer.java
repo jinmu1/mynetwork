@@ -1,8 +1,9 @@
-package com.ruoyi.system.domain.network;
+package com.ruoyi.system.network.network;
 
 public class Customer {
     private String customerCode;//客户编码
-    private String city;//客户城市
+    private City city;//客户城市
+
 
     public String getCustomerCode() {
         return customerCode;
@@ -12,11 +13,11 @@ public class Customer {
         this.customerCode = customerCode;
     }
 
-    public String getCity() {
+    public City getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(City city) {
         this.city = city;
     }
 }
