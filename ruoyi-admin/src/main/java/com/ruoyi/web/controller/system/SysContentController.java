@@ -2,8 +2,8 @@ package com.ruoyi.web.controller.system;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.system.domain.Content;
-import com.ruoyi.system.service.*;
+import com.ruoyi.network.domain.Content;
+import com.ruoyi.network.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

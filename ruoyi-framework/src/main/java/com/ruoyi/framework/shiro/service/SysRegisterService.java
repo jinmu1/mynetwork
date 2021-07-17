@@ -1,6 +1,6 @@
 package com.ruoyi.framework.shiro.service;
 
-import com.ruoyi.system.utils.WeUtil;
+import com.ruoyi.network.utils.WeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -14,7 +14,7 @@ import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
-import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.network.service.ISysUserService;
 
 import java.util.Map;
 

@@ -2,8 +2,7 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 
-import com.ruoyi.system.domain.SysProject;
-import com.ruoyi.system.service.ISysProjectService;
+import com.ruoyi.network.service.ISysProjectService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,9 +24,9 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.shiro.util.AuthorizationUtils;
-import com.ruoyi.system.domain.SysUserRole;
-import com.ruoyi.system.service.ISysRoleService;
-import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.network.domain.SysUserRole;
+import com.ruoyi.network.service.ISysRoleService;
+import com.ruoyi.network.service.ISysUserService;
 
 /**
  * 角色信息

@@ -4,10 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.framework.shiro.service.SysRegisterService;
-import com.ruoyi.system.mapper.SysUserMapper;
-import com.ruoyi.system.utils.EasyTypeToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 

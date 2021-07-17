@@ -108,6 +108,12 @@
             <artifactId>ruoyi-common</artifactId>
             <version>4.6.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-network</artifactId>
+            <version>4.6.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
