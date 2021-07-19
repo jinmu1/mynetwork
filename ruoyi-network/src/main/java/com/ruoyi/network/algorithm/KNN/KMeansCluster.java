@@ -2,7 +2,8 @@ package com.ruoyi.network.algorithm.KNN;
 
 
 
-import com.ruoyi.network.network.resource.Storage;
+
+import com.ruoyi.network.resource.Storage;
 
 import java.util.ArrayList;
 import java.util.List;

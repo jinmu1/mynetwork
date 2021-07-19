@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import com.ruoyi.network.domain.BlogContent;
+import com.ruoyi.system.domain.BlogContent;
 import com.ruoyi.network.service.IBlogContentService;
 import com.ruoyi.common.core.controller.BaseController;
 

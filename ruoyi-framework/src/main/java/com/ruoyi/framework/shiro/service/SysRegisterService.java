@@ -1,6 +1,7 @@
 package com.ruoyi.framework.shiro.service;
 
-import com.ruoyi.network.utils.WeUtil;
+
+import com.ruoyi.system.utils.WeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;

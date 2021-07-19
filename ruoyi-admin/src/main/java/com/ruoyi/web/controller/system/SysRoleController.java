@@ -24,7 +24,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.shiro.util.AuthorizationUtils;
-import com.ruoyi.network.domain.SysUserRole;
+import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.network.service.ISysRoleService;
 import com.ruoyi.network.service.ISysUserService;
 

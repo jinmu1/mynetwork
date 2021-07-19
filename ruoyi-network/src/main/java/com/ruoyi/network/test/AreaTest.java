@@ -1,9 +1,11 @@
 package com.ruoyi.network.test;
 
-import com.ruoyi.network.network.enumType.Car;
-import com.ruoyi.network.network.resource.LightStorage;
-import com.ruoyi.network.network.resource.StereoStorage;
-import com.ruoyi.network.utils.AreaUtils;
+
+import com.ruoyi.network.enumType.Car;
+import com.ruoyi.network.resource.LightStorage;
+import com.ruoyi.network.resource.StereoStorage;
+import com.ruoyi.network.utils.*;
+
 import org.junit.Test;
 
 public class AreaTest {

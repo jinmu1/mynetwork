@@ -2,7 +2,7 @@ package com.ruoyi.web.controller.glc;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.network.domain.EduEIQ;
+import com.ruoyi.system.domain.EduEIQ;
 import com.ruoyi.network.service.IGlcDeliveryService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;

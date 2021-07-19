@@ -1,7 +1,6 @@
 package com.ruoyi.network.result;
 
-import com.ruoyi.network.network.network.City;
-import com.ruoyi.network.network.network.Result;
+import com.ruoyi.network.node.City;
 
 import java.util.List;
 

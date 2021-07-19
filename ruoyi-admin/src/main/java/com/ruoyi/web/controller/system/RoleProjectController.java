@@ -2,7 +2,7 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 
-import com.ruoyi.network.domain.RoleProject;
+import com.ruoyi.system.domain.RoleProject;
 import com.ruoyi.network.service.IRoleProjectService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;

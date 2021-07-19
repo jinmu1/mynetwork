@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.network.mapper.GlcPointMapper">
+<mapper namespace="com.ruoyi.system.mapper.GlcPointMapper">
 
-    <resultMap type="GlcPoint" id="GlcPointResult">
+    <resultMap type="com.ruoyi.network.form.GlcPoint" id="GlcPointResult">
         <result property="provinces"    column="provinces"    />
         <result property="city"    column="city"    />
         <result property="lat"    column="lat"    />
@@ -16,7 +16,7 @@
         select provinces, city, lat, lng, gdp from glc_point
     </sql>
 
-    <select id="selectGlcPointList" parameterType="GlcPoint" resultMap="GlcPointResult">
+    <select id="selectGlcPointList" parameterType="com.ruoyi.network.form.GlcPoint" resultMap="GlcPointResult">
         <include refid="selectGlcPointVo"/>
         <where>
             <if test="provinces != null  and provinces != ''"> and provinces = #{provinces}</if>
@@ -32,7 +32,7 @@
         where provinces = #{provinces}
     </select>
 
-    <insert id="insertGlcPoint" parameterType="GlcPoint">
+    <insert id="insertGlcPoint" parameterType="com.ruoyi.network.form.GlcPoint">
         insert into glc_point
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="provinces != null">provinces,</if>
@@ -50,7 +50,7 @@
         </trim>
     </insert>
 
-    <update id="updateGlcPoint" parameterType="GlcPoint">
+    <update id="updateGlcPoint" parameterType="com.ruoyi.network.form.GlcPoint">
         update glc_point
         <trim prefix="SET" suffixOverrides=",">
             <if test="city != null">city = #{city},</if>

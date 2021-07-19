@@ -13,10 +13,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
-import com.ruoyi.network.network.enumType.Car;
-import com.ruoyi.network.network.form.GlcPoint;
-import com.ruoyi.network.network.network.*;
+
+import com.ruoyi.network.algorithm.kmeans.Cluster;
+import com.ruoyi.network.enumType.Car;
+import com.ruoyi.network.form.GlcPoint;
+import com.ruoyi.network.node.*;
+import com.ruoyi.network.result.Plan;
+import com.ruoyi.network.result.Result;
+import com.ruoyi.network.result.ResultMsg;
+import com.ruoyi.network.result.Target;
 import com.ruoyi.network.utils.AreaUtils;
+import com.ruoyi.network.utils.NetWorkPlanUtils;
 import com.ruoyi.network.utils.NetworkUtils;
 import com.ruoyi.network.utils.RandomUtil;
 import org.apache.commons.io.FileUtils;
@@ -38,7 +45,7 @@ import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.enums.BusinessType;
 
-import com.ruoyi.network.service.IGlcPointService;
+import com.ruoyi.system.service.IGlcPointService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
@@ -513,11 +520,275 @@ public class GlcPointController extends BaseController
         results1.add(allresults);
         return results1;
     }
+
+//    @PostMapping("/point/network")
+//    @ResponseBody
+//    public TableDataInfo  network1(HttpServletRequest req){
+//
+//        int num1 = Integer.parseInt(req.getParameter("num"));
+//        String provinces = req.getParameter("provinces");
+////        String provinces = "安徽";
+//        String carLength = req.getParameter("carLength");
+////        String carLength = "小车4米6";
+//        double transportNum = 80000;
+//        if (req.getParameter("transportNum")!=null&&!req.getParameter("transportNum").equals("")){
+//            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+//        }
+//        double warehousing = 80000;
+//        if (req.getParameter("warehousing")!=null&&!req.getParameter("warehousing").equals("")) {
+//            warehousing = Double.parseDouble(req.getParameter("warehousing"));
+//        }
+//        double h_price = 15;
+//        if(req.getParameter("h_price")!=null&&!req.getParameter("h_price").equals("")) {
+//            h_price = Double.parseDouble(req.getParameter("h_price"));
+//        }
+//        double m_price = 15;
+//        if(req.getParameter("m_price")!=null&&!req.getParameter("m_price").equals("")) {
+//            m_price = Double.parseDouble(req.getParameter("m_price"));
+//        }
+//        double l_price = 60;
+//        if(req.getParameter("s_price")!=null&&!req.getParameter("s_price").equals("")) {
+//            l_price = Double.parseDouble(req.getParameter("s_price"));
+//        }
+//        double inventory_loss = 0.5;
+//        if(req.getParameter("inventory_loss")!=null&&!req.getParameter("inventory_loss").equals("")) {
+//            inventory_loss = Double.parseDouble(req.getParameter("inventory_loss"));
+//        }
+//        double managementFee = 0;
+//        if(req.getParameter("managementFee")!=null&&!req.getParameter("managementFee").equals("")) {
+//            managementFee = Double.parseDouble(req.getParameter("managementFee"));
+//        }
+//        double times = 72;
+//        if(req.getParameter("times")!=null&&!req.getParameter("times").equals("")) {
+//            times = Integer.parseInt(req.getParameter("times"));
+//        }
+//        double order = 95;
+//        if(req.getParameter("order")!=null&&!req.getParameter("order").equals("")) {
+//            order = Integer.parseInt(req.getParameter("order"));
+//        }
+//        double goods_num = 6000;
+//        if(req.getParameter("goods_num")!=null&&!req.getParameter("goods_num").equals("")) {
+//            goods_num = Integer.parseInt(req.getParameter("goods_num"));
+//        }
+//        double b_goods_size = 20;
+//        if(req.getParameter("b_goods_size")!=null&&!req.getParameter("b_goods_size").equals("")) {
+//            b_goods_size = Double.parseDouble(req.getParameter("b_goods_size"));
+//        }
+//        double m_goods_size = 20;
+//        if(req.getParameter("m_goods_size")!=null&&!req.getParameter("m_goods_size").equals("")) {
+//            m_goods_size = Double.parseDouble(req.getParameter("m_goods_size"));
+//        }
+//        double s_goods_size = 60;
+//        if(req.getParameter("s_goods_size")!=null&&!req.getParameter("s_goods_size").equals("")) {
+//            s_goods_size = Double.parseDouble(req.getParameter("s_goods_size"));
+//        }
+//        int emp_quantity = 50;//一天处理十二托
+//        double lever =1.65;
+//        if (order == 90){
+//            lever =1.25;
+//        }else if(order == 95){
+//            lever =1.65;
+//        }else if(order == 98){
+//            lever =2.05;
+//        }else if(order == 100){
+//            lever =3.5;
+//        }
+//
+//        List<Result> results = new ArrayList<>();
+//        List<Result> results1 = new ArrayList<>();
+//        List<ResultMsg> resultMsgs = new ArrayList<>();
+//        List<JSONObject> listd;
+//        Jedis jedis = new Jedis("127.0.0.1", 6379);
+//        jedis.select(2);
+//        Boolean exists= jedis.exists(provinces+carLength+transportNum+warehousing+h_price+m_price+inventory_loss+times+order+managementFee+goods_num+b_goods_size+m_goods_size+s_goods_size);
+//        if (exists) {
+//            String in = jedis.get(provinces+carLength+transportNum+warehousing+h_price+m_price+inventory_loss+times+order+managementFee+goods_num+b_goods_size+m_goods_size+s_goods_size);
+//            listd=  (List<JSONObject>) JSON.parse(in);
+//            for(JSON json:listd){
+//                ResultMsg status =JSON.toJavaObject(json, ResultMsg.class);
+//                resultMsgs.add(status);
+//            }
+//        }else {
+//            List<GlcPoint> cityLists = glcPointService.selectGlcPointList(new GlcPoint(provinces));  //获取省份内城市
+//            List<City> points = new ArrayList<>();
+//            for (GlcPoint glcPoint : cityLists) {//需求点
+//                points.add(new City(glcPoint.getCity(), glcPoint.getLat(), glcPoint.getLng(), glcPoint.getGdp()));//备选点
+//            }
+//            List<Material> list = NetworkUtils.createGoods(goods_num);
+//            list = NetworkUtils.initMaterialPrice(list, h_price, m_price, l_price);
+//            list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
+//            List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
+//            List<Customer> customerList = NetworkUtils.initCustomer(cityLists, 200);
+//            List<Supplier> suppliers = NetworkUtils.initSupplier();
+//            orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
+//            Map<City, List<Order>> outOrdersList = orderList.stream().collect(Collectors.groupingBy(Order::getCustomerCity));//出库单
+//
+//
+//
+//            for (int i = 1; i <= cityLists.size(); i++) {
+//                double max = Double.MAX_VALUE;
+//                Result resultd = new Result();
+//                resultd.setCity(i + "");
+//                List<List<City>> combinations = NetworkUtils.combinations(points, i);//已经遍历了该RDC数量下的所有RDC组合 k为备选点数量
+//                int l =0;
+//                List<List<City>> combinations1 = new ArrayList<>();
+//                double max1 = Double.MAX_VALUE;
+//                if(combinations.size()>500){
+//                    combinations = combinations.subList(0,500);
+//                }
+//                List<City> rdcPoint = new ArrayList<>();
+//                for (List<City> cityList1 : combinations) {
+//                    results = new ArrayList<>();
+//                    rdcPoint = new ArrayList<>();
+//                    for (City city : cityList1) {
+//                        rdcPoint.add(city); //将选取的备选点当做新增的RDC
+//                    }
+//                    // 开始计算
+//                    double distance = chooseCity1(rdcPoint, points);//选择城市
+//                    if (distance < max1) {
+//                        max1 = distance;
+//                        combinations1.add(cityList1);
+//                        l++;
+//                    }
+//                }
+//                List<City> cities = new ArrayList<>();
+//                for (List<City> cityList : combinations1) {
+//                    results = new ArrayList<>();
+//                    rdcPoint = new ArrayList<>();
+//                    for (City city : cityList) {
+//                        rdcPoint.add(new City(city.getCity(), city.getLat(), city.getLng(), city.getGdp())); //将选取的备选点当做新增的RDC
+//                    }
+//                    // 开始计算
+//                    cities = chooseCity(rdcPoint, points);//选择城市
+//                    Map<String, List<City>> linkCity = cities.stream().collect(Collectors.groupingBy(City::getCity1));//网络连接
+//                    List<Cluster> cluster2 = new ArrayList<>();
+//                    for (String rdc : linkCity.keySet()){
+//                        Cluster cluster = new Cluster();
+//                        for(City city:rdcPoint){
+//                            if(city.getCity().equals(rdc)) {
+//                                cluster.setCentroid(city);
+//                            }
+//                        }
+//                        cluster.setPoints(linkCity.get(rdc));
+//                        cluster2.add(cluster);
+//                    }
+//                    for (Cluster cluster : cluster2) {
+//                        Result result = new Result();
+//                        List<Order> outOrders = new ArrayList<>();
+//                        result.setRange(cluster.getCentroid().getCity());
+//                        result.setCity(cluster.getCentroid().getCity());
+//                        for (City city : outOrdersList.keySet()) {
+//                            for (City city1 : cluster.getPoints()) {
+//                                if (city.getCity().equals(city1.getCity())) {
+//                                    outOrders.addAll(outOrdersList.get(city));
+//                                }
+//                            }
+//                        }
+//                        List<Order> inOrders = NetWorkPlanUtils.getReplenishment(outOrders, list); //获取补货单数据
+//                        result = NetWorkPlanUtils.getTransportCost(cluster.getCentroid(), cluster.getPoints(), outOrders, result);//获取运输成本数据
+//                        result = NetWorkPlanUtils.getStorageCost(inOrders, outOrders, emp_quantity, warehousing, result,i);//获取仓储成本数据
+//                        result = NetWorkPlanUtils.inventoryCost(outOrders, suppliers, order, inventory_loss, result); // 获取库存成本数据
+//                        result = NetWorkPlanUtils.buildCost(inOrders, outOrders, result, cluster.getCentroid(), carLength);
+//                        result.setAll(Math.round(result.getTransportCost() + result.getBuildCost() + result.getInventoryCost() + result.getStorageCost()));
+//                        result.setRate(result.getAll() / result.getSales_account());  //计算费率
+//                        results.add(result);
+//                        for (City city : cluster.getPoints()) {
+//                            city.setCity1(cluster.getCentroid().getCity());
+//                            city.setLat1(cluster.getCentroid().getLat());
+//                            city.setLng1(cluster.getCentroid().getLng());
+//                            cities.add(city);
+//                        }
+//                    }
+//                    Result allresult = new Result();
+//                    int m = 0;
+//                    for (Result result : results) {
+//                        allresult.setCity(result.getCity());
+//                        allresult.setStorage(Math.round(result.getStorage() + allresult.getStorage()));
+//                        allresult.setArea(Math.round(allresult.getArea() + result.getArea()));
+//                        allresult.setStorageCost(Math.round(allresult.getStorageCost() + result.getStorageCost()));
+//                        allresult.setBuildCost(Math.round(allresult.getBuildCost() + result.getBuildCost()));
+//                        allresult.setInventoryCost(Math.round(allresult.getInventoryCost() + result.getInventoryCost()));
+//                        allresult.setTransportCost(Math.round(allresult.getTransportCost() + result.getTransportCost()));
+//                        allresult.setAll(Math.round(allresult.getAll() + result.getAll()));
+//                        allresult.setThroughput_num(Math.round(allresult.getThroughput_num() + result.getThroughput_num()));
+//                        allresult.setEmp(Math.round(allresult.getEmp() + result.getEmp()));
+//                        allresult.setCar(Math.round(allresult.getCar() + result.getCar()));
+//                        allresult.setOrder_rate(allresult.getOrder_rate() + result.getOrder_rate());
+//                        allresult.setInventory_num(Math.round(result.getInventory_num() + allresult.getInventory_num()));
+//                        allresult.setSales_account(Math.round(allresult.getSales_account() + result.getSales_account()));
+//                        allresult.setRate1(allresult.getRate1() + result.getRate1());
+//                        allresult.setStorage_area(allresult.getStorage_area() + result.getStorage_area());
+//                        allresult.setPlat_cost(allresult.getAll()/transportNum);
+//                        allresult.setOrder_cost(allresult.getPlat_cost()/ NetworkUtils.random(2,5));
+//                        allresult.setArea_cost(allresult.getAll()/allresult.getArea());
+//                        m++;
+//                    }
+//                    allresult.setStorageCost(allresult.getStorageCost());
+//                    allresult.setAll(allresult.getAll());
+//                    allresult.setOrder_rate(allresult.getOrder_rate()/ i);
+//                    allresult.setInventory_num(Math.round(allresult.getInventory_num()/i));
+//                    allresult.setStorage_area(Math.round(allresult.getStorage_area()/i));
+//                    allresult.setRate(allresult.getAll()/allresult.getSales_account());
+//                    allresult.setArea_cost(allresult.getAll()/allresult.getArea());
+//                    allresult.setPlat_cost(allresult.getPlat_cost());
+//                    allresult.setRate1(allresult.getRate1()/i);
+//                    allresult.setPlat_storage(Math.round(allresult.getStorage()/transportNum/i));
+//                    allresult.setOrder_cost(allresult.getOrder_cost()/i);
+//                    allresult.setPlat_transport(Math.round(allresult.getTransportCost()/transportNum/i));
+//                    if (allresult.getAll() < max) {
+////                        resultd.setStorageCost(allresult.getStorageCost());
+////                        resultd.setAll(allCost);
+////                        resultd.setTransportCost(allresult.getTransportCost());
+////                        resultd.setInventoryCost(allresult.getInventoryCost());
+////                        resultd.setBuildCost(allresult.getBuildCost());
+//                        max = allresult.getAll();
+//                        ResultMsg resultMsg = new ResultMsg();
+//                        resultMsg.setRdc(i);
+//                        resultMsg.setCost(allresult.getAll());
+//                        resultMsg.setCities(cities);
+//                        resultMsg.setResult(allresult);
+//                        resultMsg.setResultList(results);
+//                        resultMsgs.add(resultMsg);
+//                    }
+//                }
+////                results1.add(resultd);
+//            }
+//            jedis.select(2);
+//            jedis.set(provinces+carLength+transportNum+warehousing+h_price+m_price+inventory_loss+times+order+managementFee+goods_num+""+b_goods_size+m_goods_size+s_goods_size,JSON.toJSON(resultMsgs).toString());
+//        }
+////        ResultMsg best  =  new ResultMsg();
+////        double maxs  = Double.MAX_VALUE;
+////        for (ResultMsg resultMsg:resultMsgs){
+////            if (resultMsg.getCost()<maxs){
+////                best = resultMsg;
+////                maxs = resultMsg.getCost();
+////            }
+////        }
+//        resultMsgs = resultMsgs.stream().sorted(Comparator.comparing(ResultMsg::getCost)).collect(Collectors.toList());
+//        List<List<City>> listList = new ArrayList<>();
+//        for (ResultMsg resultMsg : resultMsgs){
+//            listList.add(resultMsg.getCities());
+//        }
+//        double[] num = {1, 25, 50, 75, 90, 100};
+//        for (List<City> list1 : listList) {
+//            Map<String, List<City>> linkCity = list1.stream().collect(Collectors.groupingBy(City::getCity1));
+//            int i = 0;
+//            for (String str : linkCity.keySet()) {
+//                List<City> cities1 = linkCity.get(str);
+//                for (City city : cities1) {
+//                    city.setGdp(num[i % 5] + "");
+//                }
+//                i++;
+//            }
+//        }
+//        return getDataTable(listList.get(num1-1));
+//
+//    }
     @PostMapping("/point/network")
     @ResponseBody
     public TableDataInfo  network1(HttpServletRequest req){
 
-        int num1 = Integer.parseInt(req.getParameter("num"));
+         int num1 = Integer.parseInt(req.getParameter("num"));
         String provinces = req.getParameter("provinces");
 //        String provinces = "安徽";
         String carLength = req.getParameter("carLength");

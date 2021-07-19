@@ -2,9 +2,13 @@ package com.ruoyi.network.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.ruoyi.network.network.enumType.Car;
-import com.ruoyi.network.network.form.GlcPoint;
-import com.ruoyi.network.network.network.*;
+import com.ruoyi.network.enumType.Car;
+import com.ruoyi.network.form.GlcPoint;
+import com.ruoyi.network.node.*;
+import com.ruoyi.network.result.Result;
+import com.ruoyi.network.result.ResultMsg;
+import com.ruoyi.network.utils.MathUtils;
+import com.ruoyi.network.utils.RandomUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -82,6 +86,7 @@ public class NetworkUtils {
 
             }
         }
+
             return max;
     }
 
@@ -168,16 +173,23 @@ public class NetworkUtils {
     public static List<Material> initMaterialVolume(List<Material> materialList,double b,double m,double s){
         double all = b + m + s;
         Random random = new Random();
+        materialList =  materialList.stream().sorted(Comparator.comparing(Material::getPrice)).collect(Collectors.toList());
+        double num3 = 0.0;
+        int i = 0;
         for (Material material : materialList){
-             int i = random.nextInt((int)all*100);
-             if (i<=s*100){
-                 material.setVolume(initNormalDistribution(1,0.05)[0]);
-             }else if (i<=(m+s)*100){
-                 material.setVolume(initNormalDistribution(1,0.45)[0]+0.05);
-             }else if (i<=(all*100)){
-                 material.setVolume(initNormalDistribution(1,4.5)[0]+0.5);
+             if (i<=s/all*materialList.size()){
+                 material.setVolume(initNormalDistribution1(100,0.05)[(int)NetworkUtils.random(0,99)]);
+                 num3 += material.getVolume();
+             }else if (i<=(m+s)/all*materialList.size()){
+                 material.setVolume(initNormalDistribution1(100,0.45)[(int)NetworkUtils.random(0,99)]+0.05);
+                 num3 += material.getVolume();
+             }else if (i<=materialList.size()){
+                 material.setVolume(initNormalDistribution1(100,4.5)[(int)NetworkUtils.random(0,99)]+0.5);
+                 num3 += material.getVolume();
              }
+             i++;
         }
+         System.out.println(num3);
          return materialList;
     }
 
@@ -189,9 +201,9 @@ public class NetworkUtils {
      */
     public static List<Material> initMaterialNeedNum(List<Material> list,double total) {
         for (Material material:list){
-            material.setNeedNum(initNormalDistribution(1,total)[0]);
+            material.setNeedNum(initNormalDistribution(10000,total)[0]);
             material.setOrderNum(material.getNeedNum()/material.getVolume());
-            material.setFrequency(initNormalDistribution(1,material.getNeedNum())[0]);
+            material.setFrequency(initNormalDistribution(10000,material.getNeedNum())[0]);
         }
         return list;
     }
@@ -199,7 +211,7 @@ public class NetworkUtils {
     public static double[] initNormalDistribution(int length,double max){
         double[] num = new double[length];
         for (int i = 0;i<length;i+=1){
-            num[i] = Math.abs(NetworkUtils.NormalDistribution(1,(float)100));
+            num[i] = Math.abs(NetworkUtils.NormalDistribution(50,(float)1000));
         }
         double avg = MathUtils.sum(num);
         for (int i = 0; i<num.length;i++){
@@ -207,7 +219,17 @@ public class NetworkUtils {
         }
         return num;
     }
-
+    public static double[] initNormalDistribution1(int length,double max){
+        double[] num = new double[length];
+        for (int i = 0;i<length;i+=1){
+            num[i] = Math.abs(NetworkUtils.NormalDistribution(50,(float)1000));
+        }
+        double avg = MathUtils.sum(num)/num.length;
+        for (int i = 0; i<num.length;i++){
+            num[i] = num[i]*max/avg;
+        }
+        return num;
+    }
     /**
      * 初始化物料价格
      * @param materialList
@@ -225,11 +247,11 @@ public class NetworkUtils {
             Random random = new Random();
             int i = random.nextInt((int)all*100);
             if (i<=s*100){
-                material.setPrice(initNormalDistribution(1,50)[0]);
+                material.setPrice(initNormalDistribution1(10000,50)[0]);
             }else if (i<=(m+s)*100){
-                material.setPrice(initNormalDistribution(1,450)[0]+50);
+                material.setPrice(initNormalDistribution1(10000,450)[0]+50);
             }else if (i<=(all*100)){
-                material.setPrice(initNormalDistribution(1,1000)[0]+500);
+                material.setPrice(initNormalDistribution1(10000,1000)[0]+500);
             }
         }
         return materialList;
@@ -283,38 +305,46 @@ public class NetworkUtils {
      * @param
      * @return
      */
-    public static List<Order> initOrders(List<Material> list,int orderLine,double transportNum)  {
+    public static List<Order> initOrders(List<Material> list, double transportNum)  {
         List<Order> orderList = new ArrayList<>();
         Random random = new Random();
+        list = list.stream().sorted(Comparator.comparing(Material::getVolume)).collect(Collectors.toList());
+        double[] nums = initNormalDistribution(list.size(),transportNum);
+        for (int i = 0;i<list.size();i++){
+            list.get(i).setNeedNum(nums[i]);
+        }
+        double num3 = 0.0;
         for (Material material:list) {
             double num = material.getNeedNum();
             for (int i = 0; i < material.getNeedNum()*10; i+=(int)random.nextInt(5) ) {
-                if(num>0) {
-                    double num1 = num - NetworkUtils.random(0,(long)((num*1.1*1.25*1.5)/material.getVolume()));
-                    orderList.add(new Order(material.getCode(),num1));
+                long numd =  (long)((num*1.1*1.25*1.5)/material.getVolume())/365;
+                long num2 = (long)((num*1.1*1.25*1.5)/material.getVolume());
+
+                if(num>0&&num2>1) {
+                    double num1 = NetworkUtils.random(numd,num2);
+                    num =  num - num1*material.getVolume()/(1.1*1.25*1.5);
+                    num3 += num1*material.getVolume()/(1.1*1.25*1.5);
+                    orderList.add(new Order(material.getCode(),num1,material.getVolume(),material.getPrice()));
+                }else if (num>0&&num2==1){
+                    num = 0;
+                    orderList.add(new Order(material.getCode(),num2,material.getVolume(),material.getPrice()));
                 }
+
 
             }
         }
-
+        System.out.println(num3);
         for (Order order:orderList) {
-            String OrderCode = RandomUtil.toFixdLengthString(random.nextInt(1000000),11);
+            String OrderCode = RandomUtil.toFixdLengthString(random.nextInt(1000),5);
             String orderDate = sdf1.format(randomDate("2021-01-01 08:00:00","2021-12-31 18:00:00"));
-            int n =  (int)random(1,list.size());
-            int m =  (int)random(1,list.size());
-            if (m <= orderLine) {
+
                 order.setOrderCode(OrderCode);
                 try {
-                    order.setOrderDate(sdf1.parse(orderDate));
+                    order.setDeliveryDate(sdf1.parse(orderDate));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                int z = random.nextInt(list.size());
 
-                order.setGoodsCode(list.get(z).getCode());
-                order.setGoodsNum((int) list.get(z).getNeedNum() / list.get(z).getFrequency() / list.get(z).getVolume());
-                orderList.add(order);
-            }
         }
             return orderList;
     }

@@ -1189,6 +1189,7 @@
         }
         // 数字转换成货币格式的字符串，例如把1234567转换成 1,234,567 这样的
        function int2str (num) {
+            num = parseInt(num);
             let numberStr = num.toString()
             let str = numberStr.split('').reverse()
             for (let i = 0; i < str.length; i++) {

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.network.mapper.GlcNetworkSupplyChainMapper">
+<mapper namespace="com.ruoyi.system.mapper.GlcNetworkSupplyChainMapper">
     
     <resultMap type="GlcNetworkSupplyChain" id="GlcNetworkSupplyChainResult">
         <result property="id"    column="id"    />

@@ -3,7 +3,7 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 
 import com.ruoyi.common.utils.ShiroUtils;
-import com.ruoyi.network.domain.SysProject;
+import com.ruoyi.system.domain.SysProject;
 import com.ruoyi.network.service.ISysProjectService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;

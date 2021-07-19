@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.network.mapper.GlcDeliveryMapper">
+<mapper namespace="com.ruoyi.system.mapper.GlcDeliveryMapper">
     
     <resultMap type="GlcDelivery" id="GlcDeliveryResult">
         <result property="id"    column="id"    />
@@ -155,14 +155,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from glc_delivery where batch_id = #{userId}
     </delete>
 
-    <select id="getEIQOrderI" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderI" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
       select  DATE_FORMAT(t.delivery_date,'%Y-%m-%d') as 'date',count(distinct(t.goods_name)) as 'category_number'
      from glc_delivery t
       WHERE
         t.batch_id = #{userId}
      group by  DATE_FORMAT(t.delivery_date,'%Y-%m-%d')
     </select>
-    <select id="getEIQOrderEI" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderEI" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
       select  (@i:=@i+1) as 'anInt', a.order_code as 'order_code',count(distinct(a.goods_name)) as 'category_number'
     from glc_delivery a
      WHERE
@@ -171,28 +171,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     order by count(distinct(a.goods_name)) desc
     </select>
 
-    <select id="getEIQOrderE" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderE" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
   select  DATE_FORMAT(t.delivery_date,'%Y-%m-%d') as 'date',count(distinct(t.order_code)) as 'order_num'
 from glc_delivery t
     WHERE
         t.batch_id = #{userId}
 group by  DATE_FORMAT(t.delivery_date,'%Y-%m-%d')
     </select>
-    <select id="getEIQOrderN" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderN" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
 select  DATE_FORMAT(t.delivery_date,'%Y-%m-%d') as 'date',count(t.order_code) as 'order_num1'
 from glc_delivery t
     WHERE
         t.batch_id = #{userId}
 group by  DATE_FORMAT(t.delivery_date,'%Y-%m-%d')
     </select>
-    <select id="getEIQOrderE1" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderE1" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
 select  DATE_FORMAT(t.delivery_date,'%Y-%m-%d') as 'date',count(t.order_code) as 'order_num1'
 from edu_delivery t
     WHERE
         t.batch_id = #{userId}
 group by  DATE_FORMAT(t.delivery_date,'%H%m%d')
     </select>
-    <select id="getEIQOrderEN" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderEN" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
   select  a.order_code as 'order_code',count(a.order_code) as 'times'
    from glc_delivery a
        WHERE
@@ -200,7 +200,7 @@ group by  DATE_FORMAT(t.delivery_date,'%H%m%d')
    group by a.order_code
    order by count(a.order_code) desc
     </select>
-    <select id="getEIQOrderEN1" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderEN1" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
   select  a.order_code as 'order_code',count(a.order_code) as 'times'
    from edu_delivery a
        WHERE
@@ -208,7 +208,7 @@ group by  DATE_FORMAT(t.delivery_date,'%H%m%d')
    group by a.order_code
    order by count(a.order_code) desc
     </select>
-    <select id="getEIQOrderEN2" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderEN2" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
   select  a.order_code as 'order_code',count( a.order_code) as 'times'
    from edu_delivery a
        WHERE
@@ -216,7 +216,7 @@ group by  DATE_FORMAT(t.delivery_date,'%H%m%d')
    group by a.order_code
    order by times desc
     </select>
-    <select id="getEIQOrderENHist" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderENHist" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
      select a.goods_code as 'goods_code',count(a.order_code) as 'order_num'  from (select order_code, count(goods_code) as 'goods_num'
      from edu_delivery
 where batch_id = #{batch_id}
@@ -224,14 +224,14 @@ group by order_code
 order by count(goods_code) desc)a
 group by a.goods_code
     </select>
-    <select id="getEIQOrderQ" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderQ" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
 select  DATE_FORMAT(t.delivery_date,'%Y-%m-%d') as 'date',sum(t.goods_num) as 'total_num',sum(floor(t.goods_num)) as 'delivery_num'
 from glc_delivery t
     WHERE
         t.batch_id = #{userId}
 group by  DATE_FORMAT(t.delivery_date,'%Y-%m-%d')
     </select>
-    <select id="getEIQOrderEQ" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderEQ" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
   select  a.order_code as 'order_code',sum(a.goods_num) as 'total_num'
    from glc_delivery a
     WHERE
@@ -239,7 +239,7 @@ group by  DATE_FORMAT(t.delivery_date,'%Y-%m-%d')
    group by a.order_code
    order by sum(a.goods_num) desc
     </select>
-    <select id="getEIQOrderEQ1" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderEQ1" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
   select  a.order_code as 'order_code',sum(a.goods_num) as 'total_num'
    from edu_delivery a
     WHERE
@@ -247,14 +247,14 @@ group by  DATE_FORMAT(t.delivery_date,'%Y-%m-%d')
    group by a.order_code
    order by sum(a.goods_num) desc
     </select>
-    <select id="getEIQOrderEQHist" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderEQHist" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
     select a.goods_num as 'goods_num',count(order_code) as 'order_num'  from(select order_code,round(sum(piece_num),1) as 'goods_num'
 from edu_delivery
 where batch_id =#{batch_id}
 group by order_code)a
 group by a.goods_num
     </select>
-    <select id="getEIQOrderIK" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderIK" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
     select  a.goods_name as 'goods_name',count(a.goods_name) as 'times'
    from glc_delivery a
     WHERE
@@ -262,7 +262,7 @@ group by a.goods_num
    group by a.goods_name
    order by count(a.goods_name) desc
     </select>
-    <select id="getEIQOrderIQ" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEIQOrderIQ" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
    select  a.goods_code as 'goods_code',sum(a.goods_num)as 'total_num'
         from glc_delivery a
             WHERE
@@ -270,7 +270,7 @@ group by a.goods_num
         group by a.goods_code
         order by sum(a.goods_num) DESC
     </select>
-    <select id="getCustomerOrder" parameterType="Long" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getCustomerOrder" parameterType="Long" resultType="com.ruoyi.system.domain.EduEIQ">
 select a.customer_code as 'date',count(a.order_code) as 'order_num'  from (select order_code as 'order_code',customer_code as 'customer_code'
 from edu_delivery
 where batch_id = #{batch_id}
@@ -278,41 +278,41 @@ group by order_code)a
 group by a.customer_code
 order by count(a.order_code) desc
     </select>
-    <select id="getABCCount" parameterType="Long" resultType="com.ruoyi.network.domain.EduABC">
+    <select id="getABCCount" parameterType="Long" resultType="com.ruoyi.system.domain.EduABC">
    select a.goods_name as 'goods_name',a.goods_code as 'goods_code',a.stock_price as 'stock_price' ,sum(ceil(ceil(a.goods_num/a.specification)/a.pallet_capacity)) AS 'total_delivery', count(distinct(a.delivery_date)) AS 'data',a.specification AS 'specification'
    from glc_delivery a
    where a.batch_id = #{userId}
    group by a.goods_name
     </select>
 
-    <select id="getABCFrequency" parameterType="Long" resultType="com.ruoyi.network.domain.EduABC">
+    <select id="getABCFrequency" parameterType="Long" resultType="com.ruoyi.system.domain.EduABC">
    	select t1.goods_name as 'goods_name',t1.goods_code as 'goods_code',count(t1.goods_name) as 'delivery_frequency'
 		from glc_delivery t1
 		 WHERE t1.batch_id = #{userId}
 		group by t1.goods_name
     </select>
 
-    <select id="selectABCQuantity" parameterType="Long" resultType="com.ruoyi.network.domain.EduABC">
+    <select id="selectABCQuantity" parameterType="Long" resultType="com.ruoyi.system.domain.EduABC">
         select a.goods_name as 'goods_name',goods_code as 'goods_code',sum(a.goods_num) as 'delivery_quantity'
         from glc_delivery a
         where a.batch_id =#{userId}
         group by a.goods_code
     </select>
 
-    <select id="selectEduEOQ" parameterType="Long" resultType="com.ruoyi.network.domain.EduEOQ">
+    <select id="selectEduEOQ" parameterType="Long" resultType="com.ruoyi.system.domain.EduEOQ">
               select a.goods_name as 'goods_name',a.stock_price as 'stock_price',sum(a.goods_num) as 'total_delivery'
        from glc_delivery a
         WHERE
         a.batch_id = #{userId}
        group by a.goods_code
     </select>
-    <select id="selectReceivingList" parameterType="Long" resultType="com.ruoyi.network.domain.EduPCB">
+    <select id="selectReceivingList" parameterType="Long" resultType="com.ruoyi.system.domain.EduPCB">
 select m.goods_code as 'goods_code',m.goods_name as 'goods_name',m.specification as 'specification',m.pallet_capacity as 'pallet_capacity',m.num as 'goods_num2',m.goods_num1 as 'goods_num1',m.pallet_num as 'pallet_num',m.cases_num3 as 'cases_num3',floor(m.goods_num2/m.pallet_capacity) as 'pallet_num1',round(m.num-(floor(m.goods_num1)*m.specification),2) as 'cases_num2' from(select goods_code as 'goods_code',sum(goods_num) as 'num',round(sum(goods_num)/specification,2) as 'goods_num1',floor(round(sum(goods_num)/specification,2)/pallet_capacity) as 'pallet_num',floor(round(sum(goods_num)/specification,2)) as 'cases_num3',specification,goods_name,pallet_capacity,goods_num2
 from glc_delivery
 where batch_id = #{userId}
 group by goods_code)m
     </select>
-    <select id="selectDeliveryListByGoodsName" parameterType="java.util.HashMap" resultType="com.ruoyi.network.domain.EduPCB">
+    <select id="selectDeliveryListByGoodsName" parameterType="java.util.HashMap" resultType="com.ruoyi.system.domain.EduPCB">
 select a.goods_code as 'goods_code',a.goods_name as 'goods_name',a.goods_num as 'num',a.goods_num/t1.specification as 'unit_cases',floor(a.goods_num/t1.specification/t1.pallet_capacity) as 'pallet_num',floor(floor(a.goods_num-floor(a.goods_num/t1.specification/t1.pallet_capacity)*t1.pallet_capacity*t1.specification)/t1.specification) as 'cases_num3',
 	 a.goods_num - floor(a.goods_num/t1.specification/t1.pallet_capacity)*t1.pallet_capacity*t1.specification-floor(floor(a.goods_num-floor(a.goods_num/t1.specification/t1.pallet_capacity)*t1.pallet_capacity*t1.specification)/t1.specification)*t1.specification as 'cases_num2',t1.specification,t1.pallet_capacity
         from glc_delivery a left join (select t.* from glc_delivery t group by t.goods_name ) t1 on a.goods_name=t1.goods_name
@@ -320,17 +320,17 @@ select a.goods_code as 'goods_code',a.goods_name as 'goods_name',a.goods_num as 
         a.batch_id = #{userId} limit 1
     </select>
 
-    <select id="getEduEn1" parameterType="java.util.HashMap" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEduEn1" parameterType="java.util.HashMap" resultType="com.ruoyi.system.domain.EduEIQ">
    select CEILING(a.num) as 'times'
    from (select order_code as 'order_code' ,count(order_code) as 'num' from edu_delivery where batch_id = #{userId}
         group by order_code)a
     </select>
-    <select id="getEduEn2" parameterType="java.util.HashMap" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEduEn2" parameterType="java.util.HashMap" resultType="com.ruoyi.system.domain.EduEIQ">
     select CEILING(a.num) as 'times' from (select order_code as 'order_code' ,count(order_code) as 'num' from edu_receiving where batch_id = #{userId}
         group by order_code)a
     </select>
 
-    <select id="getEduEq1" parameterType="java.util.HashMap" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEduEq1" parameterType="java.util.HashMap" resultType="com.ruoyi.system.domain.EduEIQ">
         select round(sum(pullet_num),1) as 'times'
 from edu_delivery
 where batch_id = #{userId}
@@ -338,7 +338,7 @@ group by order_code
 order by times desc
     </select>
 
-    <select id="getEduEq2" parameterType="java.util.HashMap" resultType="com.ruoyi.network.domain.EduEIQ">
+    <select id="getEduEq2" parameterType="java.util.HashMap" resultType="com.ruoyi.system.domain.EduEIQ">
      select CEILING(a.goods_num)  as 'times' from (select order_code as 'order_code' ,sum(pullet_num) as 'goods_num'
       from edu_receiving where batch_id = #{userId}
         group by order_code)a

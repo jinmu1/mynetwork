@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.shiro.session.OnlineSession;
-import com.ruoyi.network.domain.SysUserOnline;
+import com.ruoyi.system.domain.SysUserOnline;
 import com.ruoyi.network.service.ISysUserOnlineService;
 
 /**

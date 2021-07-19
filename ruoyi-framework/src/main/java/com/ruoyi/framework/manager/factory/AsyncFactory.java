@@ -1,6 +1,8 @@
 package com.ruoyi.framework.manager.factory;
 
 import java.util.TimerTask;
+
+import com.ruoyi.system.service.impl.SysLogininforServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ruoyi.common.constant.Constants;
@@ -11,12 +13,11 @@ import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.framework.shiro.session.OnlineSession;
-import com.ruoyi.network.domain.SysLogininfor;
-import com.ruoyi.network.domain.SysOperLog;
-import com.ruoyi.network.domain.SysUserOnline;
+import com.ruoyi.system.domain.SysLogininfor;
+import com.ruoyi.system.domain.SysOperLog;
+import com.ruoyi.system.domain.SysUserOnline;
 import com.ruoyi.network.service.ISysOperLogService;
 import com.ruoyi.network.service.ISysUserOnlineService;
-import com.ruoyi.network.service.impl.SysLogininforServiceImpl;
 import eu.bitwalker.useragentutils.UserAgent;
 
 /**

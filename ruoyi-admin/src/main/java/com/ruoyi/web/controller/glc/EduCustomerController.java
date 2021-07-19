@@ -2,7 +2,7 @@ package com.ruoyi.web.controller.glc;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.network.domain.EduDelivery;
+import com.ruoyi.system.domain.EduDelivery;
 import com.ruoyi.network.service.IEduDeliveryService;
 import com.ruoyi.network.service.IEduReceivingService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

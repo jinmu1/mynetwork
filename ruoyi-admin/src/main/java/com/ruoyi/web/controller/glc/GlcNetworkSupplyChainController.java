@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.network.domain.GlcNetworkSupplyChain;
+import com.ruoyi.system.domain.GlcNetworkSupplyChain;
 import com.ruoyi.network.service.IGlcNetworkSupplyChainService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;

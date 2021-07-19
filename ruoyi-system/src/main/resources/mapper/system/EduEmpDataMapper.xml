@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.network.mapper.EduEmpDataMapper">
+<mapper namespace="com.ruoyi.system.mapper.EduEmpDataMapper">
     
     <resultMap type="EduEmpData" id="EduEmpDataResult">
         <result property="id"    column="id"    />

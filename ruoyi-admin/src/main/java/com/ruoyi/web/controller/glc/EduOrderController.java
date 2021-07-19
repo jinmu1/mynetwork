@@ -2,9 +2,9 @@ package com.ruoyi.web.controller.glc;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.network.domain.EduEIQ;
-import com.ruoyi.network.domain.EduReceiving;
-import com.ruoyi.network.domain.MathCount;
+import com.ruoyi.system.domain.EduEIQ;
+import com.ruoyi.system.domain.EduReceiving;
+import com.ruoyi.system.domain.MathCount;
 import com.ruoyi.network.service.IEduReceivingService;
 import com.ruoyi.network.service.IGlcDeliveryService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

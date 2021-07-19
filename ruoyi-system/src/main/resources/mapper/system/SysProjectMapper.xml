@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.network.mapper.SysProjectMapper">
+<mapper namespace="com.ruoyi.system.mapper.SysProjectMapper">
     
     <resultMap type="SysProject" id="SysProjectResult">
         <result property="id"    column="id"    />
@@ -89,7 +89,7 @@ where user_id = #{userId})
   from sys_user_project
    where user_id = #{userId}
     </select>
-    <select id="selectRoleByUserId"  parameterType="Long" resultType="com.ruoyi.network.domain.SysUserRole">
+    <select id="selectRoleByUserId"  parameterType="Long" resultType="com.ruoyi.system.domain.SysUserRole">
   select user_id as 'userId',role_id as 'roleId'
   from sys_user_role
    where user_id = #{userId}

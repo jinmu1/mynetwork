@@ -1,8 +1,8 @@
 package com.ruoyi.network.utils;
 
-import com.ruoyi.network.network.enumType.Car;
-import com.ruoyi.network.network.enumType.StorageType;
-import com.ruoyi.network.network.resource.*;
+import com.ruoyi.network.enumType.Car;
+import com.ruoyi.network.enumType.StorageType;
+import com.ruoyi.network.resource.*;
 
 public final class AreaUtils {
 
@@ -63,7 +63,7 @@ public final class AreaUtils {
      * @param
      * @return
      */
-    public static Platform getPlatform(double  total,String CarType){
+    public static Platform getPlatform(double  total, String CarType){
         double car_volumetric = Double.parseDouble(Car.valueOf(CarType).getCode());//计算车辆容积 通过车辆类型
         platform_width = 3 * 1.25;
 
@@ -82,11 +82,6 @@ public final class AreaUtils {
      */
     public static Tally getTally(double  total,String carType){
         double pallet_num = total*tally_rate/tally_batch;//理货平均托盘量
-        if (carType.equals("超大车17米5")){
-            platform_width = 2.4*1.25;
-        }else {
-            platform_width = 2.4;
-        }
         double tally_transverse = getPlatform(total,carType).getPlatform_num();//纵向数量
         if (tally_transverse>pallet_num){
             tally_transverse = 1;

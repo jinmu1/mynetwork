@@ -1,6 +1,6 @@
 package com.ruoyi.network.algorithm.kmeans;
 
-import com.ruoyi.network.network.network.City;
+import com.ruoyi.network.node.City;
 
 import java.util.ArrayList;
 import java.util.List;

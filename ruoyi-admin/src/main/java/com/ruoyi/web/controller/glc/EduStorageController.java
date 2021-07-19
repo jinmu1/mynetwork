@@ -2,7 +2,7 @@ package com.ruoyi.web.controller.glc;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.network.domain.EduReplenishment;
+import com.ruoyi.system.domain.EduReplenishment;
 import com.ruoyi.network.service.IEduDeliveryService;
 import com.ruoyi.network.service.IEduReceivingService;
 import com.ruoyi.network.service.IEduReplenishmentService;

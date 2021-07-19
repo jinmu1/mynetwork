@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.network.algorithm.kmeans.Cluster;
-import com.ruoyi.network.network.form.GlcPoint;
-import com.ruoyi.network.network.network.*;
-import com.ruoyi.network.service.IGlcPointService;
+import com.ruoyi.network.form.GlcPoint;
+import com.ruoyi.network.node.*;
+import com.ruoyi.network.result.Result;
+import com.ruoyi.network.result.ResultMsg;
+import com.ruoyi.system.service.IGlcPointService;
 import com.ruoyi.network.utils.NetWorkPlanUtils;
 import com.ruoyi.network.utils.NetworkUtils;
 import org.gavaghan.geodesy.Ellipsoid;
@@ -122,27 +124,55 @@ public class NetWorkController extends BaseController
             List<Material> list = NetworkUtils.createGoods(goods_num);
             list = NetworkUtils.initMaterialPrice(list, h_price, m_price, l_price);
             list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
-            List<Order> orderList = NetworkUtils.initOrders(list, 12,transportNum);
+            List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
             List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
             List<Supplier> suppliers = NetworkUtils.initSupplier();
             orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
             Map<City, List<Order>> outOrdersList = orderList.stream().collect(Collectors.groupingBy(Order::getCustomerCity));//出库单
-            int k = 6; // K值
+
+
+
             for (int i = 1; i <= cityList.size(); i++) {
                 List<Result> results = new ArrayList<>();
                 Result allresult = new Result();
-                List<Cluster> clusters = initCentroides(points, k);
-                while (!checkConvergence(clusters)) { // 所有分类是否全部收敛
+
+                List<List<Cluster>> clusters1 = initCentroides(points, i);
+                List<Cluster> cluster2 = new ArrayList<>();
+                double max1 = Double.MAX_VALUE;
+                List<List<Cluster>> clusters = new ArrayList<>();
+                List<City> rdcPoint = new ArrayList<>();
+                for(List<Cluster> cluster1 : clusters1) {
+
+                    results = new ArrayList<>();
+                    rdcPoint = new ArrayList<City>();
+                    for (Cluster rdc: cluster1) {
+                        rdcPoint.add(rdc.getCentroid()); //将选取的备选点当做新增的RDC
+                    }
+                    // 开始计算
+                    double distance = NetWorkPlanUtils.chooseCity1(rdcPoint, points);//选择城市
+                    if (distance < max1) {
+                        max1 = distance;
+                        clusters.add(cluster1);
+                    }
+
+                }
+
+                double max = Double.MAX_VALUE;
+                for(List<Cluster> cluster1 : clusters) { // 所有分类是否全部收敛
                     // 1.计算距离对每个点进行分类
                     // 2.判断质心点是否改变,未改变则该分类已经收敛
                     // 3.重新生成质心点
-                    initClusters(clusters); // 重置分类中的点
-                    classifyPoint(points, clusters);// 计算距离进行分类
-                    recalcularCentroides(clusters); // 重新计算质心点
+                    initClusters(cluster1); // 重置分类中的点
+                    classifyPoint(points, cluster1);// 计算距离进行分类
+                   double distance =  recalcularCentroides(cluster1); // 重新计算质心点
+                    if (distance<max) {
+                        cluster2 = cluster1;
+                        max = distance;
+                    }
                 }
                 List<City> cities = new ArrayList<>();
 
-                for (Cluster cluster : clusters) {
+                for (Cluster cluster : cluster2) {
                     Result result = new Result();
                     List<Order> outOrders = new ArrayList<>();
                     result.setRange(cluster.getCentroid().getCity());
@@ -155,7 +185,7 @@ public class NetWorkController extends BaseController
                     }
                     List<Order> inOrders = NetWorkPlanUtils.getReplenishment(outOrders, list); //获取补货单数据
                     result = NetWorkPlanUtils.getTransportCost(cluster.getCentroid(), cluster.getPoints(), outOrders, result);//获取运输成本数据
-                    result = NetWorkPlanUtils.getStorageCost(inOrders, outOrders, emp_quantity, warehousing, result);//获取仓储成本数据
+                    result = NetWorkPlanUtils.getStorageCost(inOrders, outOrders, emp_quantity, warehousing, result,i);//获取仓储成本数据
                     result = NetWorkPlanUtils.inventoryCost(outOrders, suppliers, order, inventory_loss, result); // 获取库存成本数据
                     result = NetWorkPlanUtils.buildCost(inOrders, outOrders, result, cluster.getCentroid(), carLength);
                     result.setAll(Math.round(result.getTransportCost() + result.getBuildCost() + result.getInventoryCost() + result.getStorageCost()));
@@ -233,7 +263,7 @@ public class NetWorkController extends BaseController
                 i++;
             }
         }
-        return getDataTable(listList.get(num1-1));
+        return getDataTable(resultMsgs);
 
     }
 
@@ -245,20 +275,23 @@ public class NetWorkController extends BaseController
      * @param k      K值
      * @return 分类集合对象
      */
-    private static List<Cluster> initCentroides(List<City> points, Integer k) {
-        List<Cluster> centroides = new ArrayList<>();
+    private static  List<List<Cluster>> initCentroides(List<City> points, Integer k) {
+        List<List<Cluster>> centroides = new ArrayList<>();
 
         // 在范围内随机初始化k个质心点
 
         List<List<City>> combinations = NetworkUtils.combinations(points, k);
-        // 随机初始化k个中心点
-        for (int i = 0; i < k; i++) {
-            Cluster c = new Cluster();
-            City centroide = combinations.get(0).get(i); // 初始化的随机中心点
-            c.setCentroid(centroide);
-            centroides.add(c);
+        for (int j =0;j<k;j++) {
+            // 随机初始化k个中心点
+            List<Cluster> centroide = new ArrayList<>();
+            for (int i = 0; i < k; i++) {
+                Cluster c = new Cluster();
+                City city = combinations.get(j).get(i); // 初始化的随机中心点
+                c.setCentroid(city);
+                centroide.add(c);
+            }
+            centroides.add(centroide);
         }
-
         return centroides;
     }
 
@@ -310,7 +343,9 @@ public class NetWorkController extends BaseController
      *
      * @param clusters
      */
-    private static void recalcularCentroides(List<Cluster> clusters) {
+
+    private static double recalcularCentroides(List<Cluster> clusters) {
+        double distance1 = 0.0;
         for (Cluster c : clusters) {
             if (c.getPoints().isEmpty()) {
                 c.setConvergence(true);
@@ -330,13 +365,18 @@ public class NetWorkController extends BaseController
             y = sum_y / c.getPoints().size();
             City nuevoCentroide = new City(String.valueOf(x), String.valueOf(y)); // 新的质心点
             double max = Double.MAX_VALUE;
-            for (Cluster cluster:clusters){
+
+            for (City cluster:c.getPoints()){
                  double distance = getDistance(cluster,nuevoCentroide);
                  if (distance<max){
                      max = distance;
-                     nuevoCentroide = cluster.getCentroid();
+                     nuevoCentroide = cluster;
                  }
             }
+            for (City city:c.getPoints()){
+                distance1 += getDistance(nuevoCentroide,city)*Double.parseDouble(city.getGdp());
+            }
+
 
             if (nuevoCentroide.equals(c.getCentroid())) { // 如果质心点不再改变 则该分类已经收敛
                 c.setConvergence(true);
@@ -344,10 +384,12 @@ public class NetWorkController extends BaseController
                 c.setCentroid(nuevoCentroide);
             }
         }
+
+        return distance1;
     }
 
-    private static double getDistance(Cluster cluster, City nuevoCentroide) {
-        GlobalCoordinates userSource = new GlobalCoordinates(Double.parseDouble(cluster.getCentroid().getLat()),Double.parseDouble(cluster.getCentroid().getLng()));
+    private static double getDistance(City cluster, City nuevoCentroide) {
+        GlobalCoordinates userSource = new GlobalCoordinates(Double.parseDouble(cluster.getLat()),Double.parseDouble(cluster.getLng()));
         GlobalCoordinates businessTarget = new GlobalCoordinates(Double.parseDouble(nuevoCentroide.getLat()),Double.parseDouble(nuevoCentroide.getLng()));
         double meterDouble = NetWorkPlanUtils.getDistanceMeter(userSource, businessTarget, Ellipsoid.Sphere);
         return meterDouble;
