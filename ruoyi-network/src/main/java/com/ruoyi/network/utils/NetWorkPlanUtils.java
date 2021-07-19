@@ -89,12 +89,12 @@ public class NetWorkPlanUtils {
         double[] work = new double[inordersList.keySet().size()];
         int i =0;
         for (Date date:inordersList.keySet()){
-//            List<Order> in = inordersList.get(date);
+            List<Order> in = inordersList.get(date);
             List<Order> out = outOrdersList.get(date);
             double worknum= 0.0;
-//            for (Order order:in){
-//                worknum +=Math.abs(order.getGoodsNum()*order.getVolume()/(1.1*1.25*1.5));
-//            }
+            for (Order order:in){
+                worknum +=Math.abs(order.getGoodsNum()*order.getVolume()/(1.1*1.25*1.5));
+            }
             for (Order order:out){
                 worknum +=Math.abs(order.getGoodsNum()*order.getVolume()/(1.1*1.25*1.5));
             }
@@ -245,7 +245,7 @@ public class NetWorkPlanUtils {
         if (orders==null||orders.size()==0||orders.size()==1){
             return 0;
         }
-        Supplier supplier = new Supplier("供应商","物料","450.0",3);
+
         Map<Date, List<Order>> outOrdersList  = orders.stream().collect(Collectors.groupingBy(Order::getDeliveryDate));//出库单
         double[] work = new double[outOrdersList.keySet().size()];
         int i =0;
@@ -262,7 +262,7 @@ public class NetWorkPlanUtils {
         if (work==null||work.length==0||work.length==1){
             return 0;
         }
-        return MathUtils.standardDeviation(work)*lever*Math.sqrt(supplier.getLeadTime());
+        return MathUtils.standardDeviation(work)*lever*Math.sqrt(NetworkUtils.findObjFromList(suppliers,"getSupplier",orders.get(0).getGoodsCode()).get(0).getLeadTime());
     }
 
     /**

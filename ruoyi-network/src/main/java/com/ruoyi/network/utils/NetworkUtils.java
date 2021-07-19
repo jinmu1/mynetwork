@@ -9,6 +9,8 @@ import com.ruoyi.network.result.Result;
 import com.ruoyi.network.result.ResultMsg;
 import com.ruoyi.network.utils.MathUtils;
 import com.ruoyi.network.utils.RandomUtil;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -16,6 +18,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -260,7 +263,7 @@ public class NetworkUtils {
 
 
     /**
-     * 补货
+     * 配送路径
      * @param rdcPoint
      * @param netPoint
      * @param
@@ -416,7 +419,6 @@ public class NetworkUtils {
             int i = random.nextInt(customerList.size());
             order.setCustomerCode(customerList.get(i).getCustomerCode());
             order.setCustomerCity(customerList.get(i).getCity());
-
         }
         return  orderList;
     }
@@ -428,8 +430,19 @@ public class NetworkUtils {
         return list;
     }
 
-    public static List<Supplier> initSupplier() {
-        return new ArrayList<>();
+    /**
+     * 生成供应商
+     * @return
+     */
+    public static List<Supplier> initSupplier(int goodsnum) {
+
+        List<Supplier> suppliers = new ArrayList<>();
+        Random random = new Random();
+        for (int i=0;i<goodsnum/10;i++) {
+            Supplier supplier = new Supplier(RandomUtil.toFixdLengthString(random.nextInt(10000000),8), "物料", "450.0", 3);
+            suppliers.add(supplier);
+        }
+        return suppliers;
     }
 
 
@@ -551,6 +564,38 @@ public class NetworkUtils {
             e.printStackTrace();
         }
         return juli;
+
+    }
+
+
+    /**
+     * 从列表中找出包括Value值的对象列表
+     * @param list
+     * @param methodName
+     * @param value
+     * @return
+     */
+    public static <T,V> List<T> findObjFromList(List<T> list,String methodName,V value) {
+
+        Predicate<T> predicate = new Predicate<T>() {
+
+            @Override
+            public boolean evaluate(T obj) {
+                // TODO Auto-generated method stub
+                try {
+                    Method method = obj.getClass().getMethod(methodName);
+                    @SuppressWarnings("unchecked")
+                    V keyName = (V) method.invoke(obj);
+                    return keyName.equals(value);
+                }
+                catch (Exception e) {
+                    return false;
+                }
+            }
+        };
+
+        List<T> result = (List<T>) CollectionUtils.select( list, predicate);
+        return result;
 
     }
 }
