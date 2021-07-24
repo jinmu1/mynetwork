@@ -128,20 +128,12 @@ public class NetWorkPlanUtils {
         double inventoryCost  = 0.0;
         double sales_account = 0.0;
         double lever =1.65;
-        if (order == 90){
-            lever =1.25;
-        }else if(order == 95){
-            lever =1.65;
-        }else if(order == 98){
-            lever =2.05;
-        }else if(order == 100){
-            lever =3.5;
-        }
+
         Map<String, List<Order>> outOrdersList  = outOrders.stream().collect(Collectors.groupingBy(Order::getGoodsCode));//出库单
         Map<String, List<Supplier>> stringListMap  = supplierList.stream().collect(Collectors.groupingBy(Supplier::getGoodsCode));//出库单
         for(String goodsCode :outOrdersList.keySet()){
             List<Order> orders = outOrdersList.get(goodsCode);
-            double safeInventory = getSafeInventory(orders,stringListMap.get(goodsCode),lever);
+            double safeInventory = getSafeInventory(orders,stringListMap.get(goodsCode),order); //获取安全库存
             double orderNum = getOrderNum(orders);
             inventory += (safeInventory+orderNum/2);
             inventory1 +=(safeInventory+orderNum/2)*orders.get(0).getVolume()/(1.1*1.25*1.5);
@@ -249,7 +241,18 @@ public class NetWorkPlanUtils {
      * @param lever
      * @return
      */
-    public static double getSafeInventory(List<Order> orders,List<Supplier> suppliers, double lever) {
+    public static double getSafeInventory(List<Order> orders,List<Supplier> suppliers, double order) {
+        double lever = 1.25;
+        if (order == 90){
+            lever =1.25;
+        }else if(order == 95){
+            lever =1.65;
+        }else if(order == 98){
+            lever =2.05;
+        }else if(order == 100){
+            lever =3.5;
+        }
+
         if (orders==null||orders.size()==0||orders.size()==1){
             return 0;
         }
@@ -261,8 +264,8 @@ public class NetWorkPlanUtils {
         for (Date date:outOrdersList.keySet()) {
             List<Order> out = outOrdersList.get(date);
             double worknum= 0.0;
-            for (Order order:out){
-                worknum +=order.getGoodsNum();
+            for (Order orderd:out){
+                worknum +=orderd.getGoodsNum();
             }
             work[i]=worknum;
             i++;
@@ -270,7 +273,8 @@ public class NetWorkPlanUtils {
         if (work==null||work.length==0||work.length==1){
             return 0;
         }
-        return MathUtils.standardDeviation(work)*lever*Math.sqrt(suppliers.get(0).getLeadTime());
+        double leadTime = suppliers.get(0).getLeadTime();
+        return lever*MathUtils.standardDeviation(work)*leadTime;
     }
 
     /**

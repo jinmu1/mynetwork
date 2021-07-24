@@ -3,6 +3,7 @@ package com.ruoyi.network.test;
 
 import com.ruoyi.network.enumType.Car;
 import com.ruoyi.network.node.Order;
+import com.ruoyi.network.node.Supplier;
 import com.ruoyi.network.resource.LightStorage;
 import com.ruoyi.network.resource.StereoStorage;
 import com.ruoyi.network.utils.*;
@@ -107,6 +108,7 @@ public class AreaTest {
         Order order2 = new Order("物料二",9,4,2);
         Order order3 = new Order("物料三",8,3,3);
         Order order4 = new Order("物料四",7,2,4);
+
         list.add(order1);
         list.add(order2);
         list.add(order3);
