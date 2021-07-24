@@ -44,7 +44,7 @@ public class NetWorkPlanUtils {
 
     public static Result getTransportCost(City point, List<City> cities, List<Order> orders, Result result){
         double transportCost = 0.0;
-
+        double transportDate = 0.0; //运输周期
         double times = 0.0;
         int i = 0;
         Map<String, List<Order>> orderMaps = orders.stream().collect(Collectors.groupingBy(Order::getOrderCode));//入库单
@@ -57,15 +57,17 @@ public class NetWorkPlanUtils {
                      if (order.getCustomerCity().getCity().equals(fee.getCity())) {
                          GlobalCoordinates userSource = new GlobalCoordinates(Double.parseDouble(order.getCustomerCity().getLat()),Double.parseDouble(order.getCustomerCity().getLng()));
                          GlobalCoordinates businessTarget = new GlobalCoordinates(Double.parseDouble(point.getLat()),Double.parseDouble(point.getLng()));
-                         double meterDouble = getDistanceMeter(userSource, businessTarget, Ellipsoid.Sphere)/1000;
-//                         double meterDouble = twoJuLi(order.getCustomerCity(),fee)/1000;
+                         double meterDouble1 = getDistanceMeter(userSource, businessTarget, Ellipsoid.Sphere)/1000;
+                         double meterDouble = twoJuLi(order.getCustomerCity(),fee)/1000;
                          if (meterDouble<100){
                              meterDouble = 100;
                          }
-                         orderCost += order.getGoodsNum()*order.getVolume()* Math.sqrt(meterDouble) * 0.25;//运输体积与运输量以及运输费率得到运输成本
+                         orderCost += order.getGoodsNum()*order.getVolume()* Math.ceil(meterDouble) *fee.getPrice()* (1+0.09);//运输体积与运输量以及运输费率得到运输成本
+                         transportDate = meterDouble/60/24; //运输周期
                          transportCost += orderCost;
                      }
                  }
+                 order.setDeliveryDate(DateUtils.getExpiredDay(order.getDeliveryDate(),(int)transportDate));
              }
              transportfee[i] = transportCost;
              i++;
@@ -86,6 +88,8 @@ public class NetWorkPlanUtils {
          double storageCost =0.0;
         Map<Date, List<Order>> inordersList = inorders.stream().collect(Collectors.groupingBy(Order::getDeliveryDate));//入库单
         Map<Date, List<Order>> outOrdersList  = outOrders.stream().collect(Collectors.groupingBy(Order::getDeliveryDate));//出库单
+        double stroageDate = 0.0;
+        double plat_size = 1.1*1.25*1.5;
         double[] work = new double[inordersList.keySet().size()];
         int i =0;
         for (Date date:inordersList.keySet()){
@@ -93,17 +97,19 @@ public class NetWorkPlanUtils {
             List<Order> out = outOrdersList.get(date);
             double worknum= 0.0;
             for (Order order:in){
-                worknum +=Math.abs(order.getGoodsNum()*order.getVolume()/(1.1*1.25*1.5));
+                worknum +=Math.abs(order.getGoodsNum()*order.getVolume()/plat_size);
             }
             for (Order order:out){
-                worknum +=Math.abs(order.getGoodsNum()*order.getVolume()/(1.1*1.25*1.5));
+                worknum +=Math.abs(order.getGoodsNum()*order.getVolume()/plat_size);
             }
+            stroageDate +=worknum*emp_quantity/60/60/10;//仓库作业时间
             work[i] = worknum;
             i++;
         }
         double num = MathUtils.avg(work);
-        double emp = Math.ceil(num/emp_quantity*Math.pow(1.1,pointNum));
-        storageCost = emp*warehousing;
+        double emp = Math.ceil(num/emp_quantity);
+        double point = Math.pow(1.1,pointNum);
+        storageCost = emp*warehousing*point;
         result.setEmp(emp);
         result.setStorageCost(storageCost);
         return result;
@@ -118,6 +124,7 @@ public class NetWorkPlanUtils {
      */
     public static Result inventoryCost(List<Order> outOrders, List<Supplier> supplierList, double order, double inventory_loss, Result result){
         double inventory = 0.0;
+        double inventory1 = 0.0;
         double inventoryCost  = 0.0;
         double sales_account = 0.0;
         double lever =1.65;
@@ -136,14 +143,15 @@ public class NetWorkPlanUtils {
             List<Order> orders = outOrdersList.get(goodsCode);
             double safeInventory = getSafeInventory(orders,stringListMap.get(goodsCode),lever);
             double orderNum = getOrderNum(orders);
-            inventory += (safeInventory+orderNum)*orders.get(0).getVolume()/(1.1*1.25*1.5);
-            inventoryCost += inventory*orders.get(0).getGoodsPrice()*0.05;
+            inventory += (safeInventory+orderNum/2);
+            inventory1 +=(safeInventory+orderNum/2)*orders.get(0).getVolume()/(1.1*1.25*1.5);
+            inventoryCost += inventory*orders.get(0).getGoodsPrice()*(0.05+inventory_loss/100);
             for(Order order1:orders){
             sales_account += order1.getGoodsNum()*orders.get(0).getGoodsPrice();
             }
         }
-        result.setInventory_num(inventory);
-        result.setInventoryCost(inventoryCost*0.05/1000*(1+inventory_loss/100));
+        result.setInventory_num(inventory1);
+        result.setInventoryCost(inventoryCost);
         result.setSales_account(sales_account);
         return result;
     }
@@ -180,7 +188,7 @@ public class NetWorkPlanUtils {
         }
         double in =  Math.abs(MathUtils.avg(ins));
         double out =  Math.abs(MathUtils.avg(outs));
-        double platform = Math.abs(AreaUtils.getPlatform(in + out, carLength).getPlatform_area());
+        double platform = Math.abs(AreaUtils.getPlatform((in + out), carLength).getPlatform_area());
 
         double storage_area = 0.0;
         double inventory = result.getInventory_num();
@@ -200,7 +208,7 @@ public class NetWorkPlanUtils {
 
         double area =  outtally  + storage_area + platform;
 
-        double buildCost =  area * 22*12;
+        double buildCost =  area * city.getPrice()*12;
         result.setThroughput_num(in+out);
         result.setArea(area);
         result.setBuildCost(buildCost);
@@ -262,7 +270,7 @@ public class NetWorkPlanUtils {
         if (work==null||work.length==0||work.length==1){
             return 0;
         }
-        return MathUtils.standardDeviation(work)*lever*Math.sqrt(NetworkUtils.findObjFromList(suppliers,"getSupplier",orders.get(0).getGoodsCode()).get(0).getLeadTime());
+        return MathUtils.standardDeviation(work)*lever*Math.sqrt(suppliers.get(0).getLeadTime());
     }
 
     /**
@@ -419,7 +427,7 @@ public class NetWorkPlanUtils {
                 GlobalCoordinates userSource = new GlobalCoordinates(Double.parseDouble(netPoints.getLat()),Double.parseDouble(netPoints.getLng()));
                 GlobalCoordinates businessTarget = new GlobalCoordinates(Double.parseDouble(city.getLat()),Double.parseDouble(city.getLng()));
                 double meterDouble = getDistanceMeter(userSource, businessTarget, Ellipsoid.Sphere);
-//                double meterDouble = Double.parseDouble(twoJuLi(netPoints,city));
+//                 meterDouble = Double.parseDouble(twoJuLi(netPoints,city));
 
                 double num = meterDouble/1000;
                 if (num==0){
@@ -528,6 +536,55 @@ public class NetWorkPlanUtils {
         return geoCurve.getEllipsoidalDistance();
     }
 
+
+
+    /**
+     * 通过运输单计算运输成本
+     * @param orders
+     * @param cities
+     * @return
+     */
+
+    public static List<Order> getTransportCost1(City point, List<City> cities, List<Order> orders){
+
+        double transportCost = 0.0;
+        double transportDate = 0.0; //运输周期
+        double times = 0.0;
+        int i = 0;
+        Map<String, List<Order>> orderMaps = orders.stream().collect(Collectors.groupingBy(Order::getOrderCode));//入库单
+        double[] transportfee =new double[orderMaps.keySet().size()];
+        for (String ordercode: orderMaps.keySet()){
+            double orderCost = 0.0;
+            Order orderd = new Order();
+            orderd.setOrderCode(ordercode);
+            List<Order> orderList = orderMaps.get(ordercode);
+            for (Order order :orderList) {
+                for (City fee : cities) {
+                    if (order.getCustomerCity().getCity().equals(fee.getCity())) {
+                        GlobalCoordinates userSource = new GlobalCoordinates(Double.parseDouble(order.getCustomerCity().getLat()),Double.parseDouble(order.getCustomerCity().getLng()));
+                        GlobalCoordinates businessTarget = new GlobalCoordinates(Double.parseDouble(point.getLat()),Double.parseDouble(point.getLng()));
+                        double meterDouble = getDistanceMeter(userSource, businessTarget, Ellipsoid.Sphere)/1000;
+//                         double meterDouble = twoJuLi(order.getCustomerCity(),fee)/1000;
+                        if (meterDouble<100){
+                            meterDouble = 100;
+                        }
+
+                        orderCost += order.getGoodsNum()*order.getVolume()* Math.sqrt(meterDouble) * 0.25;//运输体积与运输量以及运输费率得到运输成本
+                        transportDate = meterDouble/60/24; //运输周期
+                        order.setCustomerName(orderCost+"");
+                        transportCost += orderCost;
+                    }
+                }
+                order.setDeliveryDate(DateUtils.getExpiredDay(order.getDeliveryDate(),(int)transportDate));
+            }
+            transportfee[i] = transportCost;
+            i++;
+        }
+        for (Order order:orders){
+            order.setCustomerCity(null);
+        }
+        return orders;
+    }
 
 
 }

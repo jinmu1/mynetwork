@@ -2,11 +2,16 @@ package com.ruoyi.network.test;
 
 
 import com.ruoyi.network.enumType.Car;
+import com.ruoyi.network.node.Order;
 import com.ruoyi.network.resource.LightStorage;
 import com.ruoyi.network.resource.StereoStorage;
 import com.ruoyi.network.utils.*;
 
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class AreaTest {
 
@@ -21,7 +26,7 @@ public class AreaTest {
     }
     @Test
     public void printTally(){
-        System.out.println("理货区托盘数量:"+ AreaUtils.getTally(1,"中车7米2").getPallet()+";"+"理货区面积:"+ AreaUtils.getTally(1,"中车7米2").getArea()+",横向托盘数量:"+AreaUtils.getTally(1,"中车7米2").getTally_longitudinal()+",纵向托盘数量:"+AreaUtils.getTally(1,"中车7米2").getTally_transverse());
+        System.out.println("理货区托盘数量:"+ AreaUtils.getTally(200,"中车7米2").getPallet()+";"+"理货区面积:"+ AreaUtils.getTally(50,"中车7米2").getArea()+",横向托盘数量:"+AreaUtils.getTally(1,"中车7米2").getTally_longitudinal()+",纵向托盘数量:"+AreaUtils.getTally(1,"中车7米2").getTally_transverse());
 
     }
     @Test
@@ -92,6 +97,43 @@ public class AreaTest {
 //        }
 
     }
+    @Test
+    public void printPow(){
+//        System.out.println(Math.pow(3,2));
+//        double[] num = {1,2,3,4,5,6};
+//        System.out.println(MathUtils.avg(num));
+        List<Order> list = new ArrayList<>();
+        Order order1 = new Order("物料一",10,5,1);
+        Order order2 = new Order("物料二",9,4,2);
+        Order order3 = new Order("物料三",8,3,3);
+        Order order4 = new Order("物料四",7,2,4);
+        list.add(order1);
+        list.add(order2);
+        list.add(order3);
+        list.add(order4);
+        double[] num = new double[4];
+        int i = 0;
+        for (Order order:list){
+           num[i] = order.getGoodsNum();
+           i++;
+        }
+
+        System.out.println(Arrays.toString(num));
+
+//        for (Order order:list){
+//             System.out.println(order.toString());
+//        }
+//        double nums = 0.0;
+//        for (Order order:list){
+//            nums += order.getGoodsNum()*order.getVolume()*order.getGoodsPrice();
+//        }
+//        System.out.println(nums);
+
+    }
+
+
+
+
     @Test
     public void printEveryArea(){
         double heap = 0.0;//地堆区面积

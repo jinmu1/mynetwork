@@ -66,6 +66,7 @@ public class NetworkUtils {
         }
         double max = Double.MAX_VALUE;
         int number = 0;
+        double cars =0;
         for(int i=1;i<list.size();i++) {
             List<List<City>> combinations = combinations(point, new Random(list.size()).nextInt());//已经遍历了该RDC数量下的所有RDC组合 k为备选点数量
             List<City> cities = new ArrayList<>();
@@ -79,7 +80,8 @@ public class NetworkUtils {
                 double transportCost = 0.0;
                 for (City city : cities) {
                     double carCos = Double.parseDouble(Car.valueOf(carType).getCode()); //计算车辆类型
-                    double CarNum = Double.parseDouble(city.getGdp()) / gdp * transportNum * 1.2 * 1 * 1.5 / carCos;//计算车辆数量(总计)
+                    double carNum = initCar(city,transportNum,carCos,gdp);//记录车辆数
+                    cars +=carNum;
                     transportCost += Double.parseDouble(city.getDistance()) * 0.89 * 1.09 * transportNum * 1.2 * 1 * 1.5;//计算运输成本
                 }
                 if (transportCost<max){
@@ -91,6 +93,13 @@ public class NetworkUtils {
         }
 
             return max;
+    }
+
+    private static double initCar(City city, double transportNum, double carCos,double gdp) {
+        if (transportNum<carCos){
+            return 0;
+        }
+        return Double.parseDouble(city.getGdp()) / gdp * transportNum * 1.2 * 1 * 1.5 / carCos;
     }
 
     public static double getSaleAccount(double h_price,double m_price,double l_price,double transportNUm){
@@ -214,7 +223,7 @@ public class NetworkUtils {
     public static double[] initNormalDistribution(int length,double max){
         double[] num = new double[length];
         for (int i = 0;i<length;i+=1){
-            num[i] = Math.abs(NetworkUtils.NormalDistribution(50,(float)1000));
+            num[i] = Math.abs(Math.ceil(NetworkUtils.NormalDistribution(500,(float)10000)));
         }
         double avg = MathUtils.sum(num);
         for (int i = 0; i<num.length;i++){
@@ -225,7 +234,7 @@ public class NetworkUtils {
     public static double[] initNormalDistribution1(int length,double max){
         double[] num = new double[length];
         for (int i = 0;i<length;i+=1){
-            num[i] = Math.abs(NetworkUtils.NormalDistribution(50,(float)1000));
+            num[i] = Math.abs(NetworkUtils.NormalDistribution(500,(float)10000));
         }
         double avg = MathUtils.sum(num)/num.length;
         for (int i = 0; i<num.length;i++){
@@ -319,9 +328,9 @@ public class NetworkUtils {
         double num3 = 0.0;
         for (Material material:list) {
             double num = material.getNeedNum();
-            for (int i = 0; i < material.getNeedNum()*10; i+=(int)random.nextInt(5) ) {
+            for (int i = 0; i < material.getNeedNum()*200; i+=(int)random.nextInt(3) ) {
                 long numd =  (long)((num*1.1*1.25*1.5)/material.getVolume())/365;
-                long num2 = (long)((num*1.1*1.25*1.5)/material.getVolume());
+                long num2 = (long)((num*1.1*1.25*1.5)/material.getVolume())/12;
 
                 if(num>0&&num2>1) {
                     double num1 = NetworkUtils.random(numd,num2);
@@ -336,9 +345,9 @@ public class NetworkUtils {
 
             }
         }
-        System.out.println(num3);
+
         for (Order order:orderList) {
-            String OrderCode = RandomUtil.toFixdLengthString(random.nextInt(1000),5);
+            String OrderCode = "D"+RandomUtil.toFixdLengthString(random.nextInt(10000),4);
             String orderDate = sdf1.format(randomDate("2021-01-01 08:00:00","2021-12-31 18:00:00"));
 
                 order.setOrderCode(OrderCode);

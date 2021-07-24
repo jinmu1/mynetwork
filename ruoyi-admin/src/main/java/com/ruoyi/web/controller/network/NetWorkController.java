@@ -126,10 +126,9 @@ public class NetWorkController extends BaseController
             list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
             List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
             List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
-            List<Supplier> suppliers = NetworkUtils.initSupplier();
+            List<Supplier> suppliers = NetworkUtils.initSupplier(list.size());
             orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
             Map<City, List<Order>> outOrdersList = orderList.stream().collect(Collectors.groupingBy(Order::getCustomerCity));//出库单
-
 
 
             for (int i = 1; i <= cityList.size(); i++) {
@@ -183,6 +182,7 @@ public class NetWorkController extends BaseController
                             }
                         }
                     }
+                    result.setCity(cluster.getCentroid().getCity());
                     List<Order> inOrders = NetWorkPlanUtils.getReplenishment(outOrders, list); //获取补货单数据
                     result = NetWorkPlanUtils.getTransportCost(cluster.getCentroid(), cluster.getPoints(), outOrders, result);//获取运输成本数据
                     result = NetWorkPlanUtils.getStorageCost(inOrders, outOrders, emp_quantity, warehousing, result,i);//获取仓储成本数据
@@ -190,6 +190,7 @@ public class NetWorkController extends BaseController
                     result = NetWorkPlanUtils.buildCost(inOrders, outOrders, result, cluster.getCentroid(), carLength);
                     result.setAll(Math.round(result.getTransportCost() + result.getBuildCost() + result.getInventoryCost() + result.getStorageCost()));
                     result.setRate(result.getAll() / result.getSales_account());  //计算费率
+                    result.setStorageCost(result.getStorageCost()+managementFee);
                     results.add(result);
                     for (City city : cluster.getPoints()) {
                         city.setCity1(cluster.getCentroid().getCity());
@@ -234,25 +235,28 @@ public class NetWorkController extends BaseController
                 allresult.setPlat_storage(Math.round(allresult.getStorage() / transportNum / i));
                 allresult.setOrder_cost(allresult.getOrder_cost() / i);
                 allresult.setPlat_transport(Math.round(allresult.getTransportCost() / transportNum / i));
-                ResultMsg resultMsg = new ResultMsg();
-                resultMsg.setRdc(i);
-                resultMsg.setCost(allresult.getAll());
-                resultMsg.setCities(cities);
-                resultMsg.setResult(allresult);
-                resultMsg.setResultList(results);
-                resultMsgs.add(resultMsg);
+                if (allresult.getAll()<max)
+                {
+                    ResultMsg resultMsg = new ResultMsg();
+                    resultMsg.setRdc(i);
+                    resultMsg.setCost(allresult.getAll());
+                    resultMsg.setCities(cities);
+                    resultMsg.setResult(allresult);
+                    resultMsg.setResultList(results);
+                    resultMsgs.add(resultMsg);
+                }
 
             }
             jedis.select(2);
             jedis.set(provinces + carLength + transportNum + warehousing + h_price + m_price + inventory_loss + times + order + managementFee + goods_num + "" + b_goods_size + m_goods_size + s_goods_size, JSON.toJSON(resultMsgs).toString());
         }
-           resultMsgs = resultMsgs.stream().sorted(Comparator.comparing(ResultMsg::getCost)).collect(Collectors.toList());
-           List<List<City>> listList = new ArrayList<>();
-          for (ResultMsg resultMsg : resultMsgs){
+        resultMsgs = resultMsgs.stream().sorted(Comparator.comparing(ResultMsg::getCost)).collect(Collectors.toList());
+        List<List<City>> listList = new ArrayList<>();
+        for (ResultMsg resultMsg : resultMsgs){
             listList.add(resultMsg.getCities());
-          }
-         double[] num = {1, 25, 50, 75, 90, 100};
-         for (List<City> list1 : listList) {
+        }
+        double[] num = {1, 25, 50, 75, 90, 100};
+        for (List<City> list1 : listList) {
             Map<String, List<City>> linkCity = list1.stream().collect(Collectors.groupingBy(City::getCity1));
             int i = 0;
             for (String str : linkCity.keySet()) {
@@ -263,28 +267,266 @@ public class NetWorkController extends BaseController
                 i++;
             }
         }
-        return getDataTable(resultMsgs);
+        return getDataTable(listList.get(0));
 
     }
 
 
-    /**
-     * 初始化k个质心点
-     *
-     * @param points 点集
-     * @param k      K值
-     * @return 分类集合对象
-     */
+    @PostMapping("/network1")
+    @ResponseBody
+    public TableDataInfo  network2(HttpServletRequest req) {
+        int num1 = Integer.parseInt(req.getParameter("num"));
+        String provinces = req.getParameter("provinces");
+        String carLength = req.getParameter("carLength");
+
+        double transportNum = 80000;
+        if (req.getParameter("transportNum")!=null&&!req.getParameter("transportNum").equals("")){
+            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+        }
+        double warehousing = 80000;
+        if (req.getParameter("warehousing")!=null&&!req.getParameter("warehousing").equals("")) {
+            warehousing = Double.parseDouble(req.getParameter("warehousing"));
+        }
+        double h_price = 15;
+        if(req.getParameter("h_price")!=null&&!req.getParameter("h_price").equals("")) {
+            h_price = Double.parseDouble(req.getParameter("h_price"));
+        }
+        double m_price = 15;
+        if(req.getParameter("m_price")!=null&&!req.getParameter("m_price").equals("")) {
+            m_price = Double.parseDouble(req.getParameter("m_price"));
+        }
+        double l_price = 60;
+        if(req.getParameter("s_price")!=null&&!req.getParameter("s_price").equals("")) {
+            l_price = Double.parseDouble(req.getParameter("s_price"));
+        }
+        double inventory_loss = 0.5;
+        if(req.getParameter("inventory_loss")!=null&&!req.getParameter("inventory_loss").equals("")) {
+            inventory_loss = Double.parseDouble(req.getParameter("inventory_loss"));
+        }
+        double managementFee = 0;
+        if(req.getParameter("managementFee")!=null&&!req.getParameter("managementFee").equals("")) {
+            managementFee = Double.parseDouble(req.getParameter("managementFee"));
+        }
+        double times = 72;
+        if(req.getParameter("times")!=null&&!req.getParameter("times").equals("")) {
+            times = Integer.parseInt(req.getParameter("times"));
+        }
+        double order = 95;
+        if(req.getParameter("order")!=null&&!req.getParameter("order").equals("")) {
+            order = Integer.parseInt(req.getParameter("order"));
+        }
+        double goods_num = 6000;
+        if(req.getParameter("goods_num")!=null&&!req.getParameter("goods_num").equals("")) {
+            goods_num = Integer.parseInt(req.getParameter("goods_num"));
+        }
+        double b_goods_size = 20;
+        if(req.getParameter("b_goods_size")!=null&&!req.getParameter("b_goods_size").equals("")) {
+            b_goods_size = Double.parseDouble(req.getParameter("b_goods_size"));
+        }
+        double m_goods_size = 20;
+        if(req.getParameter("m_goods_size")!=null&&!req.getParameter("m_goods_size").equals("")) {
+            m_goods_size = Double.parseDouble(req.getParameter("m_goods_size"));
+        }
+        double s_goods_size = 60;
+        if(req.getParameter("s_goods_size")!=null&&!req.getParameter("s_goods_size").equals("")) {
+            s_goods_size = Double.parseDouble(req.getParameter("s_goods_size"));
+        }
+        int emp_quantity = 50;//一天处理50托
+
+        List<GlcPoint> cityList = glcPointService.selectGlcPointList(new GlcPoint(provinces));  //获取省份内城市
+        List<City> points = new ArrayList<>();
+        for (GlcPoint glcPoint : cityList) {//需求点
+            points.add(new City(glcPoint.getCity(), glcPoint.getLat(), glcPoint.getLng(), glcPoint.getGdp()));//备选点
+        }
+        List<Material> list = NetworkUtils.createGoods(goods_num);
+        list = NetworkUtils.initMaterialPrice(list, h_price, m_price, l_price);
+        list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
+        List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
+        List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
+        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size());
+        orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
+        List<Order> list1 = NetWorkPlanUtils.getTransportCost1(points.get(0),points,orderList);
+
+        return getDataTable(list1);
+    }
+
+
+    @PostMapping("/network2")
+    @ResponseBody
+    public TableDataInfo  network3(HttpServletRequest req) {
+        int num1 = Integer.parseInt(req.getParameter("num"));
+        String provinces = req.getParameter("provinces");
+        String carLength = req.getParameter("carLength");
+
+        double transportNum = 80000;
+        if (req.getParameter("transportNum")!=null&&!req.getParameter("transportNum").equals("")){
+            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+        }
+        double warehousing = 80000;
+        if (req.getParameter("warehousing")!=null&&!req.getParameter("warehousing").equals("")) {
+            warehousing = Double.parseDouble(req.getParameter("warehousing"));
+        }
+        double h_price = 15;
+        if(req.getParameter("h_price")!=null&&!req.getParameter("h_price").equals("")) {
+            h_price = Double.parseDouble(req.getParameter("h_price"));
+        }
+        double m_price = 15;
+        if(req.getParameter("m_price")!=null&&!req.getParameter("m_price").equals("")) {
+            m_price = Double.parseDouble(req.getParameter("m_price"));
+        }
+        double l_price = 60;
+        if(req.getParameter("s_price")!=null&&!req.getParameter("s_price").equals("")) {
+            l_price = Double.parseDouble(req.getParameter("s_price"));
+        }
+        double inventory_loss = 0.5;
+        if(req.getParameter("inventory_loss")!=null&&!req.getParameter("inventory_loss").equals("")) {
+            inventory_loss = Double.parseDouble(req.getParameter("inventory_loss"));
+        }
+        double managementFee = 0;
+        if(req.getParameter("managementFee")!=null&&!req.getParameter("managementFee").equals("")) {
+            managementFee = Double.parseDouble(req.getParameter("managementFee"));
+        }
+        double times = 72;
+        if(req.getParameter("times")!=null&&!req.getParameter("times").equals("")) {
+            times = Integer.parseInt(req.getParameter("times"));
+        }
+        double order = 95;
+        if(req.getParameter("order")!=null&&!req.getParameter("order").equals("")) {
+            order = Integer.parseInt(req.getParameter("order"));
+        }
+        double goods_num = 6000;
+        if(req.getParameter("goods_num")!=null&&!req.getParameter("goods_num").equals("")) {
+            goods_num = Integer.parseInt(req.getParameter("goods_num"));
+        }
+        double b_goods_size = 20;
+        if(req.getParameter("b_goods_size")!=null&&!req.getParameter("b_goods_size").equals("")) {
+            b_goods_size = Double.parseDouble(req.getParameter("b_goods_size"));
+        }
+        double m_goods_size = 20;
+        if(req.getParameter("m_goods_size")!=null&&!req.getParameter("m_goods_size").equals("")) {
+            m_goods_size = Double.parseDouble(req.getParameter("m_goods_size"));
+        }
+        double s_goods_size = 60;
+        if(req.getParameter("s_goods_size")!=null&&!req.getParameter("s_goods_size").equals("")) {
+            s_goods_size = Double.parseDouble(req.getParameter("s_goods_size"));
+        }
+        int emp_quantity = 50;//一天处理50托
+
+        List<GlcPoint> cityList = glcPointService.selectGlcPointList(new GlcPoint(provinces));  //获取省份内城市
+        List<City> points = new ArrayList<>();
+        for (GlcPoint glcPoint : cityList) {//需求点
+            points.add(new City(glcPoint.getCity(), glcPoint.getLat(), glcPoint.getLng(), glcPoint.getGdp()));//备选点
+        }
+        List<Material> list = NetworkUtils.createGoods(goods_num);
+        list = NetworkUtils.initMaterialPrice(list, h_price, m_price, l_price);
+        list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
+        List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
+        List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
+        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size());
+        orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
+//        Map<City, List<Order>> outOrdersList = orderList.stream().collect(Collectors.groupingBy(Order::getCustomerCity));//出库单
+
+        return getDataTable(orderList);
+    }
+
+
+
+    @PostMapping("/network3")
+    @ResponseBody
+    public TableDataInfo  network4(HttpServletRequest req) {
+        int num1 = Integer.parseInt(req.getParameter("num"));
+        String provinces = req.getParameter("provinces");
+        String carLength = req.getParameter("carLength");
+
+        double transportNum = 80000;
+        if (req.getParameter("transportNum")!=null&&!req.getParameter("transportNum").equals("")){
+            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+        }
+        double warehousing = 80000;
+        if (req.getParameter("warehousing")!=null&&!req.getParameter("warehousing").equals("")) {
+            warehousing = Double.parseDouble(req.getParameter("warehousing"));
+        }
+        double h_price = 15;
+        if(req.getParameter("h_price")!=null&&!req.getParameter("h_price").equals("")) {
+            h_price = Double.parseDouble(req.getParameter("h_price"));
+        }
+        double m_price = 15;
+        if(req.getParameter("m_price")!=null&&!req.getParameter("m_price").equals("")) {
+            m_price = Double.parseDouble(req.getParameter("m_price"));
+        }
+        double l_price = 60;
+        if(req.getParameter("s_price")!=null&&!req.getParameter("s_price").equals("")) {
+            l_price = Double.parseDouble(req.getParameter("s_price"));
+        }
+        double inventory_loss = 0.5;
+        if(req.getParameter("inventory_loss")!=null&&!req.getParameter("inventory_loss").equals("")) {
+            inventory_loss = Double.parseDouble(req.getParameter("inventory_loss"));
+        }
+        double managementFee = 0;
+        if(req.getParameter("managementFee")!=null&&!req.getParameter("managementFee").equals("")) {
+            managementFee = Double.parseDouble(req.getParameter("managementFee"));
+        }
+        double times = 72;
+        if(req.getParameter("times")!=null&&!req.getParameter("times").equals("")) {
+            times = Integer.parseInt(req.getParameter("times"));
+        }
+        double order = 95;
+        if(req.getParameter("order")!=null&&!req.getParameter("order").equals("")) {
+            order = Integer.parseInt(req.getParameter("order"));
+        }
+        double goods_num = 6000;
+        if(req.getParameter("goods_num")!=null&&!req.getParameter("goods_num").equals("")) {
+            goods_num = Integer.parseInt(req.getParameter("goods_num"));
+        }
+        double b_goods_size = 20;
+        if(req.getParameter("b_goods_size")!=null&&!req.getParameter("b_goods_size").equals("")) {
+            b_goods_size = Double.parseDouble(req.getParameter("b_goods_size"));
+        }
+        double m_goods_size = 20;
+        if(req.getParameter("m_goods_size")!=null&&!req.getParameter("m_goods_size").equals("")) {
+            m_goods_size = Double.parseDouble(req.getParameter("m_goods_size"));
+        }
+        double s_goods_size = 60;
+        if(req.getParameter("s_goods_size")!=null&&!req.getParameter("s_goods_size").equals("")) {
+            s_goods_size = Double.parseDouble(req.getParameter("s_goods_size"));
+        }
+        int emp_quantity = 50;//一天处理50托
+
+        List<GlcPoint> cityList = glcPointService.selectGlcPointList(new GlcPoint(provinces));  //获取省份内城市
+        List<City> points = new ArrayList<>();
+        for (GlcPoint glcPoint : cityList) {//需求点
+            points.add(new City(glcPoint.getCity(), glcPoint.getLat(), glcPoint.getLng(), glcPoint.getGdp()));//备选点
+        }
+        List<Material> list = NetworkUtils.createGoods(goods_num);
+        list = NetworkUtils.initMaterialPrice(list, h_price, m_price, l_price);
+        list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
+        List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
+        List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
+        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size());
+        orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
+//        Map<City, List<Order>> outOrdersList = orderList.stream().collect(Collectors.groupingBy(Order::getCustomerCity));//出库单
+
+        return getDataTable(orderList);
+    }
+
+
+        /**
+         * 初始化k个质心点
+         *
+         * @param points 点集
+         * @param k      K值
+         * @return 分类集合对象
+         */
     private static  List<List<Cluster>> initCentroides(List<City> points, Integer k) {
         List<List<Cluster>> centroides = new ArrayList<>();
 
         // 在范围内随机初始化k个质心点
 
         List<List<City>> combinations = NetworkUtils.combinations(points, k);
-        for (int j =0;j<k;j++) {
+        for (int j =0;j<combinations.size();j++) {
             // 随机初始化k个中心点
             List<Cluster> centroide = new ArrayList<>();
-            for (int i = 0; i < k; i++) {
+            for (int i = 0; i < combinations.get(j).size(); i++) {
                 Cluster c = new Cluster();
                 City city = combinations.get(j).get(i); // 初始化的随机中心点
                 c.setCentroid(city);

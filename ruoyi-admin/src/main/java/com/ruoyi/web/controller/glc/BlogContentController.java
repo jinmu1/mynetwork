@@ -3,9 +3,12 @@ package com.ruoyi.web.controller.glc;
 import java.util.HashMap;
 import java.util.List;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.ruoyi.system.domain.BlogContent;
 import com.ruoyi.network.service.IBlogContentService;
@@ -42,5 +45,17 @@ public class BlogContentController extends BaseController
         BlogContent blogContent = new BlogContent();
         blogContent.setDel(1);
         return blogContentService.selectList(blogContent);
+    }
+
+    @PostMapping("/account/blog/eidt")
+    @ResponseBody
+    public AjaxResult saveBlog(HttpServletRequest request){
+            BlogContent contentDO = new BlogContent();
+            contentDO.setTitle(request.getParameter("title"));
+            contentDO.setContent(request.getParameter("content"));
+            contentDO.setType((long) 1);
+            contentDO.setDel(1);
+            blogContentService.insertBlogContent(contentDO);
+        return AjaxResult.success("提交成功");
     }
 }

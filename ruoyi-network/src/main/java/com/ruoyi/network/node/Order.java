@@ -25,10 +25,17 @@ public class Order {
    // @TableField(value = "发货日期")
     private Date deliveryDate;
 
+    private Date storageDate;//仓储作业时间
+
+
 
     public Order() {
     }
-
+    public Order(String goodsCode,  double goodsNum,double volume) {
+        this.goodsCode = goodsCode;
+        this.goodsNum = goodsNum;
+        this.volume = volume;
+    }
     public Order(String goodsCode,  double goodsNum,double volume,double price) {
         this.goodsCode = goodsCode;
         this.goodsNum = goodsNum;
@@ -130,5 +137,22 @@ public class Order {
 
     public void setDeliveryDate(Date deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+
+    public Date getStorageDate() {
+        return storageDate;
+    }
+
+    public void setStorageDate(Date storageDate) {
+        this.storageDate = storageDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "物料名称=" + goodsCode +
+                ", 物料数量=" + goodsNum +
+                ", 体积=" + volume +
+                '}';
     }
 }

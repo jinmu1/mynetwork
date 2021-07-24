@@ -945,7 +945,7 @@ public class GlcPointController extends BaseController
 //                            range += city1.getCity() + ",";
                             double gdps = 1.5 * Double.parseDouble(city1.getGdp()) / gdp * transportNum;
                             transportNum1+=Double.parseDouble(city1.getGdp()) / gdp * transportNum;
-                            transportCost += Math.sqrt(Double.parseDouble(city1.getDistance()))  * (1 + 0.09) * 1.68 * 1 * gdps;//计算运输成本
+                            transportCost += Math.sqrt(Double.parseDouble(city1.getDistance()))  * (1 + 0.09) * 2.68 * 1 * gdps;//计算运输成本
                             carNum += gdps / Double.parseDouble(Car.valueOf(carLength).getCode()) / 365;
                             emp += gdps / 365 / emp_quantity*Math.sqrt((2 - (Math.sqrt(times / 72) )))*(1+Math.sqrt(goods_num/10000))/Math.sqrt(Math.sqrt(size))/1.5;//一天处理多少托需要多少人
                             inventory +=Math.pow(gdps / 365 * Math.sqrt(i) * lever,0.9) ;
@@ -985,7 +985,7 @@ public class GlcPointController extends BaseController
                         result.setSales_account(transportNum1*price);
                         result.setThroughput_num((emp * 365 * emp_quantity/2));
                         result.setSales_account(transportNum);
-                        result.setRate(result.getAll()/result.getSales_account());
+                        result.setRate(result.getAll()/result.getSales_account()/2);
 //                        result.setRate1(NetworkUtils.random(320,720));
                         result.setStorage_area(NetworkUtils.random(120,320));
                         result.setPlat_cost(result.getAll()/result.getThroughput_num());
@@ -1016,7 +1016,7 @@ public class GlcPointController extends BaseController
                         allresult.setRate1(allresult.getRate1() + result.getRate1());
                         allresult.setStorage_area(allresult.getStorage_area() + result.getStorage_area());
                         allresult.setPlat_cost(allresult.getAll()/transportNum);
-                        allresult.setOrder_cost(allresult.getPlat_cost()/ NetworkUtils.random(2,5));
+                        allresult.setOrder_cost(Math.round(result.getOrder_cost() + allresult.getOrder_cost()));
                         allresult.setArea_cost(allresult.getAll()/allresult.getArea());
                         m++;
                     }
@@ -1776,7 +1776,7 @@ public class GlcPointController extends BaseController
                                 order_rate++;
                             }
                         }
-                        emp = emp + Math.sqrt(Math.sqrt(i));
+                        emp = Math.ceil(emp*Math.pow(1.1,i));
                         storageCost = emp * warehousing;//需要的人员数量
                         double storage_area = 0.0;
                         if (inventory > 5) {
@@ -2052,7 +2052,7 @@ public class GlcPointController extends BaseController
                             inventory +=Math.pow(gdps / 365 * Math.sqrt(i) * lever,0.9) ;
                         }
 
-                        emp = Math.ceil(emp + Math.sqrt(Math.sqrt(i)));
+                        emp = Math.ceil(Math.pow(emp,1.1));
                         storageCost = emp * warehousing+managementFee;//需要的人员数量
                         double storage_area = 0.0;
                         if (inventory > 5) {
@@ -2201,8 +2201,8 @@ public class GlcPointController extends BaseController
                 double meterDouble = twoJuLi(netPoints,city);
 
                 double num = meterDouble/1000;
-                if (num<=40){
-                    num=40;
+                if (num<=60){
+                    num=60;
                 }
                 if (num<max){
                     city1.setCity1(city.getCity());

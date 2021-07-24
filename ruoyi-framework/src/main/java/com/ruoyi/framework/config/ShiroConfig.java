@@ -313,11 +313,16 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/system/point/point/networkplan1", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/networkLine", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/netWork/network", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/system/netWork/network1", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/system/netWork/network2", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/system/netWork/network3", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/system/netWork/network4", "anon,captchaValidate");
         filterChainDefinitionMap.put("/light", "anon,captchaValidate");
         filterChainDefinitionMap.put("/haier", "anon,captchaValidate");
         filterChainDefinitionMap.put("/wx", "anon,captchaValidate");
         filterChainDefinitionMap.put("/wxlogin", "anon,captchaValidate");
         filterChainDefinitionMap.put("/account/blog/open/list", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/account/blog/eidt", "anon,captchaValidate");
         filterChainDefinitionMap.put("/account/imgUpload", "anon,captchaValidate");
         filterChainDefinitionMap.put("/account/uploadImage", "anon,captchaValidate");
         filterChainDefinitionMap.put("/file/**", "anon,captchaValidate");
