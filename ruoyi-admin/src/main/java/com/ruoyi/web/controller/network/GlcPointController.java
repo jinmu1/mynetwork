@@ -694,9 +694,9 @@ public class GlcPointController extends BaseController
                             transportNum1+=Double.parseDouble(city1.getGdp()) / gdp * transportNum;
                             if (city1.getCity().equals(rdc)){
                                 transportCost += Math.ceil(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 0.42 * 1 * gdps*0.4;//计算运输成本
-                                transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())+200) * (1 + 0.09) * 1.68 * 1 * gdps*0.6;
+                                transportCost += 400 * (1 + 0.09) * 0.24 * gdps;
                             }else {
-                                transportCost += Math.ceil(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 2.21 * 1 * gdps;//计算运输成本
+                                transportCost += Math.ceil(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 0.24 * 1 * gdps;//计算运输成本
                             }
 //                            if (city1.getCity().equals(rdc)){
 //                                transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 2.68 * 1 * gdps*0.8;//计算运输成本
