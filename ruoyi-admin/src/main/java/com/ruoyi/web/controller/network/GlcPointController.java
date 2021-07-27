@@ -693,10 +693,11 @@ public class GlcPointController extends BaseController
                             double gdps = 1.5 * Double.parseDouble(city1.getGdp()) / gdp * transportNum;
                             transportNum1+=Double.parseDouble(city1.getGdp()) / gdp * transportNum;
                             if (city1.getCity().equals(rdc)){
-                                transportCost += Math.ceil(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 0.42 * 1 * gdps*0.4;//计算运输成本
-                                transportCost += 400 * (1 + 0.09) * 0.24 * gdps;
+
+                                transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) * (1 + 0.09) *2.20 * 1 * gdps*0.4;//计算运输成本
+                                transportCost +=  (1 + 0.09) * 0.1 *  1.5 * Math.sqrt(gdp / Double.parseDouble(city1.getGdp())) * transportNum;
                             }else {
-                                transportCost += Math.ceil(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 0.24 * 1 * gdps;//计算运输成本
+                                transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 2.24 * 1 * gdps;//计算运输成本
                             }
 //                            if (city1.getCity().equals(rdc)){
 //                                transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 2.68 * 1 * gdps*0.8;//计算运输成本
@@ -1986,9 +1987,6 @@ public class GlcPointController extends BaseController
 //                double meterDouble = Double.parseDouble(twoJuLi(netPoints,city));
 
                 double num = meterDouble/1000;
-                if (num==0){
-                    num=30;
-                }
                 if (num<max){
                     city1.setCity1(city.getCity());
                     city1.setLat1(city.getLat());
