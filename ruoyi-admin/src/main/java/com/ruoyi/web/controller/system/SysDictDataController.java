@@ -19,7 +19,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.network.service.ISysDictDataService;
+import com.ruoyi.system.service.ISysDictDataService;
 
 /**
  * 数据字典信息

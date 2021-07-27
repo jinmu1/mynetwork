@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.GlcNetworkTransportPropertyMapper;
 import com.ruoyi.system.domain.GlcNetworkTransportProperty;
-import com.ruoyi.network.service.IGlcNetworkTransportPropertyService;
+import com.ruoyi.system.service.IGlcNetworkTransportPropertyService;
 import com.ruoyi.common.core.text.Convert;
 
 /**

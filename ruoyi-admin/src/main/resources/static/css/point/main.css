@@ -1,7 +1,7 @@
 body{
     margin: 0;
     padding: 0;
-    background: url(../../img/landing/bg.png);
+    background: url(../../img/Homebodybg.png) no-repeat;
     background-repeat: no-repeat;
     background-attachment:fixed;
     /*filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../../img/point/background.jpg', sizingMethod='scale');*/

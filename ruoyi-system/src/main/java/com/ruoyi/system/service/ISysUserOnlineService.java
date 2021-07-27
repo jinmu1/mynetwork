@@ -1,4 +1,4 @@
-package com.ruoyi.network.service;
+package com.ruoyi.system.service;
 
 import java.util.Date;
 import java.util.List;

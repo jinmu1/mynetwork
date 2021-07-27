@@ -4,7 +4,7 @@ import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.domain.RoleProject;
 import com.ruoyi.system.mapper.RoleProjectMapper;
-import com.ruoyi.network.service.IRoleProjectService;
+import com.ruoyi.system.service.IRoleProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

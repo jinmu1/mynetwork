@@ -268,259 +268,6 @@ public class GlcPointController extends BaseController
         return null;
     }
 
-
-    @GetMapping("/point/get")
-    @ResponseBody
-    public List<Result> open(HttpServletRequest req){
-
-        String provinces = req.getParameter("provinces");
-//        String provinces = "安徽";
-        String carLength = req.getParameter("carLength");
-//        String carLength = "小车4米6";
-        double transportNum = 800000;
-        if (req.getParameter("transportNum")!=null&&!req.getParameter("transportNum").equals("")){
-            transportNum = Double.parseDouble(req.getParameter("transportNum"));
-        }
-        double warehousing = 80000;
-        if (req.getParameter("warehousing")!=null&&!req.getParameter("warehousing").equals("")) {
-            warehousing = Double.parseDouble(req.getParameter("warehousing"));
-        }
-        double h_price = 15;
-        if(req.getParameter("h_price")!=null&&!req.getParameter("h_price").equals("")) {
-            h_price = Double.parseDouble(req.getParameter("h_price"));
-        }
-        double m_price = 15;
-        if(req.getParameter("m_price")!=null&&!req.getParameter("m_price").equals("")) {
-            m_price = Double.parseDouble(req.getParameter("m_price"));
-        }
-        double l_price = 60;
-        if(req.getParameter("s_price")!=null&&!req.getParameter("s_price").equals("")) {
-            l_price = Double.parseDouble(req.getParameter("s_price"));
-        }
-        double inventory_loss = 0.5;
-        if(req.getParameter("inventory_loss")!=null&&!req.getParameter("inventory_loss").equals("")) {
-            inventory_loss = Double.parseDouble(req.getParameter("inventory_loss"));
-        }
-        double managementFee = 0;
-        if(req.getParameter("managementFee")!=null&&!req.getParameter("managementFee").equals("")) {
-            managementFee = Double.parseDouble(req.getParameter("managementFee"));
-        }
-        double times = 72;
-        if(req.getParameter("times")!=null&&!req.getParameter("times").equals("")) {
-            times = Integer.parseInt(req.getParameter("times"));
-        }
-        double order = 80;
-        if(req.getParameter("order")!=null&&!req.getParameter("order").equals("")) {
-            order = Integer.parseInt(req.getParameter("order"));
-        }
-        double goods_num = 6000;
-        if(req.getParameter("goods_num")!=null&&!req.getParameter("goods_num").equals("")) {
-            goods_num = Integer.parseInt(req.getParameter("goods_num"));
-        }
-        double b_goods_size = 20;
-        if(req.getParameter("b_goods_size")!=null&&!req.getParameter("b_goods_size").equals("")) {
-            b_goods_size = Double.parseDouble(req.getParameter("b_goods_size"));
-        }
-        double m_goods_size = 20;
-        if(req.getParameter("m_goods_size")!=null&&!req.getParameter("m_goods_size").equals("")) {
-            m_goods_size = Double.parseDouble(req.getParameter("m_goods_size"));
-        }
-        double s_goods_size = 60;
-        if(req.getParameter("s_goods_size")!=null&&!req.getParameter("s_goods_size").equals("")) {
-            s_goods_size = Double.parseDouble(req.getParameter("s_goods_size"));
-        }
-//        int times1 = 10;
-//        if(req.getParameter("times1")!=null&&!req.getParameter("times1").equals("")) {
-//            times1 = Integer.parseInt(req.getParameter("times1"));
-//        }
-//        int times2 = 8;
-//        if(req.getParameter("times2")!=null&&!req.getParameter("times2").equals("")) {
-//            times2 = Integer.parseInt(req.getParameter("times2"));
-//        }
-//        int times3 = 6;
-//        if(req.getParameter("times3")!=null&&!req.getParameter("times3").equals("")) {
-//            times3 = Integer.parseInt(req.getParameter("times3"));
-//        }
-//        int times4 = 4;
-//        if(req.getParameter("times4")!=null&&!req.getParameter("times4").equals("")) {
-//            times4 = Integer.parseInt(req.getParameter("times4"));
-//        }
-        int emp_quantity = 50;//一天处理十二托
-
-
-        List<GlcPoint> list = glcPointService.selectGlcPointList(new GlcPoint(provinces));  //获取省份内城市
-
-        double gdp =  0.0;
-        for (GlcPoint city:list){
-            gdp+= Double.parseDouble(city.getGdp());
-        }
-
-        List<City> rdcPoint = new ArrayList<>();
-        List<City> points = new ArrayList<>();
-        List<City> cities = new ArrayList<>();
-        for ( GlcPoint glcPoint:list){//需求点
-            points.add(new City(glcPoint.getCity(),glcPoint.getLat(),glcPoint.getLng(),glcPoint.getGdp()));//备选点
-        }
-        List<Result> results = new ArrayList<>();
-        List<Result> results1 = new ArrayList<>();
-        List<Result> results2 = new ArrayList<>();
-        List<ResultMsg> resultMsgs = new ArrayList<>();
-        List<JSONObject> listd;
-        Jedis jedis = new Jedis("127.0.0.1", 6379);
-        jedis.select(2);
-        Boolean exists= jedis.exists(provinces+carLength+transportNum+warehousing+h_price+m_price+inventory_loss+times+order+managementFee+goods_num+b_goods_size+m_goods_size+s_goods_size);
-        if (exists) {
-            String in = jedis.get(provinces+carLength+transportNum+warehousing+h_price+m_price+inventory_loss+times+order+managementFee+goods_num+b_goods_size+m_goods_size+s_goods_size);
-            listd=  (List<JSONObject>) JSON.parse(in);
-            for(JSON json:listd){
-                ResultMsg status =JSON.toJavaObject(json, ResultMsg.class);
-                resultMsgs.add(status);
-            }
-        }else {
-            for (int i = 1; i <= points.size(); i++) {
-                double max = Double.MAX_VALUE;
-                Result resultd = new Result();
-                resultd.setCity(i + "");
-                List<List<City>> combinations = NetworkUtils.combinations(points, i);//已经遍历了该RDC数量下的所有RDC组合 k为备选点数量
-                for (List<City> cityList : combinations) {
-                    results = new ArrayList<>();
-                    rdcPoint = new ArrayList<>();
-                    for (City city : cityList) {
-                        rdcPoint.add(new City(city.getCity(), city.getLat(), city.getLng(), city.getGdp())); //将选取的备选点当做新增的RDC
-                    }
-                    // 开始计算
-                    cities = chooseCity(rdcPoint, points);//选择城市
-                    Map<String, List<City>> linkCity = cities.stream().collect(Collectors.groupingBy(City::getCity1));//网络连接
-                    double allCost = 0.0;
-                    for (String rdc : linkCity.keySet()) {
-                        List<City> cityLink = linkCity.get(rdc);
-                        Result result = new Result();
-                        double transportCost = 0.0;
-                        double carNum = 0.0;
-                        double storageCost = 0.0;
-                        double emp = 0;
-                        double inventory = 0.0;
-                        int order_rate = 0;
-                        int order_num = 0;
-                        String range = "";
-                        for (City city1 : cityLink) {
-                            range += city1.getCity() + ",";
-                            double gdps = 1.5 * Double.parseDouble(city1.getGdp()) / gdp * transportNum;
-                            transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) * 1.62 * (1 + 0.09) * 1.2 * 1 * gdps;//计算运输成本
-                            carNum += gdps / Double.parseDouble(Car.valueOf(carLength).getCode()) / 365;
-                            emp += gdps / 365 / emp_quantity;//一天处理多少托需要多少人
-                            inventory += gdps / 365 * Math.sqrt(Math.sqrt(i));
-                            order_num++;
-                            if (Double.parseDouble(city1.getDistance()) < 1000) {
-                                order_rate++;
-                            }
-                        }
-                        emp = Math.ceil(emp + Math.sqrt(Math.sqrt(i)));
-                        storageCost = emp * warehousing;//需要的人员数量
-                        double storage_area = 0.0;
-                        if (inventory > 5) {
-                            storage_area = AreaUtils.getHightStorage(inventory, emp * emp_quantity).getArea();
-                        } else {
-                            storage_area = AreaUtils.getHeapStorage(inventory).getArea();
-                        }
-
-                        double tally = AreaUtils.getTally(2 * emp * 60 / 2, carLength).getArea();
-                        double platform = AreaUtils.getPlatform(2 * emp * 60 / 2, carLength).getPlatform_area();
-                        double area = tally + storage_area + platform;
-                        double buildCost = area * 27 * 12;//先假设每平米面积为32元/月
-                        double price = (h_price * 5000 + m_price * 1000 + l_price * 100) / 100;
-                        if (inventory <= 1) {
-                            inventory = 0;
-                        }
-                        double inventoryCost = price * inventory * (0.05 + inventory_loss / 100) * 5;
-                        result.setCity(rdc);
-                        result.setRange(range);
-                        result.setArea(Math.round(area));
-                        result.setStorage(emp * emp_quantity * 365);
-                        result.setStorageCost(Math.round(storageCost));
-                        result.setBuildCost(Math.round(buildCost));
-                        result.setInventoryCost(Math.round(inventoryCost));
-                        result.setTransportCost(Math.round(transportCost));
-                        result.setAll(Math.round(storageCost + buildCost + inventoryCost + transportCost));
-                        result.setEmp(emp);
-                        result.setCar(Math.ceil(carNum));
-                        result.setOrder_rate(order_rate / order_num);
-                        result.setInventory_num(inventory);
-                        result.setSales_account(transportCost * 40);
-                        result.setThroughput_num((emp * 365 * emp_quantity));
-                        result.setRate(result.getAll() / result.getSales_account());
-                        result.setRate1(result.getAll() / result.getSales_account() );
-                        results.add(result);
-                        allCost += result.getAll();
-                    }
-                    Result allresult = new Result();
-                    allresult.setArea(0);
-                    allresult.setStorageCost(0);
-                    allresult.setStorage(0);
-                    allresult.setBuildCost(0);
-                    allresult.setInventoryCost(0);
-                    allresult.setTransportCost(0);
-                    allresult.setAll(0);
-                    allresult.setEmp(0);
-                    allresult.setCar(0);
-                    allresult.setRate(0);
-                    allresult.setOrder_rate(0);
-                    allresult.setInventory_num(0);
-                    allresult.setSales_account(0);
-                    allresult.setThroughput_num(0);
-                    int m = 0;
-                    for (Result result : results) {
-                        allresult.setCity(result.getCity());
-                        allresult.setStorage(Math.round(result.getStorage() + allresult.getStorage()));
-                        allresult.setArea(Math.round(allresult.getArea() + result.getArea()));
-                        allresult.setStorageCost(Math.round(allresult.getStorageCost() + result.getStorageCost()));
-                        allresult.setBuildCost(Math.round(allresult.getBuildCost() + result.getBuildCost()));
-                        allresult.setInventoryCost(Math.round(allresult.getInventoryCost() + result.getInventoryCost()));
-                        allresult.setTransportCost(Math.round(allresult.getTransportCost() + result.getTransportCost()));
-                        allresult.setAll(Math.round(allresult.getAll() + result.getAll()));
-                        allresult.setEmp(Math.round(allresult.getEmp() + result.getEmp()));
-                        allresult.setCar(Math.round(allresult.getCar() + result.getCar()));
-                        allresult.setOrder_rate(allresult.getOrder_rate() + result.getOrder_rate());
-                        allresult.setInventory_num(Math.round(result.getInventory_num() + allresult.getInventory_num()));
-                        allresult.setThroughput_num(Math.round(transportNum));
-                        allresult.setSales_account(Math.round(allresult.getSales_account() + result.getSales_account()));
-                        allresult.setRate1(allresult.getAll() / allresult.getSales_account() );
-                        m++;
-                    }
-                    allresult.setStorageCost(allresult.getStorageCost() + managementFee*i);
-                    allresult.setAll(allresult.getAll() + managementFee*i);
-                    allresult.setOrder_rate(allresult.getOrder_rate() / m);
-
-                    if (allresult.getAll() < max) {
-//                        resultd.setStorageCost(allresult.getStorageCost());
-//                        resultd.setAll(allCost);
-//                        resultd.setTransportCost(allresult.getTransportCost());
-//                        resultd.setInventoryCost(allresult.getInventoryCost());
-//                        resultd.setBuildCost(allresult.getBuildCost());
-                        max = allresult.getAll();
-                        ResultMsg resultMsg = new ResultMsg();
-                        resultMsg.setRdc(i);
-                        resultMsg.setCost(allresult.getAll());
-                        resultMsg.setCities(cities);
-                        resultMsg.setResult(allresult);
-                        resultMsg.setResultList(results);
-                        resultMsgs.add(resultMsg);
-                    }
-                }
-//                results1.add(resultd);
-            }
-            jedis.select(2);
-            jedis.set(provinces+carLength+transportNum+warehousing+h_price+m_price+inventory_loss+times+order+managementFee+goods_num+b_goods_size+m_goods_size+s_goods_size,JSON.toJSON(resultMsgs).toString());
-        }
-//        List<City> list1 = listList.get(listList.size()-1);
-        resultMsgs = resultMsgs.stream().sorted(Comparator.comparing(ResultMsg::getCost)).collect(Collectors.toList());
-        Result allresults = resultMsgs.get(0).getResult();
-        allresults.setCity("总计");
-        results1.addAll( resultMsgs.get(0).getResultList());
-        results1.add(allresults);
-        return results1;
-    }
-
 //    @PostMapping("/point/network")
 //    @ResponseBody
 //    public TableDataInfo  network1(HttpServletRequest req){
@@ -945,14 +692,25 @@ public class GlcPointController extends BaseController
 //                            range += city1.getCity() + ",";
                             double gdps = 1.5 * Double.parseDouble(city1.getGdp()) / gdp * transportNum;
                             transportNum1+=Double.parseDouble(city1.getGdp()) / gdp * transportNum;
-                            transportCost += Math.sqrt(Double.parseDouble(city1.getDistance()))  * (1 + 0.09) * 2.68 * 1 * gdps;//计算运输成本
+                            if (city1.getCity().equals(rdc)){
+                                transportCost += Math.ceil(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 0.42 * 1 * gdps*0.4;//计算运输成本
+                                transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())+200) * (1 + 0.09) * 1.68 * 1 * gdps*0.6;
+                            }else {
+                                transportCost += Math.ceil(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 2.21 * 1 * gdps;//计算运输成本
+                            }
+//                            if (city1.getCity().equals(rdc)){
+//                                transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 2.68 * 1 * gdps*0.8;//计算运输成本
+//                            }else {
+//                                transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) * (1 + 0.09) * 2.68 * 1 * gdps;//计算运输成本
+//                            }
+
                             carNum += gdps / Double.parseDouble(Car.valueOf(carLength).getCode()) / 365;
                             emp += gdps / 365 / emp_quantity*Math.sqrt((2 - (Math.sqrt(times / 72) )))*(1+Math.sqrt(goods_num/10000))/Math.sqrt(Math.sqrt(size))/1.5;//一天处理多少托需要多少人
-                            inventory +=Math.pow(gdps / 365 * Math.sqrt(i) * lever,0.9) ;
+                            inventory +=Math.pow(gdps / 365 * Math.pow(1.04,i) * lever,1.1) ;
                         }
 
-                        emp = Math.ceil(emp + Math.sqrt(Math.sqrt(i)));
-                        storageCost = emp * warehousing+managementFee;//需要的人员数量
+                        emp = Math.ceil(emp);
+                        storageCost = (emp * warehousing+managementFee)*Math.pow(1.05,i);//需要的人员数量
                         double storage_area = 0.0;
                         if (inventory > 5) {
                             storage_area = AreaUtils.getHightStorage(inventory, emp * emp_quantity).getArea();
@@ -962,8 +720,8 @@ public class GlcPointController extends BaseController
 
                         double tally = AreaUtils.getTally(2 * emp * 60 / 2, carLength).getArea();
                         double platform = AreaUtils.getPlatform(2 * emp * 60 / 2, carLength).getPlatform_area();
-                        double area = tally + Math.pow(storage_area,0.85) + platform;
-                        double buildCost = area * 27 * 12;//先假设每平米面积为32元/月
+                        double area = tally + storage_area*Math.pow(1.04,i) + platform;
+                        double buildCost = area * 35 * 12;//先假设每平米面积为32元/月
 
                         if (inventory <= 1) {
                             inventory = 0;
@@ -983,12 +741,12 @@ public class GlcPointController extends BaseController
                         result.setOrder_rate(order-30+times/6+NetworkUtils.random(1,10));
                         result.setInventory_num(NetworkUtils.random(18,36));
                         result.setSales_account(transportNum1*price);
-                        result.setThroughput_num((emp * 365 * emp_quantity/2));
-                        result.setSales_account(transportNum);
-                        result.setRate(result.getAll()/result.getSales_account()/2);
+                        result.setThroughput_num((emp * 365 * emp_quantity/1.8));
+//                        result.setSales_account(transportNum1*5);
+                        result.setRate(result.getAll()/result.getSales_account());
 //                        result.setRate1(NetworkUtils.random(320,720));
-                        result.setStorage_area(NetworkUtils.random(120,320));
-                        result.setPlat_cost(result.getAll()/result.getThroughput_num());
+                        result.setStorage_area(NetworkUtils.random(190,261));
+                        result.setPlat_cost(result.getAll()/transportNum1*15);
                         result.setOrder_cost(result.getPlat_cost()/ NetworkUtils.random(2,5));
                         result.setArea_cost(result.getAll()/result.getArea());
                         result.setPlat_storage(result.getStorage()/transportNum);
@@ -1015,7 +773,6 @@ public class GlcPointController extends BaseController
                         allresult.setSales_account(Math.round(allresult.getSales_account() + result.getSales_account()));
                         allresult.setRate1(allresult.getRate1() + result.getRate1());
                         allresult.setStorage_area(allresult.getStorage_area() + result.getStorage_area());
-                        allresult.setPlat_cost(allresult.getAll()/transportNum);
                         allresult.setOrder_cost(Math.round(result.getOrder_cost() + allresult.getOrder_cost()));
                         allresult.setArea_cost(allresult.getAll()/allresult.getArea());
                         m++;
@@ -1027,7 +784,7 @@ public class GlcPointController extends BaseController
                     allresult.setStorage_area(Math.round(allresult.getStorage_area()/i));
                     allresult.setRate(allresult.getAll()/allresult.getSales_account());
                     allresult.setArea_cost(allresult.getAll()/allresult.getArea());
-                    allresult.setPlat_cost(allresult.getPlat_cost());
+                    allresult.setPlat_cost(allresult.getAll()/transportNum*15);
                     allresult.setRate1(allresult.getRate1()/i);
                     allresult.setPlat_storage(Math.round(allresult.getStorage()/transportNum/i));
                     allresult.setOrder_cost(allresult.getOrder_cost()/i);
@@ -2201,8 +1958,8 @@ public class GlcPointController extends BaseController
                 double meterDouble = twoJuLi(netPoints,city);
 
                 double num = meterDouble/1000;
-                if (num<=60){
-                    num=60;
+                if (num<=50){
+                    num=50;
                 }
                 if (num<max){
                     city1.setCity1(city.getCity());

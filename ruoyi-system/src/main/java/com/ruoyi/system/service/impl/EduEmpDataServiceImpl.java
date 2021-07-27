@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.EduEmpDataMapper;
 import com.ruoyi.system.domain.EduEmpData;
-import com.ruoyi.network.service.IEduEmpDataService;
+import com.ruoyi.system.service.IEduEmpDataService;
 import com.ruoyi.common.core.text.Convert;
 
 /**

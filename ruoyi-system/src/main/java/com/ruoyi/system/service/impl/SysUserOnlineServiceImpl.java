@@ -13,7 +13,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysUserOnline;
 import com.ruoyi.system.mapper.SysUserOnlineMapper;
-import com.ruoyi.network.service.ISysUserOnlineService;
+import com.ruoyi.system.service.ISysUserOnlineService;
 
 /**
  * 在线用户 服务层处理

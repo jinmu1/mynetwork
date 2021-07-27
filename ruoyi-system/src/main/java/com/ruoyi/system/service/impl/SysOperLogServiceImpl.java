@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.system.domain.SysOperLog;
 import com.ruoyi.system.mapper.SysOperLogMapper;
-import com.ruoyi.network.service.ISysOperLogService;
+import com.ruoyi.system.service.ISysOperLogService;
 
 /**
  * 操作日志 服务层处理

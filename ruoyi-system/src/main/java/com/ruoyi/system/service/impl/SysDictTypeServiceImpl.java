@@ -16,7 +16,7 @@ import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.ruoyi.system.mapper.SysDictTypeMapper;
-import com.ruoyi.network.service.ISysDictTypeService;
+import com.ruoyi.system.service.ISysDictTypeService;
 
 /**
  * 字典 业务层处理

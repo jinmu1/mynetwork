@@ -16,8 +16,8 @@ import com.ruoyi.framework.shiro.session.OnlineSession;
 import com.ruoyi.system.domain.SysLogininfor;
 import com.ruoyi.system.domain.SysOperLog;
 import com.ruoyi.system.domain.SysUserOnline;
-import com.ruoyi.network.service.ISysOperLogService;
-import com.ruoyi.network.service.ISysUserOnlineService;
+import com.ruoyi.system.service.ISysOperLogService;
+import com.ruoyi.system.service.ISysUserOnlineService;
 import eu.bitwalker.useragentutils.UserAgent;
 
 /**

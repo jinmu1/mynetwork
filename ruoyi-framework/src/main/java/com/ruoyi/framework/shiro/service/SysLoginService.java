@@ -19,7 +19,7 @@ import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
-import com.ruoyi.network.service.ISysUserService;
+import com.ruoyi.system.service.ISysUserService;
 
 /**
  * 登录校验方法

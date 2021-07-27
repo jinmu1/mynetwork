@@ -8,6 +8,8 @@ public class Order {
     private String customerCode;
     //@TableField(value = "客户名称")
     private String customerName;
+
+    private City supplierCity;//供应商城市
    // @TableField(value = "客户城市")
     private City customerCity;
    // @TableField(value = "物料编码")
@@ -27,7 +29,16 @@ public class Order {
 
     private Date storageDate;//仓储作业时间
 
+    private Date replenishmentDate;//仓储作业时间
 
+
+    public City getSupplierCity() {
+        return supplierCity;
+    }
+
+    public void setSupplierCity(City supplierCity) {
+        this.supplierCity = supplierCity;
+    }
 
     public Order() {
     }
@@ -50,7 +61,14 @@ public class Order {
         this.volume = volume;
         this.goodsPrice = price;
     }
-
+    public Order(String orderCode,Date orderDate, String goodsCode, double goodsNum,double volume,double price) {
+        this.orderCode = orderCode;
+        this.goodsCode = goodsCode;
+        this.goodsNum = goodsNum;
+        this.deliveryDate = orderDate;
+        this.volume = volume;
+        this.goodsPrice = price;
+    }
     public String getOrderCode() {
         return orderCode;
     }
@@ -145,6 +163,15 @@ public class Order {
 
     public void setStorageDate(Date storageDate) {
         this.storageDate = storageDate;
+    }
+
+
+    public Date getReplenishmentDate() {
+        return replenishmentDate;
+    }
+
+    public void setReplenishmentDate(Date replenishmentDate) {
+        this.replenishmentDate = replenishmentDate;
     }
 
     @Override

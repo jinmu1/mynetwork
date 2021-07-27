@@ -19,7 +19,7 @@ import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.framework.shiro.session.OnlineSession;
 import com.ruoyi.system.domain.SysUserOnline;
-import com.ruoyi.network.service.ISysUserOnlineService;
+import com.ruoyi.system.service.ISysUserOnlineService;
 
 /**
  * 主要是在此如果会话的属性修改了 就标识下其修改了 然后方便 OnlineSessionDao同步

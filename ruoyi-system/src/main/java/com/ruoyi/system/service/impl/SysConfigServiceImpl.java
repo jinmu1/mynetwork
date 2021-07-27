@@ -12,7 +12,7 @@ import com.ruoyi.common.utils.CacheUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysConfig;
 import com.ruoyi.system.mapper.SysConfigMapper;
-import com.ruoyi.network.service.ISysConfigService;
+import com.ruoyi.system.service.ISysConfigService;
 
 /**
  * 参数配置 服务层实现

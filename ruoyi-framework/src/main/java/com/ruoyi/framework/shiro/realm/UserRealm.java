@@ -23,8 +23,8 @@ import com.ruoyi.common.exception.user.UserPasswordNotMatchException;
 import com.ruoyi.common.exception.user.UserPasswordRetryLimitExceedException;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.framework.shiro.service.SysLoginService;
-import com.ruoyi.network.service.ISysMenuService;
-import com.ruoyi.network.service.ISysRoleService;
+import com.ruoyi.system.service.ISysMenuService;
+import com.ruoyi.system.service.ISysRoleService;
 
 /**
  * 自定义Realm 处理登录 权限

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.shiro.session.OnlineSession;
 import com.ruoyi.system.domain.SysUserOnline;
-import com.ruoyi.network.service.ISysUserOnlineService;
+import com.ruoyi.system.service.ISysUserOnlineService;
 
 /**
  * 会话db操作处理

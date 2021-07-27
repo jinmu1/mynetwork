@@ -20,7 +20,7 @@ import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.framework.shiro.session.OnlineSession;
 import com.ruoyi.framework.shiro.session.OnlineSessionDAO;
 import com.ruoyi.system.domain.SysUserOnline;
-import com.ruoyi.network.service.ISysUserOnlineService;
+import com.ruoyi.system.service.ISysUserOnlineService;
 
 /**
  * 在线用户监控

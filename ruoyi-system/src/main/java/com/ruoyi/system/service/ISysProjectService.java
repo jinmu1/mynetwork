@@ -1,4 +1,4 @@
-package com.ruoyi.network.service;
+package com.ruoyi.system.service;
 
 import com.ruoyi.system.domain.SysProject;
 

@@ -251,21 +251,25 @@ public class NetworkUtils {
      * @return
      */
     public static List<Material> initMaterialPrice(List<Material> materialList,double b,double m,double s){
-        double b_price = 1500;//5立方
-        double m_price = 500;//0.5立方
-        double s_price = 50;//0.05立方
+        double b_price = 1000;//5立方
+        double m_price = 100;//0.5立方
+        double s_price = 20;//0.05立方
         double all = b + m + s;
-        for (Material material : materialList){
-            Random random = new Random();
-            int i = random.nextInt((int)all*100);
-            if (i<=s*100){
-                material.setPrice(initNormalDistribution1(10000,50)[0]);
-            }else if (i<=(m+s)*100){
-                material.setPrice(initNormalDistribution1(10000,450)[0]+50);
-            }else if (i<=(all*100)){
-                material.setPrice(initNormalDistribution1(10000,1000)[0]+500);
-            }
-        }
+        int[] bNum = splitInteger((int)b,(int)(b_price*b/all*materialList.size()),false);
+
+
+
+//        for (Material material : materialList){
+//            Random random = new Random();
+//            int i = random.nextInt((int)all*100);
+//            if (i<=s*100){
+//                material.setPrice(initNormalDistribution1(10000,50)[0]);
+//            }else if (i<=(m+s)*100){
+//                material.setPrice(initNormalDistribution1(10000,450)[0]+50);
+//            }else if (i<=(all*100)){
+//                material.setPrice(initNormalDistribution1(10000,1000)[0]+500);
+//            }
+//        }
         return materialList;
 
     }
@@ -321,31 +325,25 @@ public class NetworkUtils {
         List<Order> orderList = new ArrayList<>();
         Random random = new Random();
         list = list.stream().sorted(Comparator.comparing(Material::getVolume)).collect(Collectors.toList());
-        double[] nums = initNormalDistribution(list.size(),transportNum);
+        int[] nums = splitInteger(list.size(),(int)transportNum,false);
         for (int i = 0;i<list.size();i++){
             list.get(i).setNeedNum(nums[i]);
         }
         double num3 = 0.0;
-        for (Material material:list) {
-            double num = material.getNeedNum();
-            for (int i = 0; i < material.getNeedNum()*200; i+=(int)random.nextInt(3) ) {
-                long numd =  (long)((num*1.1*1.25*1.5)/material.getVolume())/365;
-                long num2 = (long)((num*1.1*1.25*1.5)/material.getVolume())/12;
-
-                if(num>0&&num2>1) {
-                    double num1 = NetworkUtils.random(numd,num2);
-                    num =  num - num1*material.getVolume()/(1.1*1.25*1.5);
-                    num3 += num1*material.getVolume()/(1.1*1.25*1.5);
-                    orderList.add(new Order(material.getCode(),num1,material.getVolume(),material.getPrice()));
-                }else if (num>0&&num2==1){
-                    num = 0;
-                    orderList.add(new Order(material.getCode(),num2,material.getVolume(),material.getPrice()));
-                }
-
-
+        double max = Double.MAX_VALUE;
+        list = list.stream().sorted(Comparator.comparing(Material::getNeedNum)).collect(Collectors.toList());
+        int[] numsd = splitInteger(list.size(),365,false);
+        for (int i = 0;i<list.size();i++){
+            list.get(i).setFrequency(numsd[i]);
+        }
+        for (Material material:list){
+            int size = (int)material.getFrequency();
+            int num1 =(int)(material.getNeedNum()/material.getVolume()*(1.1*1.25*1.5));
+            int[] num = splitInteger(size,num1,false);
+            for (int i=0;i<material.getFrequency();i++){
+                orderList.add(new Order(material.getCode(),num[i],material.getVolume(),material.getPrice()));
             }
         }
-
         for (Order order:orderList) {
             String OrderCode = "D"+RandomUtil.toFixdLengthString(random.nextInt(10000),4);
             String orderDate = sdf1.format(randomDate("2021-01-01 08:00:00","2021-12-31 18:00:00"));
@@ -360,7 +358,7 @@ public class NetworkUtils {
         }
             return orderList;
     }
-    private static Date randomDate(String beginDate, String endDate){
+    public static Date randomDate(String beginDate, String endDate){
         try {
             Date start = sdf.parse(beginDate);
             Date end = sdf.parse(endDate);
@@ -381,6 +379,33 @@ public class NetworkUtils {
         }
         return rtn;
     }
+
+    public static int[] splitInteger(int n, int sum,boolean flag) {
+        //随机抽取n-1个小于sum的数
+        List<Integer> list = new ArrayList();
+        //将0和sum加入到里list中
+        list.add(0);
+        //判断生成的正整数集合中是否允许为0，true元素可以为0  false元素不可以为0
+        if (!flag) {
+            sum = sum - n;
+        }
+        list.add(sum);
+        int temp = 0;
+        for (int i = 0; i < n - 1 ; i++) {
+            temp = (int) (Math.random() * sum);
+            list.add(temp);
+        }
+        Collections.sort(list);
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) {
+            nums[i] = list.get(i + 1) - list.get(i);
+            if (!flag) {
+                nums[i] += 1;
+            }
+        }
+        return nums;
+    }
+
     /**
      * 生成客户
      * @param cities
@@ -443,49 +468,27 @@ public class NetworkUtils {
      * 生成供应商
      * @return
      */
-    public static List<Supplier> initSupplier(int goodsnum) {
+    public static List<Supplier> initSupplier(int goodsnum,List<GlcPoint> cities) {
 
         List<Supplier> suppliers = new ArrayList<>();
         Random random = new Random();
-        for (int i=0;i<goodsnum/10;i++) {
-            Supplier supplier = new Supplier(RandomUtil.toFixdLengthString(random.nextInt(10000000),8), "物料", "450.0", 3);
-            suppliers.add(supplier);
+        Double gdp = 0.0;
+        for(GlcPoint glcPoint:cities){
+            gdp += Double.parseDouble(glcPoint.getGdp());
+        }
+        for (GlcPoint glcPoint:cities){
+            for (int i=0;i<=goodsnum*Double.parseDouble(glcPoint.getGdp())/gdp;i++){
+                Supplier supplier = new Supplier();
+                supplier.setSupplierCode(RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
+                supplier.setCity(new City(glcPoint.getCity(),glcPoint.getLat(),glcPoint.getLng(),glcPoint.getGdp()));
+                suppliers.add(supplier);
+            }
         }
         return suppliers;
     }
 
 
-    /***
-     * 计算运输成本
-     * @param list
-     * @param orders
-     * @return
-     */
-    private double calculateTransportationCost(List<City> list, List<Order> orders) {
-        double transportationCost = 0.0;
-        Map<Date, List<Order>> orderList = orders.stream().collect(Collectors.groupingBy(Order::getDeliveryDate));
-        for (Date date:orderList.keySet() ){
-            List<Order> nowOrder = orderList.get(date);
-            Map<String, List<Order>> customers = nowOrder.stream().collect(Collectors.groupingBy(Order::getCustomerCode));
-            for(String customerCode:customers.keySet()){
-                List<Order> customerOrder = customers.get(customerCode);
-                double  customerGoodsNum = 0.0;
-                for (Order order:customerOrder){
-                    customerGoodsNum+=order.getGoodsNum();
-                }
-                double distance = 0.0;
-                for (City city:list){
-                    String code = city.getCode().trim();
-                    if (customerCode.equals(code)){
-                        distance = Double.parseDouble(city.getDistance());
-                    }
-                }
-                transportationCost += (customerGoodsNum/60)*distance*0.213;
-            }
 
-        }
-        return transportationCost;
-    }
 
 
     /**
@@ -606,5 +609,20 @@ public class NetworkUtils {
         List<T> result = (List<T>) CollectionUtils.select( list, predicate);
         return result;
 
+    }
+
+    /**
+     * 初始化物料供应商
+     * @param suppliers
+     * @param list
+     * @return
+     */
+    public static List<Material> initMaterialSupplier(List<Supplier> suppliers, List<Material> list) {
+        Random random = new Random();
+        for (Material material:list){
+            int i = (int)random.nextInt()*suppliers.size();
+            material.setSupplier(suppliers.get(i));
+        }
+        return list;
     }
 }

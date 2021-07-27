@@ -5,7 +5,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.domain.SysProject;
 import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.mapper.SysProjectMapper;
-import com.ruoyi.network.service.ISysProjectService;
+import com.ruoyi.system.service.ISysProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

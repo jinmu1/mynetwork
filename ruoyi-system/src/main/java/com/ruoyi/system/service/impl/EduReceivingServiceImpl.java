@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.EduReceivingMapper;
 import com.ruoyi.system.domain.EduReceiving;
-import com.ruoyi.network.service.IEduReceivingService;
+import com.ruoyi.system.service.IEduReceivingService;
 import com.ruoyi.common.core.text.Convert;
 
 /**

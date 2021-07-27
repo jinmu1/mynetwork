@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.GlcNetworkSupplyChainMapper;
 import com.ruoyi.system.domain.GlcNetworkSupplyChain;
-import com.ruoyi.network.service.IGlcNetworkSupplyChainService;
+import com.ruoyi.system.service.IGlcNetworkSupplyChainService;
 import com.ruoyi.common.core.text.Convert;
 
 /**

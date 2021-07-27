@@ -161,7 +161,7 @@ public class KMeansCluster {
             double time = getDistance(x,y,points.get(i).getX(),points.get(i).getY())/60+storages.get(i).getArea();
             if (c<d){
                 d=c;
-
+                point.setSize(time);
                 point=points.get(i);
             }
 

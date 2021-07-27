@@ -1,16 +1,31 @@
 package com.ruoyi.network.node;
 
+import java.util.List;
+
 public class Supplier {
     private String SupplierCode;
     private String goodsCode;//物料编码
     private String distance;//运输距离
     private double leadTime;//运输提前期
+    private City city;
+
+    public Supplier() {
+       super();
+    }
 
     public Supplier(String supplierCode, String goodsCode, String distance, double leadTime) {
         SupplierCode = supplierCode;
         this.goodsCode = goodsCode;
         this.distance = distance;
         this.leadTime = leadTime;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
     }
 
     public String getSupplierCode() {

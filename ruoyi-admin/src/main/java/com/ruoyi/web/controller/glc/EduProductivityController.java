@@ -4,7 +4,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.system.domain.EduReport;
-import com.ruoyi.network.service.IEduReportService;
+import com.ruoyi.system.service.IEduReportService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

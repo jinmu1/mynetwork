@@ -9,7 +9,16 @@ public class Material {
        private double inventory;//库存量-托
        private double orderNum;//订货量-数量
        private double frequency;//物料需求频次
+       private Supplier supplier;//供应商
 
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
 
     public double getOrderNum() {
         return orderNum;

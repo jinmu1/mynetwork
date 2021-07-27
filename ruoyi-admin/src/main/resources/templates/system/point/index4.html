@@ -10,6 +10,7 @@
 <th:block th:include="include :: point-index4-css" />
 <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
 <script th:src="@{/js/jquery.min.js}"></script>
+
 <script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
 <style>
     .layui-layer-content{
@@ -67,8 +68,10 @@
         });
     });
 </script>
-<body style="background: #jjj;height: 150%;width: 100%">
+<body style="background: #jjj;height: 150%;width: 100%;">
+
 <div class="main">
+
     <div class="header">
         <div class="header-left fl">
 
@@ -77,9 +80,9 @@
             <div class="header-title">
                 物流网络实时规划 . 省域
             </div>
-            <div class="header-img">  <img class="imgs"  src="http://backend.glc360.com/jeecg-boot/bigscreen/template4/images/new_log.png" style="width: 20%;margin-left:-40%;margin-top:0%;z-index: 9999"></div>
+            <div class="header-img"><h3 style="margin-left: -30%;margin-top: -10">数字 . 筹划未来</h3> </div>
         </div>
-        <div class="header-right fl"></div>
+        <div class="header-right fl"><h4 style="float: left"><a href="http://localhost:8084/system/point/index" class="button" style="background-color: '#008CBA';  color: white;padding: 10px 26px;margin-left: 80px;margin-top: 20px;font-size: 16px;text-decoration: none;display: inline-block;">返回</a></h4></div>
         <div class="header-bottom fl">
         </div>
     </div>
@@ -379,6 +382,7 @@
                 </div>
                 <div class="ibox-content" >
                     <div id="bootstrap-table1" data-auto-refresh="true"  style="position:center;width: 79%;margin-left:10%"></div>
+                    <div> <img class="imgs"  src="http://backend.glc360.com/jeecg-boot/bigscreen/template4/images/new_log.png" style="width: 15%;margin-left: 40%;z-index: 9999"></div>
                     </div>
                 </div>
             </div>
@@ -551,7 +555,7 @@
         function setOption(provinces,num,ids){
 
             var myChart1 = echarts.init(document.getElementById(ids));
-            $.post("/system/netWork/network", {"provinces": provinces,"num":num, "times":$("#times option:selected").val() ,"order":$("#order option:selected").val() ,"goods_num":$("#goods_num").val() ,"carLength":$("#carLength option:selected").val(),"transportNum":parseInt($("#transportNum").val())*365,"warehousing":$("#warehousing").val(),"b_goods_size":$("#b_goods_size").val(),"m_goods_size":$("#m_goods_size").val(),"s_goods_size":$("#s_goods_size").val(),"managementFee":$("#managementFee").val(),"h_price":$("#h_price").val(),"m_price":$("#m_price").val(),"l_price":$("#l_price").val(),"inventory_loss":$("#inventory_loss").val(),"managementFee":$("#managementFee").val()}, function (result) {
+            $.post("/system/point/point/network", {"provinces": provinces,"num":num, "times":$("#times option:selected").val() ,"order":$("#order option:selected").val() ,"goods_num":$("#goods_num").val() ,"carLength":$("#carLength option:selected").val(),"transportNum":parseInt($("#transportNum").val())*365,"warehousing":$("#warehousing").val(),"b_goods_size":$("#b_goods_size").val(),"m_goods_size":$("#m_goods_size").val(),"s_goods_size":$("#s_goods_size").val(),"managementFee":$("#managementFee").val(),"h_price":$("#h_price").val(),"m_price":$("#m_price").val(),"l_price":$("#l_price").val(),"inventory_loss":$("#inventory_loss").val(),"managementFee":$("#managementFee").val()}, function (result) {
                 var d = result.rows;
                 var data1 = "[";
                 var data2 = "[";
@@ -1121,7 +1125,7 @@
                         halign: "center",
                         title: '物流费率',
                         formatter:function(value){
-                            return parseInt(value)/2.5+"%";
+                            return parseInt(value*30000)/100+"%";
                         }
                     },
                     {
@@ -1141,11 +1145,11 @@
                         }
                     },
                     // {
-                    //     field: 'plat_storage',
+                    //     field: 'sales_account',
                     //     halign: "center",
-                    //     title: '单托仓储成本',
+                    //     title: '销售额',
                     //     formatter:function(value,row,index){
-                    //         return "¥"+int2str(parseInt(value*100)/100);
+                    //         return "¥"+int2str(parseInt(value*100)/300);
                     //     }
                     // },
                     // {
@@ -1165,17 +1169,17 @@
                     //     }
                     // },
                     {
-                        field: 'plat_cost',
+                        field: 'order_cost',
                         halign: "center",
-                        title: '单订单成本',
+                        title: '单订单物流成本',
                         formatter:function(value,row,index){
-                            return "¥"+int2str(parseInt(value));
+                            return "¥"+int2str(parseInt(value*4));
                         }
                     },
                     {
                         field: 'area_cost',
                         halign: "center",
-                        title: '单位面积成本',
+                        title: '单位面积物流成本',
                         formatter:function(value,row,index){
                             return "¥"+int2str(parseInt(value));
                         }

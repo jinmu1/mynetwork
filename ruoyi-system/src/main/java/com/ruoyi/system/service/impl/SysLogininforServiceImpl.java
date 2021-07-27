@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.system.domain.SysLogininfor;
 import com.ruoyi.system.mapper.SysLogininforMapper;
-import com.ruoyi.network.service.ISysLogininforService;
+import com.ruoyi.system.service.ISysLogininforService;
 
 /**
  * 系统访问日志情况信息 服务层处理

@@ -10,11 +10,11 @@ import java.util.concurrent.Executors;
 
 import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.service.IEduDeliveryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.EduDeliveryMapper;
 import com.ruoyi.system.domain.EduDelivery;
-import com.ruoyi.network.service.IEduDeliveryService;
 import com.ruoyi.common.core.text.Convert;
 
 /**
@@ -24,7 +24,7 @@ import com.ruoyi.common.core.text.Convert;
  * @date 2021-01-10
  */
 @Service
-public class EduDeliveryServiceImpl implements IEduDeliveryService 
+public class EduDeliveryServiceImpl implements IEduDeliveryService
 {
     @Autowired
     private EduDeliveryMapper eduDeliveryMapper;

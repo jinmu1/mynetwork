@@ -19,7 +19,7 @@ import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.mapper.SysMenuMapper;
 import com.ruoyi.system.mapper.SysRoleMenuMapper;
-import com.ruoyi.network.service.ISysMenuService;
+import com.ruoyi.system.service.ISysMenuService;
 
 /**
  * 菜单 业务层处理

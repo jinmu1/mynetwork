@@ -10,7 +10,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysPost;
 import com.ruoyi.system.mapper.SysPostMapper;
 import com.ruoyi.system.mapper.SysUserPostMapper;
-import com.ruoyi.network.service.ISysPostService;
+import com.ruoyi.system.service.ISysPostService;
 
 /**
  * 岗位信息 服务层处理

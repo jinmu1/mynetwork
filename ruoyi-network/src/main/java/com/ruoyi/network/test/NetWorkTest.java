@@ -1,8 +1,10 @@
 package com.ruoyi.network.test;
 
 
+import com.ruoyi.network.node.Order;
 import com.ruoyi.network.utils.MathUtils;
 
+import com.ruoyi.network.utils.NetWorkPlanUtils;
 import com.ruoyi.network.utils.NetworkUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.CellType;
@@ -16,6 +18,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class NetWorkTest {
 
@@ -25,7 +31,7 @@ public class NetWorkTest {
 
 
 
-
+    private static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 
     @Test
     public void getGoods(){
@@ -44,7 +50,24 @@ public class NetWorkTest {
 
 
     }
+    @Test
+    public void getOrderNum(){
+        List<Order> list = new ArrayList<>();
 
+        Random random = new Random();
+        for(int i = 0;i<100;i++){
+            list.add(new Order(NetworkUtils.randomDate("2021-01-01 08:00:00","2021-12-31 18:00:00"),"物料",NetworkUtils.random(10,50),0.5,1));
+        }
+        double[] num = new double[list.size()];
+        int i = 0;
+        for (Order order:list){
+            num[i] = order.getGoodsNum();
+            i++;
+        }
+        System.out.println("标准差："+MathUtils.standardDeviation(num));
+        System.out.println("经济订货量:" +NetWorkPlanUtils.getOrderNum(list));
+        System.out.println("安全库存为"+NetWorkPlanUtils.getSafeInventory(list,100));
+    }
 
 
 

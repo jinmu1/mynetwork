@@ -5,7 +5,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.quartz.util.EOQUtil;
 import com.ruoyi.system.domain.EduABC;
 import com.ruoyi.system.domain.EduEOQ;
-import com.ruoyi.network.service.IGlcDeliveryService;
+import com.ruoyi.system.service.IGlcDeliveryService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

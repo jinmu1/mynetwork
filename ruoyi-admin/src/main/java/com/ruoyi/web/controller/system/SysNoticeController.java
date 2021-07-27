@@ -17,7 +17,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.system.domain.SysNotice;
-import com.ruoyi.network.service.ISysNoticeService;
+import com.ruoyi.system.service.ISysNoticeService;
 
 /**
  * 公告 信息操作处理

@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
-import com.ruoyi.network.service.ISysDictDataService;
+import com.ruoyi.system.service.ISysDictDataService;
 
 /**
  * 字典 业务层处理

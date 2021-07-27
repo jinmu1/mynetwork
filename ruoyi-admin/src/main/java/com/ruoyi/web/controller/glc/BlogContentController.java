@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.ruoyi.system.domain.BlogContent;
-import com.ruoyi.network.service.IBlogContentService;
+import com.ruoyi.system.service.IBlogContentService;
 import com.ruoyi.common.core.controller.BaseController;
 
 import javax.servlet.http.HttpServletRequest;

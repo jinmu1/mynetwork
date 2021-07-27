@@ -4,7 +4,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.system.domain.EduABC;
 import com.ruoyi.system.domain.EduPCB;
-import com.ruoyi.network.service.IGlcDeliveryService;
+import com.ruoyi.system.service.IGlcDeliveryService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

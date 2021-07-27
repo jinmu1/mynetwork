@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.EduEquipmentMapper;
 import com.ruoyi.system.domain.EduEquipment;
-import com.ruoyi.network.service.IEduEquipmentService;
+import com.ruoyi.system.service.IEduEquipmentService;
 import com.ruoyi.common.core.text.Convert;
 
 /**

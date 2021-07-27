@@ -3,11 +3,11 @@ package com.ruoyi.system.service.impl;
 import java.util.List;
 
 import com.ruoyi.system.mapper.BlogContentMapper;
+import com.ruoyi.system.service.IBlogContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ruoyi.system.domain.BlogContent;
-import com.ruoyi.network.service.IBlogContentService;
 import com.ruoyi.common.core.text.Convert;
 
 /**
@@ -17,7 +17,7 @@ import com.ruoyi.common.core.text.Convert;
  * @date 2021-01-16
  */
 @Service
-public class BlogContentServiceImpl implements IBlogContentService 
+public class BlogContentServiceImpl implements IBlogContentService
 {
     @Autowired
     private BlogContentMapper blogContentMapper;

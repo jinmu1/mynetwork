@@ -122,11 +122,13 @@ public class NetWorkController extends BaseController
                 points.add(new City(glcPoint.getCity(), glcPoint.getLat(), glcPoint.getLng(), glcPoint.getGdp()));//备选点
             }
             List<Material> list = NetworkUtils.createGoods(goods_num);
+            List<Supplier> suppliers = NetworkUtils.initSupplier(list.size(),cityList);
             list = NetworkUtils.initMaterialPrice(list, h_price, m_price, l_price);
             list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
+            list = NetworkUtils.initMaterialSupplier(suppliers,list);
             List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
             List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
-            List<Supplier> suppliers = NetworkUtils.initSupplier(list.size());
+
             orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
             Map<City, List<Order>> outOrdersList = orderList.stream().collect(Collectors.groupingBy(Order::getCustomerCity));//出库单
 
@@ -170,7 +172,6 @@ public class NetWorkController extends BaseController
                     }
                 }
                 List<City> cities = new ArrayList<>();
-
                 for (Cluster cluster : cluster2) {
                     Result result = new Result();
                     List<Order> outOrders = new ArrayList<>();
@@ -184,13 +185,16 @@ public class NetWorkController extends BaseController
                     }
                     result.setCity(cluster.getCentroid().getCity());
                     List<Order> inOrders = NetWorkPlanUtils.getReplenishment(outOrders, list); //获取补货单数据
-                    result = NetWorkPlanUtils.getTransportCost(cluster.getCentroid(), cluster.getPoints(), outOrders, result);//获取运输成本数据
                     result = NetWorkPlanUtils.getStorageCost(inOrders, outOrders, emp_quantity, warehousing, result,i);//获取仓储成本数据
+                    result = NetWorkPlanUtils.getTransportCost(cluster.getCentroid(), cluster.getPoints(), outOrders,inOrders, result,times);//获取运输成本数据
                     result = NetWorkPlanUtils.inventoryCost(outOrders, suppliers, order, inventory_loss, result); // 获取库存成本数据
                     result = NetWorkPlanUtils.buildCost(inOrders, outOrders, result, cluster.getCentroid(), carLength);
                     result.setAll(Math.round(result.getTransportCost() + result.getBuildCost() + result.getInventoryCost() + result.getStorageCost()));
+//                    result.setOrder_rate(result.getAll()/result.getSales_account()); //订单费率
                     result.setRate(result.getAll() / result.getSales_account());  //计算费率
                     result.setStorageCost(result.getStorageCost()+managementFee);
+                    result.setOrder_cost(result.getAll()/list.size());
+                    result.setStorage_area(result.getInventory_num()/result.getArea());
                     results.add(result);
                     for (City city : cluster.getPoints()) {
                         city.setCity1(cluster.getCentroid().getCity());
@@ -214,14 +218,13 @@ public class NetWorkController extends BaseController
                     allresult.setThroughput_num(Math.round(allresult.getThroughput_num() + result.getThroughput_num()));
                     allresult.setEmp(Math.round(allresult.getEmp() + result.getEmp()));
                     allresult.setCar(Math.round(allresult.getCar() + result.getCar()));
-                    allresult.setOrder_rate(allresult.getOrder_rate() + result.getOrder_rate());
-                    allresult.setInventory_num(Math.round(result.getInventory_num() + allresult.getInventory_num()));
+//                    allresult.setOrder_rate(allresult.getOrder_rate() + result.getOrder_rate());
+                    allresult.setInventory_num(Math.round(result.getInventory_num() / allresult.getArea()));
                     allresult.setSales_account(Math.round(allresult.getSales_account() + result.getSales_account()));
                     allresult.setRate1(allresult.getRate1() + result.getRate1());
                     allresult.setStorage_area(allresult.getStorage_area() + result.getStorage_area());
                     allresult.setPlat_cost(allresult.getAll() / transportNum);
-                    allresult.setOrder_cost(allresult.getPlat_cost() / NetworkUtils.random(2, 5));
-                    allresult.setArea_cost(allresult.getAll() / allresult.getArea());
+                    allresult.setArea_cost(allresult.getAll() / result.getArea());   //单位面积租金
                 }
                 allresult.setStorageCost(allresult.getStorageCost());
                 allresult.setAll(allresult.getAll());
@@ -233,7 +236,7 @@ public class NetWorkController extends BaseController
                 allresult.setPlat_cost(allresult.getPlat_cost());
                 allresult.setRate1(allresult.getRate1() / i);
                 allresult.setPlat_storage(Math.round(allresult.getStorage() / transportNum / i));
-                allresult.setOrder_cost(allresult.getOrder_cost() / i);
+                allresult.setOrder_cost(allresult.getAll() / list.size());   //总订单成本除以订单数量
                 allresult.setPlat_transport(Math.round(allresult.getTransportCost() / transportNum / i));
                 if (allresult.getAll()<max)
                 {
@@ -245,6 +248,7 @@ public class NetWorkController extends BaseController
                     resultMsg.setResultList(results);
                     resultMsgs.add(resultMsg);
                 }
+                allresult = new Result();
 
             }
             jedis.select(2);
@@ -267,7 +271,7 @@ public class NetWorkController extends BaseController
                 i++;
             }
         }
-        return getDataTable(listList.get(0));
+        return getDataTable(listList.get(listList.size()-1));
 
     }
 
@@ -343,7 +347,7 @@ public class NetWorkController extends BaseController
         list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
         List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
         List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
-        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size());
+        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size(),cityList);
         orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
         List<Order> list1 = NetWorkPlanUtils.getTransportCost1(points.get(0),points,orderList);
 
@@ -422,7 +426,7 @@ public class NetWorkController extends BaseController
         list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
         List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
         List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
-        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size());
+        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size(),cityList);
         orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
 //        Map<City, List<Order>> outOrdersList = orderList.stream().collect(Collectors.groupingBy(Order::getCustomerCity));//出库单
 
@@ -502,7 +506,7 @@ public class NetWorkController extends BaseController
         list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
         List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
         List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
-        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size());
+        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size(),cityList);
         orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
 //        Map<City, List<Order>> outOrdersList = orderList.stream().collect(Collectors.groupingBy(Order::getCustomerCity));//出库单
 

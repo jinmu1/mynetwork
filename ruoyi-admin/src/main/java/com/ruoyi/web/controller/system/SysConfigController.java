@@ -20,7 +20,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.SysConfig;
-import com.ruoyi.network.service.ISysConfigService;
+import com.ruoyi.system.service.ISysConfigService;
 
 /**
  * 参数配置 信息操作处理

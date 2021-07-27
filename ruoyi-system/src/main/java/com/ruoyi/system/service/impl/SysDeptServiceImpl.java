@@ -15,7 +15,7 @@ import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.mapper.SysDeptMapper;
-import com.ruoyi.network.service.ISysDeptService;
+import com.ruoyi.system.service.ISysDeptService;
 
 /**
  * 部门管理 服务实现

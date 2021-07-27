@@ -20,7 +20,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.SysPost;
-import com.ruoyi.network.service.ISysPostService;
+import com.ruoyi.system.service.ISysPostService;
 
 /**
  * 岗位信息操作处理

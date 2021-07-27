@@ -15,7 +15,7 @@ import com.ruoyi.system.utils.ABCUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.GlcDeliveryMapper;
-import com.ruoyi.network.service.IGlcDeliveryService;
+import com.ruoyi.system.service.IGlcDeliveryService;
 import com.ruoyi.common.core.text.Convert;
 
 /**

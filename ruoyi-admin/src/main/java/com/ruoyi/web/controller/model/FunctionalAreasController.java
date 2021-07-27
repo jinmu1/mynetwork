@@ -1,7 +1,7 @@
 package com.ruoyi.web.controller.model;
 
 import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.network.service.IGlcDeliveryService;
+import com.ruoyi.system.service.IGlcDeliveryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;

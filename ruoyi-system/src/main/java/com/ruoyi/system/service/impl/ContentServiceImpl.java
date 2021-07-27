@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.ruoyi.system.mapper.ContentMapper;
+import com.ruoyi.system.service.IContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ruoyi.system.domain.Content;
-import com.ruoyi.network.service.IContentService;
+import com.ruoyi.system.service.IContentService;
 import com.ruoyi.common.core.text.Convert;
 
 /**
@@ -18,7 +19,7 @@ import com.ruoyi.common.core.text.Convert;
  * @date 2021-01-15
  */
 @Service
-public class ContentServiceImpl implements IContentService 
+public class ContentServiceImpl implements IContentService
 {
     @Autowired
     private ContentMapper contentMapper;

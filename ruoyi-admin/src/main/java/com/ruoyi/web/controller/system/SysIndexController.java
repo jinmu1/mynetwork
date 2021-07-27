@@ -24,8 +24,8 @@ import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.shiro.service.SysPasswordService;
-import com.ruoyi.network.service.ISysConfigService;
-import com.ruoyi.network.service.ISysMenuService;
+import com.ruoyi.system.service.ISysConfigService;
+import com.ruoyi.system.service.ISysMenuService;
 
 /**
  * 首页 业务处理

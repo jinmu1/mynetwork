@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.EduReplenishmentMapper;
 import com.ruoyi.system.domain.EduReplenishment;
-import com.ruoyi.network.service.IEduReplenishmentService;
+import com.ruoyi.system.service.IEduReplenishmentService;
 import com.ruoyi.common.core.text.Convert;
 
 /**
