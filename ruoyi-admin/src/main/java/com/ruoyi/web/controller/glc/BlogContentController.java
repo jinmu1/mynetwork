@@ -30,6 +30,11 @@ public class BlogContentController extends BaseController
     @Autowired
     private IBlogContentService blogContentService;
 
+    @GetMapping("/netWork")
+    public String network(){
+        return "system/point/index4";
+    }
+
     @GetMapping("/account/blog/open/post")
     @ResponseBody
     public HashMap<String,Object> open(HttpServletRequest req){

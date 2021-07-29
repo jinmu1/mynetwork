@@ -677,6 +677,8 @@ public class GlcPointController extends BaseController
                     Map<String, List<City>> linkCity = cities.stream().collect(Collectors.groupingBy(City::getCity1));//网络连接
                     double allCost = 0.0;
                     double transportNum1 = 0.0;
+
+                    int sized = (int)list.size()/2;
                     for (String rdc : linkCity.keySet()) {
                         List<City> cityLink = linkCity.get(rdc);
                         Result result = new Result();
@@ -692,23 +694,17 @@ public class GlcPointController extends BaseController
 //                            range += city1.getCity() + ",";
                             double gdps = 1.4 * Double.parseDouble(city1.getGdp()) / gdp * transportNum;
                             transportNum1+=Double.parseDouble(city1.getGdp()) / gdp * transportNum;
-                            if (city1.getCity().equals(rdc)){
-                                double nums = Math.sqrt(Double.parseDouble(city1.getDistance()))  * (1 + 0.09) * 2.68 * 1 * gdps*0.6;//计算运输成本
-                                if (i>5){
-                                    double nums1  =0.005 * gdp/Double.parseDouble(city1.getGdp()) * transportNum*Math.pow(1.08,i-4);
-                                    transportCost += nums*Math.pow(1.1,i-5)+nums1;
-                                }else {
-                                    double nums1  =0.005 * gdp/Double.parseDouble(city1.getGdp()) * transportNum;
-                                    transportCost += nums+nums1;
-                                }
-                            }else {
-                                transportCost += Math.sqrt(Double.parseDouble(city1.getDistance()))  * (1 + 0.09) * 2.68 * 1 * gdps;//计算运输成本
+
+                            if (i <= sized) {
+                                    transportCost += Math.pow(Math.sqrt(Double.parseDouble(city1.getDistance())), 0.5) * (1 + 0.11) * 7 * 1 * gdps;//计算运输成本
+                            } else {
+                                    transportCost += Math.pow(Math.sqrt(Double.parseDouble(city1.getDistance())), 0.5) * (1 + 0.11) * 7 * 1 * gdps * Math.pow(1.06, i - sized);//计算运输成本
+
                             }
                             carNum += gdps / Double.parseDouble(Car.valueOf(carLength).getCode()) / 365;
                             emp += gdps / 365 / emp_quantity*Math.sqrt((2 - (Math.sqrt(times / 72) )))*(1+Math.sqrt(goods_num/10000))/Math.sqrt(Math.sqrt(size))/1.5;//一天处理多少托需要多少人
-                            inventory +=Math.pow(gdps / 365 * Math.pow(1.04,i) * lever,1.1) ;
+                            inventory +=gdps / 365 * Math.pow(1.02,i) * lever ;
                         }
-
                         emp = Math.ceil(emp);
                         storageCost = (emp * warehousing+managementFee)*Math.pow(1.05,i);//需要的人员数量
                         double storage_area = 0.0;
@@ -720,13 +716,13 @@ public class GlcPointController extends BaseController
 
                         double tally = AreaUtils.getTally(2 * emp * 60 / 2, carLength).getArea();
                         double platform = AreaUtils.getPlatform(2 * emp * 60 / 2, carLength).getPlatform_area();
-                        double area = tally + storage_area*Math.pow(1.02,i) + platform;
+                        double area = tally + storage_area* Math.pow(1.02,i) + platform;
                         double buildCost = area * 35 * 12;//先假设每平米面积为32元/月
 
                         if (inventory <= 1) {
                             inventory = 0;
                         }
-                        double inventoryCost = price * inventory * (0.05 + inventory_loss / 100);
+                        double inventoryCost = 1.5*price * inventory * (0.05 + inventory_loss / 100);
                         result.setCity(rdc);
                         result.setRange(range);
                         result.setArea(Math.round(area));
@@ -942,7 +938,7 @@ public class GlcPointController extends BaseController
                     String range= "";
                     for (City city1 : cityLink) {
                         double gdps = 1.5*Double.parseDouble(city1.getGdp()) / gdp * transportNum;
-                        transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) *1.62 * (1 + 0.09) * 1.2 * 1  * gdps;//计算运输成本
+                        transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) *1.62 * (1 + 0.11) * 1.2 * 1  * gdps;//计算运输成本
                         carNum += gdps/ Double.parseDouble(Car.valueOf(carLength).getCode()) / 365;
                         emp += gdps/ 365 / emp_quantity;//一天处理多少托需要多少人
                         inventory += gdps/365*Math.sqrt(Math.sqrt(i));
@@ -1273,7 +1269,7 @@ public class GlcPointController extends BaseController
                         for (City city1 : cityLink) {
                             range += city1.getCity() + ",";
                             double gdps = 1.5 * Double.parseDouble(city1.getGdp()) / gdp * transportNum;
-                            transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) * 1.62 * (1 + 0.09) * 1.2 * 1 * gdps;//计算运输成本
+                            transportCost += Math.sqrt(Double.parseDouble(city1.getDistance())) * 1.62 * (1 + 0.11) * 1.2 * 1 * gdps;//计算运输成本
                             carNum += gdps / Double.parseDouble(Car.valueOf(carLength).getCode()) / 365;
                             emp += gdps / 365 / emp_quantity;//一天处理多少托需要多少人
                             inventory += gdps / 365 * Math.sqrt(Math.sqrt(i));
@@ -1958,8 +1954,8 @@ public class GlcPointController extends BaseController
                 double meterDouble = twoJuLi(netPoints,city);
 
                 double num = meterDouble/1000;
-                if (num<=50){
-                    num=50;
+                if (num<=20){
+                    num=20;
                 }
                 if (num<max){
                     city1.setCity1(city.getCity());

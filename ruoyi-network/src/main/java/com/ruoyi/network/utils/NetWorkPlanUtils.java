@@ -68,7 +68,7 @@ public class NetWorkPlanUtils {
                 for (City city : cities) {
                     if (city.getCity().equals(order.getSupplierCity())) {
                         double meterDouble = twoJuLi(order.getSupplierCity(), city) / 1000;
-                        orderCost += order.getGoodsNum() * order.getVolume() * Math.ceil(meterDouble) * order.getSupplierCity().getTransportfee() * (1 + 0.09);//运输体积与运输量以及运输费率得到运输成本
+                        orderCost += order.getGoodsNum() * order.getVolume() * Math.ceil(meterDouble) * order.getSupplierCity().getTransportfee() * (1 + 0.11);//运输体积与运输量以及运输费率得到运输成本
                     }
                 }
             }
@@ -92,7 +92,7 @@ public class NetWorkPlanUtils {
                         if (fee.getCity().equals(fee.getCity1())) {
                             meterDouble = 20;
                         }
-                        orderCost += order.getGoodsNum() * order.getVolume() * Math.ceil(meterDouble) * fee.getTransportfee() * (1 + 0.09);//运输体积与运输量以及运输费率得到运输成本
+                        orderCost += order.getGoodsNum() * order.getVolume() * Math.ceil(meterDouble) * fee.getTransportfee() * (1 + 0.11);//运输体积与运输量以及运输费率得到运输成本
                         transportDate = meterDouble / workTime; //运输周期
                         transportCost += orderCost;
                     }

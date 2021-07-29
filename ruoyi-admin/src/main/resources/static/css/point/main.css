@@ -1,7 +1,7 @@
 body{
     margin: 0;
     padding: 0;
-    background: url(../../img/Homebodybg.png) no-repeat;
+    background: url(../../img/landing/bg.png) no-repeat;
     background-repeat: no-repeat;
     background-attachment:fixed;
     /*filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../../img/point/background.jpg', sizingMethod='scale');*/
@@ -53,7 +53,7 @@ li{
 .contain ul li span{
     display: inline-block;
     vertical-align:16px;
-    font-size: 30px;
+    font-size: 24px;
     color: #57daff;
     margin-left: 20px;
 }
@@ -68,8 +68,10 @@ li{
     float: left;
     background-image: url(../../img/landing/kuang.png);
     background-position: center center;
+
     background-repeat: no-repeat;
-    margin-bottom: 50px;
+    backgroun-size:50% 100%;
+    margin-bottom: 30px;
     background-color:transparent;
 }
 .contain ul li:hover{

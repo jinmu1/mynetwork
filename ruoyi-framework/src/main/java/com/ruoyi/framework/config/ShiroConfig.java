@@ -275,6 +275,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/ruoyi.png**", "anon");
         filterChainDefinitionMap.put("/css/**", "anon");
         filterChainDefinitionMap.put("/docs/**", "anon");
+        filterChainDefinitionMap.put("/file/**.pdf", "anon");
         filterChainDefinitionMap.put("/fonts/**", "anon");
         filterChainDefinitionMap.put("/img/**", "anon");
         filterChainDefinitionMap.put("/json/**", "anon");
@@ -317,6 +318,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/system/netWork/network2", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/netWork/network3", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/netWork/network4", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/netWork", "anon,captchaValidate");
         filterChainDefinitionMap.put("/light", "anon,captchaValidate");
         filterChainDefinitionMap.put("/haier", "anon,captchaValidate");
         filterChainDefinitionMap.put("/wx", "anon,captchaValidate");
