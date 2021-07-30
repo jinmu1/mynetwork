@@ -1,4 +1,4 @@
-package com.ruoyi.network.utils;
+package com.ruoyi.warehousing.utils;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -71,7 +71,7 @@ public final class DateUtils {
         }
         return resultDate;
     }
-    private static Date randomDate(String beginDate,String endDate){
+    public static Date randomDate(String beginDate,String endDate){
         try {
             Date start = sdf1.parse(beginDate);
             Date end = sdf1.parse(endDate);
@@ -131,7 +131,7 @@ public final class DateUtils {
     /**
      * 解析日期 yyyy-MM-dd
      *
-     * @param date 日期字符串
+     * @param  日期字符串
      * @return
      */
     public static Timestamp parse(Object object) {

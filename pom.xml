@@ -263,6 +263,7 @@
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
         <module>ruoyi-network</module>
+        <module>ruoyi-warehousing</module>
     </modules>
     <packaging>pom</packaging>
 

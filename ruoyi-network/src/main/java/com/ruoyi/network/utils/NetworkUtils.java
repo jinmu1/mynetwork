@@ -37,11 +37,6 @@ import static java.util.stream.Collectors.toList;
  */
 public class NetworkUtils {
 
-    private static Map<Character, Character> map = new HashMap<Character, Character>();
-    private static final String PATH = "/resources/xml/codeRegular.xml";
-    private static String threePart[] = null; //第二部分
-    private static String fourPart[] = null; //第三部分
-    private static Map<String, String> twoPart = new HashMap<String, String>();  //第一部分
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
     /***
