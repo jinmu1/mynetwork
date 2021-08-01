@@ -1,9 +1,15 @@
-package com.ruoyi.warehousing.utils;
+package com.ruoyi.warehousing.action;
 
+import com.ruoyi.warehousing.form.Cargo;
 import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.resource.*;
-import com.ruoyi.warehousing.result.Point;
-import com.ruoyi.warehousing.result.WorkTime;
+import com.ruoyi.warehousing.queue.Point;
+import com.ruoyi.warehousing.resource.equipment.Elevator;
+import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
+import com.ruoyi.warehousing.resource.facilities.platform.Platform;
+import com.ruoyi.warehousing.form.WorkTime;
+import com.ruoyi.warehousing.resource.personnel.Emp;
+import com.ruoyi.warehousing.utils.AreaUtils;
+import com.ruoyi.warehousing.utils.DateUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,7 +31,7 @@ public class WarehousingUtil {
     public static  List<Platform> initPlat(int num) {
         List<Platform> platforms = new ArrayList<>();
         for (int i =0 ;i<num ; i++){
-            platforms.add(new Platform("月台"+1+"号",0,0,new Point(0+i*AreaUtils.platform_width,0,0)));
+            platforms.add(new Platform("月台"+1+"号",0,0,new Point(0+i* AreaUtils.platform_width,0,0)));
         }
         return platforms;
     }
@@ -33,7 +39,7 @@ public class WarehousingUtil {
     /**
      * 初始化电梯
      */
-    public static List<Elevator> initElevator(int num,int floor) {
+    public static List<Elevator> initElevator(int num, int floor) {
         List<Elevator> elevators = new ArrayList<>();
          for(int i =0 ;i<num; i++){
              int f = (int)(Math.random()*floor);
@@ -61,7 +67,7 @@ public class WarehousingUtil {
      * @param emp
      * @return
      */
-    public static Point getPlatform(Emp emp,List<Platform> platforms) {
+    public static Point getPlatform(Emp emp, List<Platform> platforms) {
         Point point = new Point();
         for(Platform platform:platforms) {
             if (emp.getCode().equals(platform.getCode())) {
@@ -360,4 +366,6 @@ public class WarehousingUtil {
         }
         return point;
     }
+
+
 }

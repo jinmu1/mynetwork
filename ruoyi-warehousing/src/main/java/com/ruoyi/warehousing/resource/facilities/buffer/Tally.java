@@ -1,10 +1,10 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.resource.facilities.buffer;
 
 
 
 import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.form.Order;
-import com.ruoyi.warehousing.result.Point;
+import com.ruoyi.warehousing.queue.Order;
+import com.ruoyi.warehousing.queue.Point;
 
 import java.util.ArrayList;
 import java.util.List;

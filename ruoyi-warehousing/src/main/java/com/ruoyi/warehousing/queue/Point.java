@@ -1,11 +1,11 @@
-package com.ruoyi.warehousing.result;
+package com.ruoyi.warehousing.queue;
 
 /*
  * This gives the coordinates of each place.
  * Basically print out the layout of floor
  */
 
-import com.ruoyi.warehousing.resource.Warehouse;
+import com.ruoyi.warehousing.resource.facilities.Warehouse;
 
 public class Point {
     private double x;

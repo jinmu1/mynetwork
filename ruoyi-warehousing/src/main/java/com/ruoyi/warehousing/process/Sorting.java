@@ -1,14 +1,13 @@
 package com.ruoyi.warehousing.process;
 
+import com.ruoyi.warehousing.form.Cargo;
 import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.form.Order;
-import com.ruoyi.warehousing.resource.Cargo;
-import com.ruoyi.warehousing.resource.Elevator;
-import com.ruoyi.warehousing.resource.Emp;
-import com.ruoyi.warehousing.resource.Tally;
-import com.ruoyi.warehousing.result.Point;
-import com.ruoyi.warehousing.result.WorkTime;
-import com.ruoyi.warehousing.utils.WarehousingUtil;
+import com.ruoyi.warehousing.queue.Order;
+import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
+import com.ruoyi.warehousing.queue.Point;
+import com.ruoyi.warehousing.form.WorkTime;
+import com.ruoyi.warehousing.action.WarehousingUtil;
+import com.ruoyi.warehousing.resource.personnel.Emp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class Sorting {
      * @param cargos
      * @param tally
      */
-    public void move(List<Emp> emps,List<Cargo> cargos,Tally tally){
+    public void move(List<Emp> emps, List<Cargo> cargos, Tally tally){
         int m=0;
         int n=0;
         int d=0;

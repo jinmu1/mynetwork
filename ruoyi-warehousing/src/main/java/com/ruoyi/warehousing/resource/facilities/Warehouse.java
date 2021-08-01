@@ -1,6 +1,6 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.resource.facilities;
 
-import com.ruoyi.warehousing.result.Point;
+import com.ruoyi.warehousing.queue.Point;
 
 import java.util.ArrayList;
 import java.util.HashMap;

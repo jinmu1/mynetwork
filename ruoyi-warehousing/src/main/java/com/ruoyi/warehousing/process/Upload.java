@@ -1,21 +1,14 @@
 package com.ruoyi.warehousing.process;
 
 
-import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.form.Order;
-import com.ruoyi.warehousing.resource.*;
-import com.ruoyi.warehousing.result.EmpLog;
-import com.ruoyi.warehousing.result.Point;
-import com.ruoyi.warehousing.result.Result;
-import com.ruoyi.warehousing.result.WorkTime;
-import com.ruoyi.warehousing.utils.WarehousingUtil;
-import org.apache.commons.collections4.ListUtils;
-import org.springframework.util.unit.DataSize;
+import com.ruoyi.warehousing.queue.Point;
+import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
+import com.ruoyi.warehousing.resource.facilities.platform.Platform;
+import com.ruoyi.warehousing.form.WorkTime;
+import com.ruoyi.warehousing.action.WarehousingUtil;
+import com.ruoyi.warehousing.resource.personnel.Emp;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -32,7 +25,7 @@ public class Upload{
      * @param doors
      * @param tally
      */
-    private void move(List<Emp> emps,List<Platform> platforms,List<Point> doors,Tally tally) {
+    private void move(List<Emp> emps, List<Platform> platforms, List<Point> doors, Tally tally) {
         int m = 0;
         for (Emp emp : emps) {
             if (emp.getStatus() != 0) {

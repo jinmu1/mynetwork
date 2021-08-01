@@ -1,4 +1,4 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.resource.equipment;
 
 /**
  * 自动化立库内容

@@ -1,4 +1,6 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.resource.equipment;
+
+import com.ruoyi.warehousing.form.Cargo;
 
 /**
  * 堆垛机使用类

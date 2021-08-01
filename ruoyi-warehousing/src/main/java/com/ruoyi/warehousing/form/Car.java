@@ -1,8 +1,4 @@
-package com.ruoyi.warehousing.resource;
-
-import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.form.Order;
-import org.apache.poi.ss.formula.functions.T;
+package com.ruoyi.warehousing.form;
 
 import java.util.Date;
 import java.util.List;
@@ -29,7 +25,7 @@ public class Car {
         this.goodsList = goodsList;
     }
 
-    public Car(String carNo, int type, List<Goods> goodsList, Date arrinveTime,int tora) {
+    public Car(String carNo, int type, List<Goods> goodsList, Date arrinveTime, int tora) {
         this.carNo = carNo;
         this.type = type;
         this.goodsList = goodsList;

@@ -3,51 +3,54 @@ package com.ruoyi.warehousing.utils;
 
 import com.ruoyi.warehousing.enumType.Car;
 import com.ruoyi.warehousing.enumType.StorageType;
-import com.ruoyi.warehousing.resource.*;
+import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
+import com.ruoyi.warehousing.resource.facilities.platform.Platform;
+import com.ruoyi.warehousing.resource.facilities.storage.Storage;
+import com.ruoyi.warehousing.resource.equipment.LightStorage;
+import com.ruoyi.warehousing.resource.equipment.StereoStorage;
 
-public final class AreaUtils {
+public  class AreaUtils {
+
+    public static double platform_width = 3.5;//月台的宽度
+    public static double platform_length = 3;//单个月台的宽度 车辆宽度一般在1.8-2米之间
+    public static double platform_length1 = 2.4;//单个月台的宽度 车辆宽度一般在1.8-2米之间
+    public static double unloading_time = 0.5;//卸货时间
+    public static double everyDay_unloading_time = 8;//日收货作业时间
+    public static double peak_rate = 1.5;//高峰概率
+    public static double volumetric_coefficient=0.8;//容积系数
+
+    public static double tally_batch=4;//理货波次
+    public static double tally_rate=1.5;//高峰理货系数
+    public static double tray_length = 1.2;//托盘长度
+    public static double tray_width = 1;//托盘宽度
+    public static double tray_clearance = 0.1;//托盘间隙
+    public static double tally_channel = 0.6;//托盘间隙
+    public static double forklift_channel=3;//叉车通道
+    public static double shelf_channel = 1;//人员拣货通道
 
 
-    protected static double platform_width = 3.5;//月台的宽度
-    protected static double platform_length = 3;//单个月台的宽度 车辆宽度一般在1.8-2米之间
-    protected static double platform_length1 = 2.4;//单个月台的宽度 车辆宽度一般在1.8-2米之间
-    protected static double unloading_time = 0.5;//卸货时间
-    protected static double everyDay_unloading_time = 8;//日收货作业时间
-    protected static double peak_rate = 1.5;//高峰概率
-    protected static double volumetric_coefficient=0.8;//容积系数
 
-    protected static double tally_batch=4;//理货波次
-    protected static double tally_rate=1.5;//高峰理货系数
-    protected static double tray_length = 1.2;//托盘长度
-    protected static double tray_width = 1;//托盘宽度
-    protected static double tray_clearance = 0.1;//托盘间隙
-    protected static double tally_channel = 0.6;//托盘间隙
-    protected static double forklift_channel=3;//叉车通道
-    protected static double shelf_channel = 1;//人员拣货通道
+    public static double cargo_box_length = 1.2;//单个货格的长度
+    public static double cargo_box_width = 1;//单个货格的宽度
+    public static double shelf_space = 0.1;//货架间隙
+    public static double light_cargo_box_height = 0.6;//轻型货架单个货格的高度
+    public static int light_shelf_layer = 4;//轻型货架层数
+    public static int high_shelf_layer = 5;//高位货架层数
+    public static double beam_high_cargo_box_height = 1.7;//横梁式高位货架单个货格的高度
+    public static double shuttle_high_cargo_box_height = 1.9;//穿梭式高位货架单个货格的高度
+    public static double state1_high_cargo_box_width =1.65;//提升机巷道宽度
+    public static double state1_high_cargo_box_height = 1.6;//单\双升立体货架高度
+    public static double state2_high_cargo_box_height = 1.6;//多升立体货架
+    public static double heap_height = 1.5;//地堆货位的高
+    public static double tray_price=280;//托盘-塑料（带RFID)
+    public static double automation_forklift_price = 65000;//自动化叉车价格
+    public static double manual_forklift_price = 2000;//手动化叉车
+    public static double light_cargo_price = 200;//轻型货架价格
+    public static double high_cargo_price = 200;//横梁式货位的价格
+    public static double high_cross_cargo_price = 400;//穿梭式货架价格
+    public static double workload = 50;//没人每天处理托数
 
-
-
-    protected static double cargo_box_length = 1.2;//单个货格的长度
-    protected static double cargo_box_width = 1;//单个货格的宽度
-    protected static double shelf_space = 0.1;//货架间隙
-    protected static double light_cargo_box_height = 0.6;//轻型货架单个货格的高度
-    protected static int light_shelf_layer = 4;//轻型货架层数
-    protected static int high_shelf_layer = 5;//高位货架层数
-    protected static double beam_high_cargo_box_height = 1.7;//横梁式高位货架单个货格的高度
-    protected static double shuttle_high_cargo_box_height = 1.9;//穿梭式高位货架单个货格的高度
-    protected static double state1_high_cargo_box_width =1.65;//提升机巷道宽度
-    protected static double state1_high_cargo_box_height = 1.6;//单\双升立体货架高度
-    protected static double state2_high_cargo_box_height = 1.6;//多升立体货架
-    protected static double heap_height = 1.5;//地堆货位的高
-    protected static double tray_price=280;//托盘-塑料（带RFID)
-    protected static double automation_forklift_price = 65000;//自动化叉车价格
-    protected static double manual_forklift_price = 2000;//手动化叉车
-    protected static double light_cargo_price = 200;//轻型货架价格
-    protected static double high_cargo_price = 200;//横梁式货位的价格
-    protected static double high_cross_cargo_price = 400;//穿梭式货架价格
-    protected static double workload = 50;//没人每天处理托数
-
-    protected static double state1_high_cargo_box_price = 420;//单\双升立体货架高度
+    public static double state1_high_cargo_box_price = 420;//单\双升立体货架高度
     protected static double state2_high_cargo_box_price = 520;//多升立体货架堆垛机
     protected static double state1_high_cargo_box_stacker = 800000;//单个堆垛机价格
     protected static double state2_high_cargo_box_stacker = 950000;//多升堆垛机价格

@@ -1,7 +1,5 @@
 package com.ruoyi.warehousing.queue;
 
-import com.ruoyi.warehousing.form.Order;
-
 import java.util.List;
 
 /**

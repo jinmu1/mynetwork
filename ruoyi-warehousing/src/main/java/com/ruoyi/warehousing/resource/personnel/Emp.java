@@ -1,9 +1,9 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.resource.personnel;
 
 import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.form.Order;
-import com.ruoyi.warehousing.queue.Work;
-import com.ruoyi.warehousing.result.Point;
+import com.ruoyi.warehousing.queue.Order;
+import com.ruoyi.warehousing.queue.Point;
+import com.ruoyi.warehousing.resource.equipment.Elevator;
 
 import java.util.List;
 
@@ -25,19 +25,19 @@ public class Emp {
 
 
 
-    public Emp(String name,int status,Point curr) {
+    public Emp(String name, int status, Point curr) {
         this.name = name;
         this.status = status;
         this.curr = curr;
 
     }
-    public Emp(String name,int status,Point curr,List<Goods> goods) {
+    public Emp(String name, int status, Point curr, List<Goods> goods) {
         this.name = name;
         this.status = status;
         this.curr = curr;
         this.goods = goods;
     }
-    public Emp(String name,int status,Point curr,double v0,double v1,double t0,double t1) {
+    public Emp(String name, int status, Point curr, double v0, double v1, double t0, double t1) {
         this.name = name;
         this.status = status;
         this.curr = curr;
@@ -46,7 +46,7 @@ public class Emp {
         this.t0 = t0;
         this.t1 = t1;
     }
-    public Emp(String name,int status,Point curr,double v0,double v1,double t0,double t1,double t2) {
+    public Emp(String name, int status, Point curr, double v0, double v1, double t0, double t1, double t2) {
         this.name = name;
         this.status = status;
         this.curr = curr;

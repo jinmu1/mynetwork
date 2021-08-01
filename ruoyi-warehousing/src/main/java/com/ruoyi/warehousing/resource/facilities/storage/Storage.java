@@ -1,4 +1,4 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.resource.facilities.storage;
 
 
 

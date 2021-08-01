@@ -1,31 +1,21 @@
 package com.ruoyi.web.controller.warehouse;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.network.algorithm.kmeans.Cluster;
 import com.ruoyi.network.form.GlcPoint;
 import com.ruoyi.network.node.*;
-import com.ruoyi.network.result.Result;
-import com.ruoyi.network.result.ResultMsg;
 import com.ruoyi.network.utils.NetWorkPlanUtils;
 import com.ruoyi.network.utils.NetworkUtils;
 import com.ruoyi.system.service.IGlcPointService;
-import com.ruoyi.warehousing.resource.Platform;
-import com.ruoyi.warehousing.utils.WarehousingUtil;
-import org.gavaghan.geodesy.Ellipsoid;
-import org.gavaghan.geodesy.GlobalCoordinates;
+import com.ruoyi.warehousing.resource.facilities.platform.Platform;
+import com.ruoyi.warehousing.action.WarehousingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 【请填写功能名称】Controller
@@ -116,6 +106,7 @@ public class WarehousingController extends BaseController
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(runTime);
             calendar.add(Calendar.SECOND,1);
+
             runTime = calendar.getTime();
         }
         return getDataTable(new ArrayList<>());

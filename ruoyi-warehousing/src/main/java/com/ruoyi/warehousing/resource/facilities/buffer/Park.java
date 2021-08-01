@@ -1,4 +1,6 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.resource.facilities.buffer;
+
+import com.ruoyi.warehousing.enumType.Car;
 
 import java.util.List;
 

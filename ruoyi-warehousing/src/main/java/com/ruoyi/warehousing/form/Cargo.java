@@ -1,9 +1,7 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.form;
 
 import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.result.Point;
-
-import java.util.Objects;
+import com.ruoyi.warehousing.queue.Point;
 
 public class Cargo {
     private Point point;

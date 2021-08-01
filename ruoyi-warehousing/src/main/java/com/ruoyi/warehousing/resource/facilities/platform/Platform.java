@@ -1,13 +1,10 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.resource.facilities.platform;
 
+import com.ruoyi.warehousing.form.Car;
 import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.form.Order;
-import com.ruoyi.warehousing.result.Point;
-import javafx.collections.ObservableList;
+import com.ruoyi.warehousing.queue.Point;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.groupingBy;
 

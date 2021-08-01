@@ -1,4 +1,4 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.resource.equipment;
 
 public class LightStorage {
     private double area;//面积

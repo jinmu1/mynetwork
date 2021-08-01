@@ -1,6 +1,6 @@
-package com.ruoyi.warehousing.resource;
+package com.ruoyi.warehousing.resource.equipment;
 
-import com.ruoyi.warehousing.result.Point;
+import com.ruoyi.warehousing.queue.Point;
 
 public class Elevator {
     private String  code;//编码

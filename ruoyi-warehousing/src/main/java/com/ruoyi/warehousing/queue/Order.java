@@ -1,4 +1,4 @@
-package com.ruoyi.warehousing.form;
+package com.ruoyi.warehousing.queue;
 
 import java.util.Date;
 import java.util.List;
