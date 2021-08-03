@@ -201,9 +201,9 @@ public class WarehousingController extends BaseController {
             }
             Result result = new Result(i);
             result.setUploadEmp((int)Math.round(empRate/list1.size()/60/10/0.85));
-            result.setPutawayEmp((int)Math.round(empRate/list2.size()/60/10/0.85));
-            result.setSortingEmp((int)Math.round(empRate/list3.size()/60/10/0.85));
-            result.setDeliveryEmp((int)Math.round(empRate/list4.size()/60/10/0.85));
+            result.setPutawayEmp((int)Math.round(empRate1/list2.size()/60/10/0.85));
+            result.setSortingEmp((int)Math.round(empRate2/list3.size()/60/10/0.85));
+            result.setDeliveryEmp((int)Math.round(empRate3/list4.size()/60/10/0.85));
             listr.add(result);
         }
 
