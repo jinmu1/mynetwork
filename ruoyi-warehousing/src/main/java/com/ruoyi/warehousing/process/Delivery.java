@@ -6,6 +6,7 @@ import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.form.WorkTime;
 import com.ruoyi.warehousing.action.WarehousingUtil;
 import com.ruoyi.warehousing.resource.personnel.Emp;
+import com.ruoyi.warehousing.result.EmpLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,8 @@ public class Delivery {
      * @param doors
      * @param tally
      */
-    private void move(List<Emp> emps, List<Platform> platforms, List<Point> doors, Tally tally) {
+    public   static EmpLog move(List<Emp> emps, List<Platform> platforms, List<Point> doors, Tally tally) {
+        EmpLog empLog = new EmpLog();
         int m = 0;
         for (Emp emp : emps) {
             if (emp.getStatus() != 0) {
@@ -83,6 +85,9 @@ public class Delivery {
                 l++;
             }
         }
+        empLog.setComPlut(m);
+        empLog.setAllPlut(l);
+        return empLog;
 
     }
 }

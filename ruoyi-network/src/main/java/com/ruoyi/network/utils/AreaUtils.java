@@ -93,6 +93,7 @@ public final class AreaUtils {
         tally.setArea(tally_area);
         tally.setTally_longitudinal(tally_longitudinal);
         tally.setTally_transverse(tally_transverse);
+
         return tally;
     }
 
@@ -214,6 +215,13 @@ public final class AreaUtils {
         storage.setBelt(belt);
         return storage;
     }
+    public static Storage getStorage(double total,double throughput,double height){
+
+
+      return null;
+    }
+
+
     /***
      * 计算立库区域面积
      * 规则一：价格最低

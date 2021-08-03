@@ -14,6 +14,17 @@ public class Order {
     private double  weight;//重量
     private int status;//完成状态
 
+    public Order(String orderCode, String goodsCode, Date createDate, Date workDate, double goodsNum, double volume) {
+        this.orderCode = orderCode;
+        this.goodsCode = goodsCode;
+        this.createDate = createDate;
+        this.workDate = workDate;
+        this.completeDate = completeDate;
+        this.goodsNum = goodsNum;
+        this.volume = volume;
+        this.weight = weight;
+        this.status = status;
+    }
 
     public int getStatus() {
         return status;

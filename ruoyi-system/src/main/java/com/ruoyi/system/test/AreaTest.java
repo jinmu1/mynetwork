@@ -5,6 +5,7 @@ import com.ruoyi.network.enumType.Car;
 import com.ruoyi.network.resource.LightStorage;
 import com.ruoyi.network.resource.StereoStorage;
 import com.ruoyi.network.utils.AreaUtils;
+import com.ruoyi.system.utils.DateUtils;
 import org.junit.Test;
 
 public class AreaTest {
@@ -120,5 +121,9 @@ public class AreaTest {
     }
 
 
+    @Test
+    public void printBatch(){
+        System.out.println(DateUtils.getIntervalTimeList("8:00:00", "18:00:00", 600/2));
+    }
 
 }

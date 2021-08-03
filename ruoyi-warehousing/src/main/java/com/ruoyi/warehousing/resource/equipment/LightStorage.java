@@ -1,6 +1,8 @@
 package com.ruoyi.warehousing.resource.equipment;
 
-public class LightStorage {
+import com.ruoyi.warehousing.resource.facilities.storage.Storage;
+
+public class LightStorage  extends Storage {
     private double area;//面积
     private int  line;//排
     private int  row;//列

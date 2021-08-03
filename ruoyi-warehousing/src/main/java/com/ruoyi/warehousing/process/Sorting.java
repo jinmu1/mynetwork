@@ -8,6 +8,7 @@ import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.form.WorkTime;
 import com.ruoyi.warehousing.action.WarehousingUtil;
 import com.ruoyi.warehousing.resource.personnel.Emp;
+import com.ruoyi.warehousing.result.EmpLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,8 @@ public class Sorting {
      * @param cargos
      * @param tally
      */
-    public void move(List<Emp> emps, List<Cargo> cargos, Tally tally){
+    public static EmpLog move(List<Emp> emps, List<Cargo> cargos, Tally tally){
+        EmpLog empLog = new EmpLog();
         int m=0;
         int n=0;
         int d=0;
@@ -114,6 +116,7 @@ public class Sorting {
                     emp.setStatus(5);
                     emp.setTar(tally.getPoints().get(0));
                     emp.setOrders(new ArrayList<>());
+                    d++;
                 }else {
                     emp.setCurr(WarehousingUtil.getPath1(emp.getCurr(),emp.getTar(),WorkTime.v1));
                 }
@@ -127,6 +130,10 @@ public class Sorting {
             }
 
         }
+
+        empLog.setComPlut(m/emps.size());
+        empLog.setAllPlut(d/tally.getTorr());
+        return empLog;
     }
 
 

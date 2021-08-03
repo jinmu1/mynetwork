@@ -3,7 +3,7 @@ package com.ruoyi.network.resource;
 /**
  * 自动化立库内容
  */
-public class StereoStorage {
+public class StereoStorage extends Storage{
 
     private int  row;//排
     private int layer;//层

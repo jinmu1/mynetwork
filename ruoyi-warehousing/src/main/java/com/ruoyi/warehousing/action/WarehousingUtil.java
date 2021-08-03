@@ -37,6 +37,17 @@ public class WarehousingUtil {
     }
 
     /**
+     * 初始化门洞
+     *
+     */
+    public static List<Point> initDoor() {
+        List<Point> door = new ArrayList<>();
+        door.add(new Point(8,3,0));
+        door.add(new Point(34,3,0));
+        door.add(new Point(40,3,0));
+        return door;
+    }
+    /**
      * 初始化电梯
      */
     public static List<Elevator> initElevator(int num, int floor) {
@@ -365,6 +376,46 @@ public class WarehousingUtil {
             }
         }
         return point;
+    }
+
+
+    public static List<Emp> initEmp(int s) {
+        List<Emp> emps = new ArrayList<>();
+        for (int i=0;i<s;i++){
+            emps.add(new Emp("上架"+i+"号",0,new Point((int)Math.random()*8,(int)Math.random()*8,10)));
+        }
+        return emps;
+
+    }
+
+    public static Tally initTally() {
+       Tally tally = new Tally();
+        List<Point> points = new ArrayList<>();
+        for (int i=10;i<20;i++){
+            for (int j=4;j<12;j++){
+                points.add(new Point(i,j,0,0));
+            }
+        }
+        tally.setPoints(points);
+        tally.setTorr(0);
+        tally.setTorr(0);
+        return tally;
+
+
+    }
+
+    public static Tally initTally1() {
+        Tally tally1=new Tally();
+        List<Point> points1 = new ArrayList<>();
+        for (int i=20;i<32;i++){
+            for (int j =4;j<12;j++ ){
+                if (i<24||i>28){
+                    points1.add(new Point(i,j,10,0));
+                }
+            }
+        }
+//        tally1.setArea(points1);
+        return tally1;
     }
 
 

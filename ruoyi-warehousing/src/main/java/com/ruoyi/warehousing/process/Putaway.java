@@ -8,6 +8,7 @@ import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.form.WorkTime;
 import com.ruoyi.warehousing.action.WarehousingUtil;
 import com.ruoyi.warehousing.resource.personnel.Emp;
+import com.ruoyi.warehousing.result.EmpLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,10 @@ public class Putaway {
      * @param elevators 电梯
      * @param cargos  货位
      */
-    private void work(List<Emp> emps, Tally tally, Tally tally1, List<Point> elevatorPark, List<Elevator> elevators, List<Cargo> cargos) {
+    public static EmpLog work(List<Emp> emps, Tally tally, Tally tally1, List<Point> elevatorPark, List<Elevator> elevators, List<Cargo> cargos) {
+        EmpLog empLog = new EmpLog();
+        int m = 0;
+
         int empNums = 0;
         for (Emp emp : emps) {
             if (emp.getStatus() != 0) {
@@ -236,6 +240,9 @@ public class Putaway {
                 }
             }
         }
+        empLog.setComPlut(empNums/emps.size());
+        empLog.setAllPlut(m/tally.getTorr());
+        return empLog;
     }
 
 
