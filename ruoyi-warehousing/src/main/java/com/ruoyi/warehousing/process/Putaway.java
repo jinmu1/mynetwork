@@ -106,24 +106,5 @@ public class Putaway {
     }
 
 
-    public static EmpLog work1(List<Emp> emps1, Tally tally, Tally tally1, List<Elevator> elevators, List<Cargo> cargos) {
-        EmpLog empLog = new EmpLog();
-        int m=0;
-        for (Emp emp:emps1) {
-            if (emp.getStatus() == 0 && emp.getT0()>0) {
-                emp.setStatus(1);
-                emp.setT1(WarehousingUtil.random(60,90));
-                emp.setCurr(new Point(0, 0, 0));
-            } else if (emp.getStatus() == 1) {
-                emp.fix1();
-                if (emp.getT1()==0){
-                    emp.setStatus(0);
-                    emp.fix();
-                }
-                m++;
-            }
-        }
-        empLog.setComPlut(m/emps1.size());
-        return  empLog;
-    }
+
 }

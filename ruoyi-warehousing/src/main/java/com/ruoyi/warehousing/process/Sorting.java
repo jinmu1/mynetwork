@@ -154,24 +154,5 @@ public class Sorting {
     }
 
 
-    public static EmpLog move1(List<Emp> emps2, List<Cargo> cargos, Tally tally1) {
-        EmpLog empLog = new EmpLog();
-        int m=0;
-        for (Emp emp:emps2) {
-            if (emp.getStatus() == 0 && emp.getT0()>0) {
-                emp.setStatus(1);
-                emp.setT1(WarehousingUtil.random(30,40));
-                emp.setCurr(new Point(0, 0, 0));
-            } else if (emp.getStatus() == 1) {
-                emp.fix1();
-                if (emp.getT1()==0){
-                    emp.setStatus(0);
-                    emp.fix();
-                }
-                m++;
-            }
-        }
-        empLog.setComPlut(m/emps2.size());
-        return  empLog;
-    }
+
 }
