@@ -9,7 +9,11 @@ public class LightStorage  extends Storage {
     private int layer;//层
     private int cargo;//货位数
     private double price;//价格
-    private double emp;//作业人数
+    private int putawayemp;//作业人数
+    private int sortingemp;//作业人数
+    private int emp;
+
+
 
     public double getArea() {
         return area;
@@ -59,11 +63,27 @@ public class LightStorage  extends Storage {
         this.price = price;
     }
 
-    public double getEmp() {
+    public int getPutawayemp() {
+        return putawayemp;
+    }
+
+    public void setPutawayemp(int putawayemp) {
+        this.putawayemp = putawayemp;
+    }
+
+    public int getSortingemp() {
+        return sortingemp;
+    }
+
+    public void setSortingemp(int sortingemp) {
+        this.sortingemp = sortingemp;
+    }
+
+    public int getEmp() {
         return emp;
     }
 
-    public void setEmp(double emp) {
+    public void setEmp(int emp) {
         this.emp = emp;
     }
 }

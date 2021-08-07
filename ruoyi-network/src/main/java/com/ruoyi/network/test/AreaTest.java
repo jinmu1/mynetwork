@@ -22,7 +22,7 @@ public class AreaTest {
     }
     @Test
     public void printPlatform(){
-        System.out.println("月台数量:"+ AreaUtils.getPlatform(600,"中车7米2").getPlatform_num()+";"+"月台面积:"+ AreaUtils.getPlatform(600,"中车7米2").getPlatform_area());
+//        System.out.println("月台数量:"+ AreaUtils.getPlatform(600,"中车7米2",50).getPlatform_num()+";"+"月台面积:"+ AreaUtils.getPlatform(600,"中车7米2").getPlatform_area());
 
     }
     @Test

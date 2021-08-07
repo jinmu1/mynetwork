@@ -22,6 +22,9 @@ public class Platform {
     private List<Goods> goodsList;
     private double platform_num;//月台数量
     private double platform_area;//月台面积
+    private double forklift;//卸货叉车
+    private double empCost;//员工成本
+    private double forkliftCost;//叉车成本
 
     public Platform() {
     }
@@ -49,6 +52,14 @@ public class Platform {
 
     public double getPlatform_area() {
         return platform_area;
+    }
+
+    public double getForklift() {
+        return forklift;
+    }
+
+    public void setForklift(double forklift) {
+        this.forklift = forklift;
     }
 
     public void setPlatform_area(double platform_area) {
@@ -113,5 +124,21 @@ public class Platform {
 
     public void inSign() {
         this.sign = this.sign-1;
+    }
+
+    public double getEmpCost() {
+        return empCost;
+    }
+
+    public void setEmpCost(double empCost) {
+        this.empCost = empCost;
+    }
+
+    public double getForkliftCost() {
+        return forkliftCost;
+    }
+
+    public void setForkliftCost(double forkliftCost) {
+        this.forkliftCost = forkliftCost;
     }
 }

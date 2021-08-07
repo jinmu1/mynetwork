@@ -18,6 +18,25 @@ public class Tally {
     private double area;//区域面积
     private double tally_transverse;// 纵向数量
     private double tally_longitudinal;//横向数量
+    private int emp;//人员数量
+    private double empCost;//人员成本
+
+    public int getEmp() {
+        return emp;
+    }
+
+    public void setEmp(int emp) {
+        this.emp = emp;
+    }
+
+    public double getEmpCost() {
+        return empCost;
+    }
+
+    public void setEmpCost(double empCost) {
+        this.empCost = empCost;
+    }
+
     public Tally(double torr) {
         this.torr=torr;
         this.goodsList = new ArrayList<>();

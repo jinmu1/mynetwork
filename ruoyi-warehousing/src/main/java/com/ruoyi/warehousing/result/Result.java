@@ -7,6 +7,7 @@ public class Result {
 
 
     private int uploadEmp;//卸货人员数量
+    private int tallyEmp;//理货能力
     private int putawayEmp;//上架人员
     private int sortingEmp;//分拣人员
     private int deliveryEmp;//装车人员
@@ -14,6 +15,9 @@ public class Result {
     private double putawayRate;//上架人员利用率
     private double sortingRate;//分拣人员利用率
     private double deliveryRate;//装车人员利用率
+    private double forklift;//卸货叉车
+    private double empCost;//人员成本
+    private double forkliftCost;//设备成本
 
 
     private double platformNum;//卸货月台数量
@@ -21,13 +25,26 @@ public class Result {
     private double platformRate;//卸货月台利用率
     private double tallyArea;//理货区面积
     private double tallyRate;//理货区面积利用率
-    private double StorageArea;//存储区面积
+    private double storageArea;//存储区面积
     private double tally1Area;//分拣区面积
     private double tally1Rate;//分拣区面积利用率
     private double platform1Num;//装车月台数量
     private double platform1Area;//装车月台面积
     private double platform1Rate;//装车月台利用率
 
+    private int cargo;//货位数量
+
+
+    public int getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(int cargo) {
+        this.cargo = cargo;
+    }
+    public Result() {
+        super();
+    }
     public Result(int batch) {
         this.batch = batch;
     }
@@ -49,12 +66,28 @@ public class Result {
         this.platformRate = platformRate;
         this.tallyArea = tallyArea;
         this.tallyRate = tallyRate;
-        StorageArea = storageArea;
+        storageArea = storageArea;
         this.tally1Area = tally1Area;
         this.tally1Rate = tally1Rate;
         this.platform1Num = platform1Num;
         this.platform1Area = platform1Area;
         this.platform1Rate = platform1Rate;
+    }
+
+    public int getTallyEmp() {
+        return tallyEmp;
+    }
+
+    public void setTallyEmp(int tallyEmp) {
+        this.tallyEmp = tallyEmp;
+    }
+
+    public double getForklift() {
+        return forklift;
+    }
+
+    public void setForklift(double forklift) {
+        this.forklift = forklift;
     }
 
     public int getBatch() {
@@ -87,6 +120,22 @@ public class Result {
 
     public void setUploadEmp(int uploadEmp) {
         this.uploadEmp = uploadEmp;
+    }
+
+    public double getEmpCost() {
+        return empCost;
+    }
+
+    public void setEmpCost(double empCost) {
+        this.empCost = empCost;
+    }
+
+    public double getForkliftCost() {
+        return forkliftCost;
+    }
+
+    public void setForkliftCost(double forkliftCost) {
+        this.forkliftCost = forkliftCost;
     }
 
     public int getPutawayEmp() {
@@ -186,11 +235,11 @@ public class Result {
     }
 
     public double getStorageArea() {
-        return StorageArea;
+        return storageArea;
     }
 
     public void setStorageArea(double storageArea) {
-        StorageArea = storageArea;
+        this.storageArea = storageArea;
     }
 
     public double getTally1Area() {

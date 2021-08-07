@@ -18,6 +18,7 @@ public  class AreaUtils {
     public static double everyDay_unloading_time = 8;//日收货作业时间
     public static double peak_rate = 1.5;//高峰概率
     public static double volumetric_coefficient=0.8;//容积系数
+    public static double uploadEmpCapacity = 150;
 
     public static double tally_batch=4;//理货波次
     public static double tally_rate=1.5;//高峰理货系数
@@ -27,6 +28,7 @@ public  class AreaUtils {
     public static double tally_channel = 0.6;//托盘间隙
     public static double forklift_channel=3;//叉车通道
     public static double shelf_channel = 1;//人员拣货通道
+    public static double tally_area_rate = 0.7;//面积利用率
 
 
 
@@ -77,26 +79,75 @@ public  class AreaUtils {
         Platform platform = new Platform();
         platform.setPlatform_num(platform_num);
         platform.setPlatform_area(platform_area);
+        platform.setEmp((int)(total/uploadEmpCapacity));
+        platform.setForklift((int)(total/uploadEmpCapacity));
+        platform.setEmpCost(platform.getEmp()*80000);
+        platform.setForkliftCost(platform.getForklift()*12000);
         return platform;
+
     }
 
+    /**
+     *  计算月台数量与面积
+     * @param total
+     * @param
+     * @return
+     */
+    public static Platform getPlatform1(double  total, String CarType,double uploadEmpCapacity,double unloading_time,double everyDay_unloading_time , double platform_length){
+        double car_volumetric = Double.parseDouble(Car.valueOf(CarType).getCode());//计算车辆容积 通过车辆类型
+        platform_width = 3 * 1.25;
+
+        double car_num = Math.ceil(total/volumetric_coefficient/car_volumetric);//计算车辆数量 通过车辆容积
+        double platform_num =  Math.ceil(car_num*peak_rate*unloading_time/everyDay_unloading_time);//月台数量
+        double platform_area = platform_num*(platform_width+3)*platform_length;//月台面积
+        Platform platform = new Platform();
+        platform.setPlatform_num(platform_num);
+        platform.setPlatform_area(platform_area);
+        platform.setEmp((int)(total/uploadEmpCapacity));
+        platform.setForklift((int)(total/uploadEmpCapacity));
+        platform.setEmpCost(platform.getEmp()*80000);
+        platform.setForkliftCost(platform.getForklift()*12000);
+        return platform;
+
+    }
     /**
      * 计算理货区面积
      *
      */
     public static Tally getTally(double  total, String carType){
         double pallet_num = total*tally_rate/tally_batch;//理货平均托盘量
-        double tally_transverse = getPlatform(total,carType).getPlatform_num();//纵向数量
-        if (tally_transverse>pallet_num){
-            tally_transverse = 1;
-        }
+        double tally_transverse = 1;//纵向数量
+
+
         double tally_longitudinal= Math.ceil(pallet_num/tally_transverse);//横向数量
-        double tally_area = tally_longitudinal*(tray_length+tray_clearance)*(tray_width+tally_channel+3)*tally_transverse;//理货区面积
+        double tally_area = tally_longitudinal*(tray_length+tray_clearance)*(tray_width+tally_channel+3)*tally_transverse/tally_area_rate;//理货区面积
         Tally tally = new Tally();
         tally.setPallet(pallet_num);
         tally.setArea(tally_area);
         tally.setTally_longitudinal(tally_longitudinal);
         tally.setTally_transverse(tally_transverse);
+        return tally;
+    }
+    /**
+     * 计算理货区面积
+     *
+     */
+    public static Tally getTally1(double  total, String carType,double batch,double tallyEmpCapacity,double tally_channel,double tray_clearance){
+        double pallet_num = total*tally_rate/batch;//理货平均托盘量
+        double tally_transverse = getPlatform(total,carType).getPlatform_num();//纵向数量
+        if (tally_transverse>pallet_num){
+            tally_transverse = 1;
+        }
+
+        double tally_longitudinal= Math.ceil(pallet_num/tally_transverse);//横向数量
+        double tally_area = tally_longitudinal*(tray_length+tray_clearance)*(tray_width+tally_channel)*tally_transverse/tally_area_rate;//理货区面积
+        Tally tally = new Tally();
+        tally.setPallet(pallet_num);
+        tally.setArea(tally_area);
+        tally.setTally_longitudinal(tally_longitudinal);
+        tally.setTally_transverse(tally_transverse);
+        tally.setEmp((int)(total/tallyEmpCapacity));
+        tally.setEmpCost(tally.getEmp()*80000);
         return tally;
     }
 
@@ -156,8 +207,6 @@ public  class AreaUtils {
         StereoStorage storage = new StereoStorage();
         storage.setLayer(layer);
         storage.setRow(rows);
-
-
         storage.setLine(line);
         storage.setArea(area);
         storage.setPrice(price/10000);
@@ -271,6 +320,9 @@ public  class AreaUtils {
     }
 
 
+    public static void getSorting(){
+
+    }
 
     /***
      * 计算立库区域面积----面积最优双升
@@ -470,7 +522,7 @@ public  class AreaUtils {
       storage.setLine(line);
       storage.setRow(rows);
       storage.setPrice(price/10000);
-      storage.setEmp(emp);
+      storage.setEmp((int)emp);
       return storage;
   }
 
@@ -513,11 +565,53 @@ public  class AreaUtils {
         storage.setLine(line);
         storage.setRow(rows);
         storage.setPrice(price/10000);
-        storage.setEmp(emp);
+        storage.setEmp((int)emp);
         return storage;
     }
 
+    /***
+     * 高位货架型货架区
+     * @return
+     */
+    public static LightStorage getHightStorage1(double total,double throughput,double throughput1,double putaway,double sorting,double height,double forklift_channel,double shelf_space,double shelf_height){
+        int rows = 0;
+        int line = 0;
+        int layer = 0;
+        int cargo = 0;
+        double area = 0.0;
+        double price =Double.MAX_VALUE;
+        double emp = throughput/workload;
+        for (int i=1;i<200;i++){
+            for (int j=1;j<200;j++){
+                int cargos =i*j* (int)(height/shelf_height);;
+                if (cargos>total && j>emp && i>5){
+                    double num = (i*cargo_box_length+shelf_space)*(j*cargo_box_width*2+forklift_channel);
+                    double num1 = i*j*2*high_shelf_layer*high_cargo_price;//货架的价格
+                    if (price>num1){
+                        price = num1;
+                        rows = i;
+                        line = j/2;
+                        layer = high_shelf_layer;
+                        cargo = cargos;
+                        area = num;
 
+                    }
+                }
+            }
+        }
+        ;
+
+        LightStorage storage = new LightStorage();
+        storage.setArea(area);
+        storage.setCargo(cargo);
+        storage.setLayer(layer);
+        storage.setLine(line);
+        storage.setRow(rows);
+        storage.setPrice(price/10000);
+        storage.setPutawayemp((int)(throughput/putaway));
+        storage.setSortingemp((int)(throughput1/sorting));
+        return storage;
+    }
 
     /**
      * 根据加速度和速度求时间

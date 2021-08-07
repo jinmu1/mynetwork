@@ -3,6 +3,7 @@ package com.ruoyi.system.test;
 
 import com.ruoyi.network.enumType.Car;
 import com.ruoyi.network.resource.LightStorage;
+import com.ruoyi.network.resource.Platform;
 import com.ruoyi.network.resource.StereoStorage;
 import com.ruoyi.network.utils.AreaUtils;
 import com.ruoyi.system.utils.DateUtils;
@@ -16,7 +17,7 @@ public class AreaTest {
     }
     @Test
     public void printPlatform(){
-        System.out.println("月台数量:"+ AreaUtils.getPlatform(600,"中车7米2").getPlatform_num()+";"+"月台面积:"+ AreaUtils.getPlatform(600,"中车7米2").getPlatform_area());
+//        System.out.println("月台数量:"+ AreaUtils.getPlatform(600,"中车7米2",50).getPlatform_num()+";"+"月台面积:"+ AreaUtils.getPlatform(600,"中车7米2").getPlatform_area());
 
     }
     @Test
@@ -124,6 +125,14 @@ public class AreaTest {
     @Test
     public void printBatch(){
         System.out.println(DateUtils.getIntervalTimeList("8:00:00", "18:00:00", 600/2));
+    }
+
+
+
+    @Test
+    public void printUpload(){
+//        Platform platform = AreaUtils.getPlatform(2370,"大车9米6");
+
     }
 
 }

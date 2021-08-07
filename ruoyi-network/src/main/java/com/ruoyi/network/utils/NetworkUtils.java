@@ -341,11 +341,11 @@ public class NetworkUtils {
         }
         for (Order order:orderList) {
             String OrderCode = "D"+RandomUtil.toFixdLengthString(random.nextInt(10000),4);
-            String orderDate = sdf1.format(randomDate("2021-01-01 08:00:00","2021-12-31 18:00:00"));
+            String orderDate = sdf.format(randomDate("2021-01-01 08:00:00","2021-12-31 18:00:00"));
 
                 order.setOrderCode(OrderCode);
                 try {
-                    order.setDeliveryDate(sdf1.parse(orderDate));
+                    order.setDeliveryDate(sdf.parse(orderDate));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -476,6 +476,7 @@ public class NetworkUtils {
                 Supplier supplier = new Supplier();
                 supplier.setSupplierCode(RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
                 supplier.setCity(new City(glcPoint.getCity(),glcPoint.getLat(),glcPoint.getLng(),glcPoint.getGdp()));
+                supplier.setLeadTime(random(3,6));
                 suppliers.add(supplier);
             }
         }
@@ -615,7 +616,7 @@ public class NetworkUtils {
     public static List<Material> initMaterialSupplier(List<Supplier> suppliers, List<Material> list) {
         Random random = new Random();
         for (Material material:list){
-            int i = (int)random.nextInt()*suppliers.size();
+            int i = (int)random(1,suppliers.size());
             material.setSupplier(suppliers.get(i));
         }
         return list;

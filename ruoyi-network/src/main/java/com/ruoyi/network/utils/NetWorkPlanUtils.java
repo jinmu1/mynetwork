@@ -374,7 +374,7 @@ public class NetWorkPlanUtils {
                         material.setNeedNum(material.getNeedNum() + material.getOrderNum());
                         orderList.add(new Order("D" + RandomUtil.toFixdLengthString(random.nextInt(10000), 4), date, material.getCode(), material.getNeedNum(), material.getVolume(), material.getPrice()));
                         for (Order order : list1) {
-                            order.setReplenishmentDate(DateUtils.getExpiredSecond(order.getOrderDate(), (int) replenishmentDate));
+                            order.setReplenishmentDate(DateUtils.getExpiredSecond(order.getDeliveryDate(), (int) replenishmentDate));
                             order.setDeliveryDate(DateUtils.getNowExpiredDay(1));
                             runOrder.add(order);
                         }

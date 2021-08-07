@@ -9,9 +9,11 @@ import com.ruoyi.warehousing.form.WorkTime;
 import com.ruoyi.warehousing.action.WarehousingUtil;
 import com.ruoyi.warehousing.resource.personnel.Emp;
 import com.ruoyi.warehousing.result.EmpLog;
+import org.apache.commons.collections4.ListUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * 分拣流程模拟
@@ -31,7 +33,9 @@ public class Sorting {
         int d=0;
         for (Emp emp:emps) {
             d++;
-            if (emp.getStatus() == 0) {
+            if (emp.getStatus() == 0 &&emp.getOrders().size()>0) {
+                emp.setStatus(1);
+                emp.setCurr(new Point(0,0,0));
             } else if (emp.getStatus() == 1) {
                 m++;
                 if (emp.getTar()==null){
@@ -56,14 +60,21 @@ public class Sorting {
                         } else {
                             point = new Point(65, 10, 15);
                             tally.getOrders().add(emp.getOrders().get(0));
-                            emp.getOrders().remove(0);
+                            if (emp.getOrders().size()>1) {
+                                emp.getOrders().remove(0);
+                            }else {
+                                emp.setOrders(null);
+                            }
+
                         }
                         emp.setTar(point);
                     }else {
                         emp.setStatus(0);
                     }
                 }else if (emp.arrive()) {
-                    if (emp.getOrders().size()>0){
+                    List<Order> orders = new ArrayList<>();
+                    orders.addAll(emp.getOrders());
+                    if (orders!=null&&orders.size()>=1){
                         Point point = new Point(65, 15, 15);
                         int s = 0;
                         Goods goodsd = new Goods();
@@ -84,7 +95,13 @@ public class Sorting {
                         } else {
                             point = new Point(65, 10, 15);
                             tally.getOrders().add(emp.getOrders().get(0));
+
                             emp.getOrders().remove(0);
+                            if (emp.getOrders().size()==0){
+                                emp.setStatus(0);
+                                emp.setOrders(null);
+                            }
+                            emp.setStatus(3);
                         }
                         emp.setTar(point);
 
@@ -137,5 +154,24 @@ public class Sorting {
     }
 
 
-
+    public static EmpLog move1(List<Emp> emps2, List<Cargo> cargos, Tally tally1) {
+        EmpLog empLog = new EmpLog();
+        int m=0;
+        for (Emp emp:emps2) {
+            if (emp.getStatus() == 0 && emp.getT0()>0) {
+                emp.setStatus(1);
+                emp.setT1(WarehousingUtil.random(30,40));
+                emp.setCurr(new Point(0, 0, 0));
+            } else if (emp.getStatus() == 1) {
+                emp.fix1();
+                if (emp.getT1()==0){
+                    emp.setStatus(0);
+                    emp.fix();
+                }
+                m++;
+            }
+        }
+        empLog.setComPlut(m/emps2.size());
+        return  empLog;
+    }
 }

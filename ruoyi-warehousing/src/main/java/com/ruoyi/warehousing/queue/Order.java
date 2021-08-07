@@ -13,7 +13,9 @@ public class Order {
     private double  volume;//体积
     private double  weight;//重量
     private int status;//完成状态
-
+    public Order(){
+        super();
+    }
     public Order(String orderCode, String goodsCode, Date createDate, Date workDate, double goodsNum, double volume) {
         this.orderCode = orderCode;
         this.goodsCode = goodsCode;
@@ -25,7 +27,12 @@ public class Order {
         this.weight = weight;
         this.status = status;
     }
+    public Order(String orderCode, String goodsCode,  double goodsNum) {
+        this.orderCode = orderCode;
+        this.goodsCode = goodsCode;
+        this.goodsNum = goodsNum;
 
+    }
     public int getStatus() {
         return status;
     }

@@ -1,0 +1,1449 @@
+﻿<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes"/>
+    <meta charset="UTF-8"/>
+    <title>物流网络实时规划 . 省域</title>
+</head>
+
+<th:block th:include="include :: point-public-css"/>
+<th:block th:include="include :: point-index4-css"/>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+<script th:src="@{/js/jquery.min.js}"></script>
+
+<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+<style>
+    .layui-layer-content {
+        color: #000000;
+    }
+
+    body, html {
+        overflow-x: hidden;
+    }
+
+    .echarts {
+        height: 350px;
+    }
+
+    .th-inner {
+        color: rgb(171, 225, 245);
+
+    }
+
+    .thead .tr {
+        color: rgb(243, 243, 243);
+    }
+
+    .table-hover > tbody > tr {
+        text-align: right;
+    }
+
+    .table-hover > tbody > tr:hover > td,
+    .table-hover > tbody > tr:hover > th {
+        color: rgb(14, 108, 132);
+        cursor: pointer;
+    }
+
+    /*[class*="col-"]{*/
+    /*    padding: 2px;*/
+    /*    margin:2px*/
+    /*}*/
+    /*.row {*/
+    /*    margin-right: -15px;*/
+    /*    margin-left: -15px;*/
+    /*}*/
+    /*.table1{width:25xp;height: 25%}*/
+</style>
+<script>
+
+    var docEl = document.documentElement,
+        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+    var clientWidth = docEl.clientWidth;
+    docEl.style.fontSize = 10 * (clientWidth / 320) + 'px';
+    window.addEventListener(resizeEvt, function () {
+        clientWidth = docEl.clientWidth;
+        docEl.style.fontSize = 10 * (clientWidth / 320) + 'px';
+    }, false);
+</script>
+<script>
+
+    $(document).ready(function () {
+        var whei = $(window).width()
+        $("html").css({fontSize: whei / 22});
+        $(window).resize(function () {
+            var whei = $(window).width();
+            $("html").css({fontSize: whei / 22})
+        });
+    });
+</script>
+<body style="background: #jjj;height: 100%;width: 100%;">
+
+<div class="main">
+
+    <div class="header">
+        <div class="header-left fl">
+            <img class="imgs" th:src="@{/img/img.png}"
+                 style="width: 60%;margin-left: -5%;margin-top: -46%;z-index: 9999">
+        </div>
+        <div class="header-center fl">
+            <div class="header-title">
+                仓库各功能区面积测算
+            </div>
+            <div class="header-img"></div>
+        </div>
+        <div class="header-right fl">
+        </div>
+        <div class="header-bottom fl">
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12 border">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5 style="text-align: center">填写数据清单 <small></small></h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link"> <i class="fa fa-chevron-up"></i> </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a></li>
+                                <li><a href="#">选项2</a></li>
+                            </ul>
+                            <a class="close-link"> <i class="fa fa-times"></i> </a>
+                        </div>
+                    </div>
+
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <form class="form-horizontal m-t" id="signupForm" onsubmit="post_data()" target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2" style="text-align:center;vertical-align:middle;">卸货
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>卸货托数</th>
+                                                        <td><input name="transportNum" value="1000" id="transportNum"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>托
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th> 车辆规格</th>
+                                                        <td><select name="carLength" id="carLength"
+                                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;">
+                                                            <option>小车4米6</option>
+                                                            <option>中车7米2</option>
+                                                            <option>大车9米6</option>
+                                                            <option>超大车17米5</option>
+                                                        </select></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单车卸货时间</th>
+                                                        <td>
+                                                            <input type="value" id="unloading_time" value="0.5"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>h
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>日收货作业时间</th>
+                                                        <td>
+                                                            <input type="value" id="everyDay_unloading_time" value="8"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>h
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单人日卸货能力</th>
+                                                        <td>
+                                                            <input type="value" id="uploadEmpCapacity" value="150"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>托/人/天
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单个月台宽度</th>
+                                                        <td>
+                                                            <input type="value" id="platform_length" value="3.5"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <tr>
+                                                        <th>月台面积</th>
+                                                        <td id="platformArea">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>泊车位</th>
+                                                        <td id="platformNum">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>人员</th>
+                                                        <td id="uploadEmp">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>叉车</th>
+                                                        <td id="uploadForklift">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>人员成本</th>
+                                                        <td id="empCost">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>设备成本</th>
+                                                        <td id="forkliftCost">
+
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="ibox float-e-margins" style="height: 60px">
+                                                <button class="btn btn-primary" type="submit"
+                                                        style="margin-top: -2%;margin-left: 45%;z-index: 9999">确认并提交
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="col-lg-4">
+                                <form class="form-horizontal m-t" id="signupForm1" onsubmit="post_data1()" target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2" style="text-align:center;vertical-align:middle;">理货
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>每日入库托数</th>
+                                                        <td><input name="transportNum" value="1000" id="transportNum1"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>托
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th> 每天理货批次数</th>
+                                                        <td><input name="batch" value="6" id="batch"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单人日理货能力</th>
+                                                        <td>
+                                                            <input type="value" id="tallyEmpCapacity" value="150"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>托/人/天
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>理货区通道宽度</th>
+                                                        <td>
+                                                            <input type="value" id="tally_channel" value="3"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>托盘之间间隙</th>
+                                                        <td>
+                                                            <input type="value" id="tray_clearance" value="0.1"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <tr>
+                                                        <th>理货区面积</th>
+                                                        <td id="tallyArea">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>人员</th>
+                                                        <td id="tallyEmp">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>人员成本</th>
+                                                        <td id="empCost1">
+
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="ibox float-e-margins" style="height: 60px">
+                                                <button class="btn btn-primary" type="submit"
+                                                        style="margin-top: -2%;margin-left: 45%;z-index: 9999">确认并提交
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="col-lg-4">
+                                <form class="form-horizontal m-t" id="signupForm2" onsubmit="post_data2()" target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2" style="text-align:center;vertical-align:middle;">上架、下架
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>每日上架件数</th>
+                                                        <td><input name="transportNum" value="1000" id="transportNum2"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>每日下架件数</th>
+                                                        <td><input name="transportNum" value="1000" id="transportNum3"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>存储托数</th>
+                                                        <td><input name="transportNum" value="40000" id="transportNum4"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>存储区高度</th>
+                                                        <td>
+                                                            <input type="value" id="height" value="12"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>存储区单层的高度</th>
+                                                        <td>
+                                                            <input type="value" id="shelf_height" value="1.5"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>存储区通道宽度</th>
+                                                        <td>
+                                                            <input type="value" id="forklift_channel" value="3"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>货架之间间隙</th>
+                                                        <td>
+                                                            <input type="value" id="shelf_space" value="0.01"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单人日上架能力</th>
+                                                        <td>
+                                                            <input type="value" id="putaway" value="300"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>件/日
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单人日下架能力</th>
+                                                        <td>
+                                                            <input type="value" id="sorting" value="200"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>件/日
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <tr>
+                                                        <th>存储区面积</th>
+                                                        <td id="area">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>货位数</th>
+                                                        <td id="cargo">
+
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th>上架人数</th>
+                                                        <td id="workload">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>下架人数</th>
+                                                        <td id="sortingEmp">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>人员成本</th>
+                                                        <td id="empCost3">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>设备成本</th>
+                                                        <td id="eqmCost">
+
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="ibox float-e-margins" style="height: 60px">
+                                                <button class="btn btn-primary" type="submit"
+                                                        style="margin-top: -2%;margin-left: 45%;z-index: 9999">确认并提交
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <form class="form-horizontal m-t" id="signupForm4" onsubmit="post_data3()" target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2" style="text-align:center;vertical-align:middle;">分拣
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>每日出库托数</th>
+                                                        <td><input name="transportNum" value="1000" id="deliveryNum"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>托
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>每天分拣批次数</th>
+                                                        <td><input name="batch" value="6" id="batch1"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单人日分拣能力</th>
+                                                        <td>
+                                                            <input type="value" id="tallyEmpCapacity1" value="150"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>托/人/天
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>分拣区通道宽度</th>
+                                                        <td>
+                                                            <input type="value" id="tally_channel1" value="3"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>托盘之间间隙</th>
+                                                        <td>
+                                                            <input type="value" id="tray_clearance1" value="0.1"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <tr>
+                                                        <th>分拣区面积</th>
+                                                        <td id="tallyArea1">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>分拣人员</th>
+                                                        <td id="tallyEmp1">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>人员成本</th>
+                                                        <td id="empCost2">
+
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="ibox float-e-margins" style="height: 60px">
+                                                <button class="btn btn-primary" type="submit"
+                                                        style="margin-top: -2%;margin-left: 45%;z-index: 9999">确认并提交
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="col-lg-4">
+                                <form class="form-horizontal m-t" id="signupForm5" onsubmit="post_data4()" target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2" style="text-align:center;vertical-align:middle;">出库
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>每日出库托数</th>
+                                                        <td><input name="transportNum" value="1000" id="deliveryNum1"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>托
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>每天出库批次数</th>
+                                                        <td><input name="batch" value="6" id="batch2"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单人日出库能力</th>
+                                                        <td>
+                                                            <input type="value" id="tallyEmpCapacity2" value="150"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>托/人/天
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>出库缓存区通道宽度</th>
+                                                        <td>
+                                                            <input type="value" id="tally_channel2" value="3"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>托盘之间间隙</th>
+                                                        <td>
+                                                            <input type="value" id="tray_clearance2" value="0.1"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>客户数量</th>
+                                                        <td>
+                                                            <input type="value" id="custormer" value="200"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <tr>
+                                                        <th>出库缓存区面积</th>
+                                                        <td id="tallyArea2">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>出库理货人员</th>
+                                                        <td id="tallyEmp2">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>人员成本</th>
+                                                        <td id="empCost4">
+
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="ibox float-e-margins" style="height: 60px">
+                                                <button class="btn btn-primary" type="submit"
+                                                        style="margin-top: -2%;margin-left: 45%;z-index: 9999">确认并提交
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="col-lg-4">
+                                <form class="form-horizontal m-t" id="signupForm6" onsubmit="post_data5()" target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2" style="text-align:center;vertical-align:middle;">装车
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>每日出库托数</th>
+                                                        <td><input name="transportNum" value="5000" id="transportNumd"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>托
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th> 车辆规格</th>
+                                                        <td><select name="carLength" id="carLength1"
+                                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;">
+                                                            <option>小车4米6</option>
+                                                            <option>中车7米2</option>
+                                                            <option>大车9米6</option>
+                                                            <option>超大车17米5</option>
+                                                        </select></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单车装车时间</th>
+                                                        <td>
+                                                            <input type="value" id="unloading_time1" value="0.2"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>h
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>日装货作业时间</th>
+                                                        <td>
+                                                            <input type="value" id="everyDay_unloading_time1" value="8"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>h
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单人日装货能力</th>
+                                                        <td>
+                                                            <input type="value" id="uploadEmpCapacity1" value="150"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>托/人/天
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>单个月台宽度</th>
+                                                        <td>
+                                                            <input type="value" id="platform_length1" value="3.5"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;" required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <tr>
+                                                        <th>月台面积</th>
+                                                        <td id="platformArea1">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>泊车位</th>
+                                                        <td id="platformNum1">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>人员</th>
+                                                        <td id="uploadEmp1">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>叉车</th>
+                                                        <td id="uploadForklift1">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>人员成本</th>
+                                                        <td id="empCostd">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>设备成本</th>
+                                                        <td id="forkliftCostd">
+
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="ibox float-e-margins" style="height: 60px">
+                                                <button class="btn btn-primary" type="submit"
+                                                        style="margin-top: -2%;margin-left: 45%;z-index: 9999">确认并提交
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div id="areaPie" class="echarts"></div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div id="areaPie1" class="echarts"></div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div id="areaPie2" class="echarts"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+<div class="modal fade" id="loadingModal">
+    <div style="width: 200px;height:20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
+        <div class="progress progress-striped active" style="margin-bottom: 0;">
+            <div class="progress-bar" style="width: 100%;"></div>
+        </div>
+        <h5>正在加载...</h5>
+    </div>
+</div>
+<div class="footer" style="margin-left: 45.5%; bottom:0;height: 10%;">
+
+    <!--    <a onclick="turn1()" style="font-family: 华文行楷;color: white;font-size: 18px;position:absolute;margin-top: 60px">@环球物流咨询·官网     </a>-->
+    <!--    <div style="margin-left:800px" ><img th:src="@{/img/weixin.png}" style="width: 100px;height:100px;" /></div>-->
+</div>
+<!--</div>-->
+<th:block th:include="include :: echarts-js"/>
+<th:block th:include="include :: point-finereport-js"/>
+<th:block th:include="include :: footer"/>
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?0521ccff0fe6264c65cdd1c5bdc46249";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+<script th:inline="javascript">
+
+    var area1;
+    var area2;
+    var area3;
+    var area4;
+    var area5;
+    var area6;
+    var emp1;
+    var emp2;
+    var emp3;
+    var emp4;
+    var emp5;
+    var emp6;
+    var cost1;
+    var cost2;
+    var cost3;
+    var cost4;
+    var cost5;
+    var cost6;
+    var cost7;
+    //展示loading框
+    showLoading = function () {
+        $('#loadingModal').modal({backdrop: 'static', keyboard: false});
+    }
+    //隐藏掉loading框
+    hideLoading = function () {
+        $('#loadingModal').modal('hide');
+    }
+
+
+
+
+    var isClick = true;
+
+    function onLoadPlatform() {
+        var transportNum =   $("#transportNum").val();
+        var carlength = $("#carLength option:selected").val();
+        var unloading_time =   $("#unloading_time").val();
+        var everyDay_unloading_time =   $("#everyDay_unloading_time").val();
+        var uploadEmpCapacity =   $("#uploadEmpCapacity").val();
+        var platform_length =   $("#platform_length").val();
+        var shelf_height =  $("#shelf_height").val();
+        $.post("/getUpload", {"transportNum": transportNum,"carlength": carlength ,"unloading_time":unloading_time,"everyDay_unloading_time":everyDay_unloading_time,"uploadEmpCapacity":uploadEmpCapacity,"shelf_height":shelf_height,"platform_length":platform_length}, function (result) {
+            var d = result.rows[0];
+            $("#platformArea").html(parseInt(d.platformArea) + "㎡");
+            $("#platformNum").html(parseInt(d.platformNum ) + "个");
+            $("#uploadEmp").html(parseInt(d.uploadEmp) + "人");
+            $("#uploadForklift").html(parseInt(d.forklift) + "台");
+            $("#empCost").html(parseInt(d.empCost) + "¥");
+            $("#forkliftCost").html(parseInt(d.forkliftCost) + "¥");
+            area1  = parseInt(d.platformArea);
+            emp1  = parseInt(d.uploadEmp);
+            cost1  = parseInt(d.empCost+d.forkliftCost);
+        });
+        hideLoading();
+
+    }
+    function post_data() {
+        if (isClick) {
+            if ($("#transportNum").val() <= 0) {
+                layer.open({title: "输入提示", content: "请输入大于0的值", color: "#000000"});
+                return;
+            } else if ($("#transportNum").val() > 1000000) {
+                layer.open({title: "输入提示", content: "请输入小于1000000的值", color: "#000000"});
+                return;
+            }
+
+            showLoading();
+            isClick = false;
+            onLoadPlatform();
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+    function onLoadTally() {
+        var transportNum =   $("#transportNum").val();
+        var carlength = $("#carLength option:selected").val();
+        var batch =   $("#batch").val();
+        var tallyEmpCapacity =   $("#tallyEmpCapacity").val();
+        var tally_channel =   $("#tally_channel").val();
+        var tray_clearance =   $("#tray_clearance").val();
+        $.post("/getTally", {"transportNum": transportNum,"carlength": carlength ,"batch":batch,"tallyEmpCapacity":tallyEmpCapacity,"tray_clearance":tray_clearance,"tally_channel":tally_channel}, function (result) {
+            var d = result.rows[0];
+            $("#tallyArea").html(parseInt(d.tallyArea) + "㎡");
+            $("#tallyEmp").html(parseInt(d.tallyEmp ) + "个");
+            $("#empCost1").html(parseInt(d.empCost) + "¥");
+            area2  =  parseInt(d.tallyArea);
+            emp2 = parseInt(d.tallyEmp);
+            cost2 = parseInt(d.empCost);
+        });
+        hideLoading();
+    }
+    function post_data1() {
+
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            onLoadTally();
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+    function onStaroge() {
+        var transportNum2 =   $("#transportNum2").val();
+        var transportNum3 =   $("#transportNum3").val();
+        var transportNum4 =   $("#transportNum4").val();
+        var height =   $("#height").val();
+        var forklift_channel =   $("#forklift_channel").val();
+        var shelf_space =   $("#shelf_space").val();
+        var putaway =   $("#putaway").val();
+        var sorting =   $("#sorting").val();
+        $.post("/getStorage", {"transportNum2": transportNum2,"transportNum3": transportNum3 ,"transportNum4":transportNum4,"height":height,"forklift_channel":forklift_channel,"shelf_space":shelf_space,"putaway":putaway,"sorting":sorting}, function (result) {
+            var d = result.rows[0];
+            $("#area").html(parseInt(d.storageArea) + "㎡");
+            $("#cargo").html(parseInt(d.cargo ) + "个");
+            $("#workload").html(parseInt(d.putawayEmp) + "人");
+            $("#sortingEmp").html(parseInt(d.sortingEmp) + "人");
+            $("#empCost3").html((parseInt(d.putawayEmp)+parseInt(d.sortingEmp))*80000 + "¥");
+            $("#eqmCost").html(parseInt(d.cost) + "¥");
+            area3  = parseInt(d.storageArea);
+            emp3 = parseInt(d.putawayEmp);
+            emp4 = parseInt(d.sortingEmp);
+            cost3 = parseInt(d.putawayEmp)*80000;
+            cost4 = parseInt(d.putawayEmp)*80000;
+            cost7=parseInt(d.cost);
+        });
+        hideLoading();
+
+
+    }
+    function post_data2() {
+
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            onStaroge();
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+
+
+    function onloadImg(){
+        var myChart1 = echarts.init(document.getElementById("areaPie"));
+        myChart1.setOption({
+            backgroundColor: '#273454',
+            color: ['#FF9966', '#FFFFCC', '#0099CC', '#99CC33', '#99CCCC'],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c}$ ({d}%)",
+                textStyle: {
+                    fontSize: 15,
+                },
+            },
+            legend: {
+                data: ['卸货月台', '入库理货区', '存储区', '分拣区', '出库理货区','出库月台'],
+                orient: 'vertical',
+                right: '5%',
+                top: '13%',
+                top: 'center',
+                itemWidth: 20,
+                itemHeight: 20,
+                itemGap: 30,
+                textStyle: {
+                    color: '#',
+                    fontSize: 16,
+                },
+            },
+            series: [{
+                name: 'TITLE',
+                type: 'pie',
+                clockwise: false,
+                startAngle: 90,
+                radius: '35%',
+                center: ['44%', '50%'],
+                hoverAnimation: false,
+                roseType: 'radius', //area
+                data: [{
+                    value: area1,
+                    name: '卸货月台'
+                },
+                    {
+                        value: area2,
+                        name: '入库理货区'
+                    },
+                    {
+                        value: area3,
+                        name: '存储区'
+                    },
+                    {
+                        value: area4,
+                        name: '分拣区'
+                    },
+                    {
+                        value: area5,
+                        name: '出库理货区'
+                    },
+                    {
+                        value: area6,
+                        name: '出库月台'
+                    }
+                ],
+                itemStyle: {
+                    normal: {
+                        borderColor: '#273454',
+                        borderWidth: '5',
+                    },
+                },
+                label: {
+                    show: true,
+                    position: 'outside',
+                    formatter: '{a|{b}：{d}%}\n{hr|}',
+                    rich: {
+                        hr: {
+                            backgroundColor: 't',
+                            borderRadius: 100,
+                            width: 0,
+                            height: 10,
+                            padding: [3, 3, 0, -16],
+                            shadowColor: '#1c1b3a',
+                            shadowBlur: 1,
+                            shadowOffsetX: '0',
+                            shadowOffsetY: '2',
+                        },
+                        a: {
+                            padding: [-35, 15, -20, 5],
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        length: 20,
+                        length2: 30,
+                        lineStyle: {
+                            width: 1,
+                        }
+                    }
+                },
+            }],
+        });
+        var myChart2 = echarts.init(document.getElementById("areaPie1"));
+        myChart2.setOption({
+            backgroundColor: '#273454',
+            color: ['#FF9966', '#FFFFCC', '#0099CC', '#99CC33', '#99CCCC'],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c}$ ({d}%)",
+                textStyle: {
+                    fontSize: 15,
+                },
+            },
+            legend: {
+                data: ['卸货', '入库理货', '上架', '分拣', '出库理货','装车'],
+                orient: 'vertical',
+                right: '5%',
+                top: '13%',
+                top: 'center',
+                itemWidth: 20,
+                itemHeight: 20,
+                itemGap: 30,
+                textStyle: {
+                    color: '#',
+                    fontSize: 16,
+                },
+            },
+            series: [{
+                name: 'TITLE',
+                type: 'pie',
+                clockwise: false,
+                startAngle: 90,
+                radius: '35%',
+                center: ['44%', '50%'],
+                hoverAnimation: false,
+                roseType: 'radius', //area
+                data: [{
+                    value: emp1,
+                    name: '卸货'
+                },
+                    {
+                        value: emp2,
+                        name: '入库理货'
+                    },
+                    {
+                        value: emp3,
+                        name: '上架'
+                    },
+                    {
+                        value: emp4,
+                        name: '分拣'
+                    },
+                    {
+                        value: emp5,
+                        name: '出库理货'
+                    },
+                    {
+                        value: emp6,
+                        name: '装车'
+                    }
+                ],
+                itemStyle: {
+                    normal: {
+                        borderColor: '#273454',
+                        borderWidth: '5',
+                    },
+                },
+                label: {
+                    show: true,
+                    position: 'outside',
+                    formatter: '{a|{b}：{d}%}\n{hr|}',
+                    rich: {
+                        hr: {
+                            backgroundColor: 't',
+                            borderRadius: 100,
+                            width: 0,
+                            height: 10,
+                            padding: [3, 3, 0, -16],
+                            shadowColor: '#1c1b3a',
+                            shadowBlur: 1,
+                            shadowOffsetX: '0',
+                            shadowOffsetY: '2',
+                        },
+                        a: {
+                            padding: [-35, 15, -20, 5],
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        length: 20,
+                        length2: 30,
+                        lineStyle: {
+                            width: 1,
+                        }
+                    }
+                },
+            }],
+        });
+        var myChart3 = echarts.init(document.getElementById("areaPie2"));
+        myChart3.setOption({
+            backgroundColor: '#273454',
+            color: ['#FF9966', '#FFFFCC', '#0099CC', '#99CC33', '#99CCCC'],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c}$ ({d}%)",
+                textStyle: {
+                    fontSize: 15,
+                },
+            },
+            legend: {
+                data: ['卸货成本', '入库理货成本', '上架成本', '存储成本','分拣成本', '出库理货成本','装车成本'],
+                orient: 'vertical',
+                right: '5%',
+                top: '13%',
+                top: 'center',
+                itemWidth: 20,
+                itemHeight: 20,
+                itemGap: 30,
+                textStyle: {
+                    color: '#',
+                    fontSize: 16,
+                },
+            },
+            series: [{
+                name: 'TITLE',
+                type: 'pie',
+                clockwise: false,
+                startAngle: 90,
+                radius: '35%',
+                center: ['44%', '50%'],
+                hoverAnimation: false,
+                roseType: 'radius', //area
+                data: [{
+                    value: cost1,
+                    name: '卸货'
+                },
+                    {
+                        value: cost2,
+                        name: '入库理货'
+                    },
+                    {
+                        value: cost3,
+                        name: '上架'
+                    },  {
+                        value: cost7,
+                        name: '存储成本'
+                    },
+                    {
+                        value: cost4,
+                        name: '分拣'
+                    },
+                    {
+                        value: cost5,
+                        name: '出库理货'
+                    },
+                    {
+                        value: cost6,
+                        name: '装车'
+                    }
+                ],
+                itemStyle: {
+                    normal: {
+                        borderColor: '#273454',
+                        borderWidth: '5',
+                    },
+                },
+                label: {
+                    show: true,
+                    position: 'outside',
+                    formatter: '{a|{b}：{d}%}\n{hr|}',
+                    rich: {
+                        hr: {
+                            backgroundColor: 't',
+                            borderRadius: 100,
+                            width: 0,
+                            height: 10,
+                            padding: [3, 3, 0, -16],
+                            shadowColor: '#1c1b3a',
+                            shadowBlur: 1,
+                            shadowOffsetX: '0',
+                            shadowOffsetY: '2',
+                        },
+                        a: {
+                            padding: [-35, 15, -20, 5],
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        length: 20,
+                        length2: 30,
+                        lineStyle: {
+                            width: 1,
+                        }
+                    }
+                },
+            }],
+        });
+    }
+
+    function onSorting() {
+        var transportNum =   $("#deliveryNum").val();
+        var carlength = $("#carLength option:selected").val();
+        var batch =   $("#batch1").val();
+        var tallyEmpCapacity =   $("#tallyEmpCapacity1").val();
+        var tally_channel =   $("#tally_channel1").val();
+        var tray_clearance =   $("#tray_clearance1").val();
+        $.post("/getTally", {"transportNum": transportNum,"carlength": carlength ,"batch":batch,"tallyEmpCapacity":tallyEmpCapacity,"tray_clearance":tray_clearance,"tally_channel":tally_channel}, function (result) {
+            var d = result.rows[0];
+            $("#tallyArea1").html(parseInt(d.tallyArea) + "㎡");
+            $("#tallyEmp1").html(parseInt(d.tallyEmp ) + "个");
+            $("#empCost2").html(parseInt(d.empCost) + "¥");
+            area4  = parseInt(d.tallyArea);
+            emp4 = parseInt(d.tallyEmp );
+            cost4  = parseInt(d.empCost);
+        });
+        hideLoading();
+    }
+
+    function post_data3() {
+
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            onSorting();
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+
+    function delivery() {
+        var transportNum =   $("#deliveryNum1").val();
+        var carlength = $("#carLength option:selected").val();
+        var batch =   $("#batch2").val();
+        var tallyEmpCapacity =   $("#tallyEmpCapacity2").val();
+        var tally_channel =   $("#tally_channel2").val();
+        var tray_clearance =   $("#tray_clearance2").val();
+        $.post("/getTally", {"transportNum": transportNum,"carlength": carlength ,"batch":batch,"tallyEmpCapacity":tallyEmpCapacity,"tray_clearance":tray_clearance,"tally_channel":tally_channel}, function (result) {
+            var d = result.rows[0];
+            $("#tallyArea2").html(parseInt(d.tallyArea) + "㎡");
+            $("#tallyEmp2").html(parseInt(d.tallyEmp ) + "个");
+            $("#empCost4").html(parseInt(d.empCost) + "¥");
+            area5  = parseInt(d.tallyArea);
+            emp5 = parseInt(d.tallyEmp );
+            cost5  = parseInt(d.empCost);
+        });
+        hideLoading();
+    }
+
+    function post_data4() {
+
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            delivery();
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+
+    function uploading() {
+        var transportNum =   $("#transportNumd").val();
+        var carlength = $("#carLength1 option:selected").val();
+        var unloading_time =   $("#unloading_time1").val();
+        var everyDay_unloading_time =   $("#everyDay_unloading_time1").val();
+        var uploadEmpCapacity =   $("#uploadEmpCapacity1").val();
+        var platform_length =   $("#platform_length1").val();
+        $.post("/getUpload", {"transportNum": transportNum,"carlength": carlength ,"unloading_time":unloading_time,"everyDay_unloading_time":everyDay_unloading_time,"uploadEmpCapacity":uploadEmpCapacity,"platform_length":platform_length}, function (result) {
+            var d = result.rows[0];
+            $("#platformArea1").html(parseInt(d.platformArea) + "㎡");
+            $("#platformNum1").html(parseInt(d.platformNum ) + "个");
+            $("#uploadEmp1").html(parseInt(d.uploadEmp) + "人");
+            $("#uploadForklift1").html(parseInt(d.forklift) + "台");
+            $("#empCostd").html(parseInt(d.empCost) + "¥");
+            $("#forkliftCostd").html(parseInt(d.forkliftCost) + "¥");
+            area6  = parseInt(d.platformArea);
+            emp6 = parseInt(d.uploadEmp );
+            cost6  = parseInt(d.empCost)+parseInt(d.forkliftCost);
+        });
+        hideLoading();
+        onloadImg();
+    }
+
+    function post_data5() {
+
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            uploading();
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+    // 数字转换成货币格式的字符串，例如把1234567转换成 1,234,567 这样的
+    function int2str(num) {
+        num = parseInt(num);
+        let numberStr = num.toString()
+        let str = numberStr.split('').reverse()
+        for (let i = 0; i < str.length; i++) {
+            if ((i + 1) % 4 === 0) {
+                str.splice(i, 0, ',')
+            }
+        }
+        str.reverse()
+        let handleResult = ''
+        for (let j = 0; j < str.length; j++) {
+            handleResult += str[j]
+        }
+        return handleResult
+    }
+
+
+    function formatNum(strNum) {
+        if (strNum.length <= 3) {
+            return strNum;
+        }
+        if (!/^(\+|-)?(\d+)(\.\d+)?$/.test(strNum)) {
+            return strNum;
+        }
+        var a = RegExp.$1,
+            b = RegExp.$2,
+            c = RegExp.$3;
+        var re = new RegExp();
+        re.compile("(\\d)(\\d{3})(,|$)");
+        while (re.test(b)) {
+            b = b.replace(re, "$1,$2$3");
+        }
+        return a + "" + b + "" + c;
+    }
+
+    function randomNum(minNum, maxNum) {
+        switch (arguments.length) {
+            case 1:
+                return parseInt(Math.random() * minNum + 1, 10);
+                break;
+            case 2:
+                return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+                break;
+            default:
+                return 0;
+                break;
+        }
+    }
+
+
+</script>
+</div>
+</body>
+</html>
