@@ -883,8 +883,8 @@
             $("#platformNum").html(parseInt(d.platformNum ) + "个");
             $("#uploadEmp").html(parseInt(d.uploadEmp) + "人");
             $("#uploadForklift").html(parseInt(d.forklift) + "台");
-            $("#empCost").html(parseInt(d.empCost) + "¥");
-            $("#forkliftCost").html(parseInt(d.forkliftCost) + "¥");
+            $("#empCost").html("¥"+parseInt(d.empCost) );
+            $("#forkliftCost").html("¥"+parseInt(d.forkliftCost));
             area1  = parseInt(d.platformArea);
             emp1  = parseInt(d.uploadEmp);
             cost1  = parseInt(d.empCost+d.forkliftCost);
@@ -924,7 +924,7 @@
             var d = result.rows[0];
             $("#tallyArea").html(parseInt(d.tallyArea) + "㎡");
             $("#tallyEmp").html(parseInt(d.tallyEmp ) + "个");
-            $("#empCost1").html(parseInt(d.empCost) + "¥");
+            $("#empCost1").html("¥"+parseInt(d.empCost) );
             area2  =  parseInt(d.tallyArea);
             emp2 = parseInt(d.tallyEmp);
             cost2 = parseInt(d.empCost);
@@ -961,7 +961,7 @@
             $("#workload").html(parseInt(d.putawayEmp) + "人");
             $("#sortingEmp").html(parseInt(d.sortingEmp) + "人");
             $("#empCost3").html((parseInt(d.putawayEmp)+parseInt(d.sortingEmp))*80000 + "¥");
-            $("#eqmCost").html(parseInt(d.cost) + "¥");
+            $("#eqmCost").html("¥"+parseInt(d.cost) );
             area3  = parseInt(d.storageArea);
             emp3 = parseInt(d.putawayEmp);
             emp4 = parseInt(d.sortingEmp);
@@ -1297,7 +1297,7 @@
             var d = result.rows[0];
             $("#tallyArea1").html(parseInt(d.tallyArea) + "㎡");
             $("#tallyEmp1").html(parseInt(d.tallyEmp ) + "个");
-            $("#empCost2").html(parseInt(d.empCost) + "¥");
+            $("#empCost2").html("¥"+parseInt(d.empCost) );
             area4  = parseInt(d.tallyArea);
             emp4 = parseInt(d.tallyEmp );
             cost4  = parseInt(d.empCost);
@@ -1331,7 +1331,7 @@
             var d = result.rows[0];
             $("#tallyArea2").html(parseInt(d.tallyArea) + "㎡");
             $("#tallyEmp2").html(parseInt(d.tallyEmp ) + "个");
-            $("#empCost4").html(parseInt(d.empCost) + "¥");
+            $("#empCost4").html( "¥"+parseInt(d.empCost) );
             area5  = parseInt(d.tallyArea);
             emp5 = parseInt(d.tallyEmp );
             cost5  = parseInt(d.empCost);
@@ -1367,8 +1367,8 @@
             $("#platformNum1").html(parseInt(d.platformNum ) + "个");
             $("#uploadEmp1").html(parseInt(d.uploadEmp) + "人");
             $("#uploadForklift1").html(parseInt(d.forklift) + "台");
-            $("#empCostd").html(parseInt(d.empCost) + "¥");
-            $("#forkliftCostd").html(parseInt(d.forkliftCost) + "¥");
+            $("#empCostd").html("¥"+parseInt(d.empCost) );
+            $("#forkliftCostd").html("¥"+parseInt(d.forkliftCost));
             area6  = parseInt(d.platformArea);
             emp6 = parseInt(d.uploadEmp );
             cost6  = parseInt(d.empCost)+parseInt(d.forkliftCost);

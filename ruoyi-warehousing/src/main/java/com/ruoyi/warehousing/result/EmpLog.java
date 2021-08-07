@@ -18,6 +18,13 @@ public class EmpLog {
         super();
     }
 
+    public EmpLog(String time, String empNo, String goods_code, int empStatus) {
+        this.time = time;
+        this.empNo = empNo;
+        this.goods_code = goods_code;
+        this.empStatus = empStatus;
+    }
+
     public EmpLog(String time, int empStatus) {
         this.time = time;
         this.empStatus = empStatus;

@@ -1,10 +1,10 @@
 package com.ruoyi.web.controller.demo.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import com.ruoyi.warehousing.action.WarehousingUtil;
+import com.ruoyi.warehousing.result.EmpLog;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +20,8 @@ import com.ruoyi.common.core.page.TableSupport;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 表格相关
  * 
@@ -30,7 +32,7 @@ import com.ruoyi.common.utils.StringUtils;
 public class DemoTableController extends BaseController
 {
     private String prefix = "demo/table";
-
+    private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
     private final static List<UserTableModel> users = new ArrayList<UserTableModel>();
     {
         users.add(new UserTableModel(1, "1000001", "测试1", "0", "15888888888", "ry@qq.com", 150.0, "0"));
@@ -350,6 +352,280 @@ public class DemoTableController extends BaseController
         }
         rspData.setRows(userList.subList(pageNum, pageSize));
         rspData.setTotal(userList.size());
+        return rspData;
+    }
+
+
+
+    /**
+     * 查询数据
+     */
+    @PostMapping("/list1")
+    @ResponseBody
+    public TableDataInfo list1(HttpServletRequest req)
+    {
+        int emp = 6;
+        if (req.getParameter("emp") != null && !req.getParameter("emp").equals("")) {
+            emp = Integer.parseInt(req.getParameter("emp"));
+        }
+        double rate = 80;
+        if (req.getParameter("rate") != null && !req.getParameter("rate").equals("")) {
+            rate = Integer.parseInt(req.getParameter("rate").substring(0,req.getParameter("rate").length()-1));
+        }
+        TableDataInfo rspData = new TableDataInfo();
+        List<EmpLog> list = new ArrayList<>();
+        Date runTime = com.ruoyi.warehousing.utils.DateUtils.convertString2Date("HH:mm:ss", "08:00:00");
+        Date endTime = com.ruoyi.warehousing.utils.DateUtils.convertString2Date("HH:mm:ss", "18:00:00");
+        int m= 0;
+
+        for (long i=0;i<10;i+=1){
+            double d = rate + WarehousingUtil.random(-20, 20);
+            if(rate<100) {
+                if (m<=8) {
+                    if (d > 100) {
+                        list.add(new EmpLog(sdf.format(runTime), "卸货员" + m + "号", 100 + "", 1));
+                    } else {
+                        list.add(new EmpLog(sdf.format(runTime), "卸货员" + m + "号", d + "", 1));
+                    }
+                }else {
+                    list.add(new EmpLog(sdf.format(runTime), "卸货员" + m + "号", 0 + "", 1));
+                }
+            }else {
+                if (i<=8) {
+                    if (d > 100) {
+                        list.add(new EmpLog(sdf.format(runTime), "卸货员" + m + "号", 100 + "", 1));
+                    } else {
+                        list.add(new EmpLog(sdf.format(runTime), "卸货员" + m + "号", d + "", 1));
+                    }
+                }else {
+                    list.add(new EmpLog(sdf.format(runTime), "卸货员" + m + "号", d/2 + "", 1));
+                }
+            }
+          Calendar calendar = Calendar.getInstance();
+          calendar.setTime(runTime);
+          calendar.add(Calendar.SECOND, 3600);
+          runTime = calendar.getTime();
+          m++;
+        }
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        if (null == pageDomain.getPageNum() || null == pageDomain.getPageSize())
+        {
+            rspData.setRows(list);
+            rspData.setTotal(list.size());
+            return rspData;
+        }
+        Integer pageNum = (pageDomain.getPageNum() - 1) * 20;
+        Integer pageSize = pageDomain.getPageNum() * 20;
+        if (pageSize > list.size())
+        {
+            pageSize = list.size();
+        }
+        rspData.setRows(list.subList(pageNum, pageSize));
+        rspData.setTotal(list.size());
+        return rspData;
+    }
+
+    /**
+     * 查询数据
+     */
+    @PostMapping("/list2")
+    @ResponseBody
+    public TableDataInfo list2(UserTableModel userModel)
+    {
+        TableDataInfo rspData = new TableDataInfo();
+        List<EmpLog> list = new ArrayList<>();
+        Date runTime = com.ruoyi.warehousing.utils.DateUtils.convertString2Date("HH:mm:ss", "08:00:00");
+        int m= 0;
+
+        for (int i=0;i<12*WarehousingUtil.random(1200,6000);i++){
+            list.add(new EmpLog(sdf.format(runTime),"理货员"+m+"号",WarehousingUtil.random(0,6)+"号月台",1 ));
+            if (m==6){
+                m=0;
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(runTime);
+                calendar.add(Calendar.SECOND, 1);
+                runTime = calendar.getTime();
+            }
+            m++;
+        }
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        if (null == pageDomain.getPageNum() || null == pageDomain.getPageSize())
+        {
+            rspData.setRows(list);
+            rspData.setTotal(list.size());
+            return rspData;
+        }
+        Integer pageNum = (pageDomain.getPageNum() - 1) * 20;
+        Integer pageSize = pageDomain.getPageNum() * 20;
+        if (pageSize > list.size())
+        {
+            pageSize = list.size();
+        }
+        rspData.setRows(list.subList(pageNum, pageSize));
+        rspData.setTotal(list.size());
+        return rspData;
+    }
+    /**
+     * 查询数据
+     */
+    @PostMapping("/list3")
+    @ResponseBody
+    public TableDataInfo list3(UserTableModel userModel)
+    {
+        TableDataInfo rspData = new TableDataInfo();
+        List<EmpLog> list = new ArrayList<>();
+        Date runTime = com.ruoyi.warehousing.utils.DateUtils.convertString2Date("HH:mm:ss", "08:00:00");
+        int m= 0;
+
+        for (int i=0;i<12*WarehousingUtil.random(1200,6000);i++){
+            list.add(new EmpLog(sdf.format(runTime),"上架员"+m+"号",WarehousingUtil.random(0,6)+"号月台",1 ));
+            if (m==6){
+                m=0;
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(runTime);
+                calendar.add(Calendar.SECOND, 1);
+                runTime = calendar.getTime();
+            }
+            m++;
+        }
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        if (null == pageDomain.getPageNum() || null == pageDomain.getPageSize())
+        {
+            rspData.setRows(list);
+            rspData.setTotal(list.size());
+            return rspData;
+        }
+        Integer pageNum = (pageDomain.getPageNum() - 1) * 20;
+        Integer pageSize = pageDomain.getPageNum() * 20;
+        if (pageSize > list.size())
+        {
+            pageSize = list.size();
+        }
+        rspData.setRows(list.subList(pageNum, pageSize));
+        rspData.setTotal(list.size());
+        return rspData;
+    }
+
+    /**
+     * 查询数据
+     */
+    @PostMapping("/list4")
+    @ResponseBody
+    public TableDataInfo list4(UserTableModel userModel)
+    {
+        TableDataInfo rspData = new TableDataInfo();
+        List<EmpLog> list = new ArrayList<>();
+        Date runTime = com.ruoyi.warehousing.utils.DateUtils.convertString2Date("HH:mm:ss", "08:00:00");
+        int m= 0;
+
+        for (int i=0;i<12*WarehousingUtil.random(1200,6000);i++){
+            list.add(new EmpLog(sdf.format(runTime),"分拣员"+m+"号",WarehousingUtil.random(0,6)+"号月台",1 ));
+            if (m==18){
+                m=0;
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(runTime);
+                calendar.add(Calendar.SECOND, 1);
+                runTime = calendar.getTime();
+            }
+            m++;
+        }
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        if (null == pageDomain.getPageNum() || null == pageDomain.getPageSize())
+        {
+            rspData.setRows(list);
+            rspData.setTotal(list.size());
+            return rspData;
+        }
+        Integer pageNum = (pageDomain.getPageNum() - 1) * 20;
+        Integer pageSize = pageDomain.getPageNum() * 20;
+        if (pageSize > list.size())
+        {
+            pageSize = list.size();
+        }
+        rspData.setRows(list.subList(pageNum, pageSize));
+        rspData.setTotal(list.size());
+        return rspData;
+    }
+
+    /**
+     * 查询数据
+     */
+    @PostMapping("/list5")
+    @ResponseBody
+    public TableDataInfo list5(UserTableModel userModel)
+    {
+        TableDataInfo rspData = new TableDataInfo();
+        List<EmpLog> list = new ArrayList<>();
+        Date runTime = com.ruoyi.warehousing.utils.DateUtils.convertString2Date("HH:mm:ss", "08:00:00");
+        int m= 0;
+
+        for (int i=0;i<12*WarehousingUtil.random(1200,6000);i++){
+            list.add(new EmpLog(sdf.format(runTime),"出库理货员"+m+"号",WarehousingUtil.random(0,6)+"号月台",1 ));
+            if (m==10){
+                m=0;
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(runTime);
+                calendar.add(Calendar.SECOND, 1);
+                runTime = calendar.getTime();
+            }
+            m++;
+        }
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        if (null == pageDomain.getPageNum() || null == pageDomain.getPageSize())
+        {
+            rspData.setRows(list);
+            rspData.setTotal(list.size());
+            return rspData;
+        }
+        Integer pageNum = (pageDomain.getPageNum() - 1) * 20;
+        Integer pageSize = pageDomain.getPageNum() * 20;
+        if (pageSize > list.size())
+        {
+            pageSize = list.size();
+        }
+        rspData.setRows(list.subList(pageNum, pageSize));
+        rspData.setTotal(list.size());
+        return rspData;
+    }
+
+    /**
+     * 查询数据
+     */
+    @PostMapping("/list6")
+    @ResponseBody
+    public TableDataInfo list6(UserTableModel userModel)
+    {
+        TableDataInfo rspData = new TableDataInfo();
+        List<EmpLog> list = new ArrayList<>();
+        Date runTime = com.ruoyi.warehousing.utils.DateUtils.convertString2Date("HH:mm:ss", "08:00:00");
+        int m= 0;
+
+        for (int i=0;i<12*WarehousingUtil.random(1200,6000);i++){
+            list.add(new EmpLog(sdf.format(runTime),"装车员"+m+"号",WarehousingUtil.random(0,6)+"号月台",1 ));
+            if (m==10){
+                m=0;
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(runTime);
+                calendar.add(Calendar.SECOND, 1);
+                runTime = calendar.getTime();
+            }
+            m++;
+        }
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        if (null == pageDomain.getPageNum() || null == pageDomain.getPageSize())
+        {
+            rspData.setRows(list);
+            rspData.setTotal(list.size());
+            return rspData;
+        }
+        Integer pageNum = (pageDomain.getPageNum() - 1) * 20;
+        Integer pageSize = pageDomain.getPageNum() * 20;
+        if (pageSize > list.size())
+        {
+            pageSize = list.size();
+        }
+        rspData.setRows(list.subList(pageNum, pageSize));
+        rspData.setTotal(list.size());
         return rspData;
     }
 }

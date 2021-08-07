@@ -2,6 +2,7 @@ package com.ruoyi.warehousing.action;
 
 import com.ruoyi.warehousing.form.Cargo;
 import com.ruoyi.warehousing.form.Goods;
+import com.ruoyi.warehousing.process.Delivery;
 import com.ruoyi.warehousing.process.Putaway;
 import com.ruoyi.warehousing.process.Sorting;
 import com.ruoyi.warehousing.queue.Order;
@@ -39,15 +40,18 @@ public class Action {
         List<Cargo> cargos = WarehousingUtil.initCargo(orderList, total);
         List<Emp> emps1 = WarehousingUtil.initEmp(storage.getPutawayemp());
         List<Emp> emps2 = WarehousingUtil.initEmp(storage.getSortingemp());
+        List<Emp> emps3 = WarehousingUtil.initEmp(storage.getSortingemp());
         emps1 = WarehousingUtil.initEmpOrder(emps1, orderList);
         emps2 = WarehousingUtil.initEmpSortingOrder(emps2, orderList1, sort_type);
+
         double work1 = 0.0;
         double work2 = 0.0;
         Date runTime = DateUtils.convertString2Date("HH:mm:ss", "08:00:00");//当前时间
         Date endTime = DateUtils.convertString2Date("HH:mm:ss", "16:00:00");//当前时间
         while (runTime.getTime()<endTime.getTime()) {
-            EmpLog empLog2 = Putaway.work(emps1, tally, tally1, elevators, cargos);
-            EmpLog empLog3 = Sorting.move(emps2, cargos, tally1);
+            EmpLog empLog2 = Putaway.work1(emps1, tally, tally1, elevators, cargos);
+            EmpLog empLog3 = Sorting.move1(emps2, cargos, tally1);
+//            EmpLog empLog4 = Delivery.move(emps3);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(runTime);
             calendar.add(Calendar.SECOND, 1);

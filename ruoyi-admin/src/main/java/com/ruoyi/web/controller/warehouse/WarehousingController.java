@@ -7,6 +7,7 @@ import com.ruoyi.network.node.*;
 import com.ruoyi.network.utils.NetWorkPlanUtils;
 import com.ruoyi.network.utils.NetworkUtils;
 import com.ruoyi.system.service.IGlcPointService;
+import com.ruoyi.warehousing.action.Action;
 import com.ruoyi.warehousing.form.Cargo;
 import com.ruoyi.warehousing.form.Goods;
 import com.ruoyi.warehousing.process.Delivery;
@@ -461,7 +462,7 @@ public class WarehousingController extends BaseController {
 
         List<Result> list = new ArrayList<>();
         LightStorage storage = AreaUtils.getHightStorage1(transportNum4,transportNum2,transportNum3,putaway,sorting,height,forklift_channel,shelf_space,shelf_height);
-        Result result = WarehousingUtil.action(goods_num,sort_type,transportNum2,transportNum3,storage);
+        Result result = Action.action(goods_num,sort_type,transportNum2,transportNum3,storage);
 
         result.setStorageArea(storage.getArea());
         result.setCargo(storage.getCargo());
@@ -519,7 +520,7 @@ public class WarehousingController extends BaseController {
 
         List<Result> list = new ArrayList<>();
         LightStorage storage = AreaUtils.getHightStorage1(transportNum4,transportNum2,transportNum3,putaway,sorting,height,forklift_channel,shelf_space,shelf_height);
-        Result result = WarehousingUtil.action(goods_num,sort_type,transportNum2,transportNum3,storage);
+        Result result = Action.action(goods_num,sort_type,transportNum2,transportNum3,storage);
 
         result.setStorageArea(storage.getArea());
         result.setCargo(storage.getCargo());

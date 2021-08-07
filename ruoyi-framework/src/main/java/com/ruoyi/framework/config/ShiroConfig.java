@@ -326,6 +326,18 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/getStoragePoint", "anon,captchaValidate");
         filterChainDefinitionMap.put("/warehouse", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getBatch", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/modal/demo1", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/modal/demo2", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/modal/demo3", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/modal/demo4", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/modal/demo5", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/modal/demo6", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/table/list1", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/table/list2", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/table/list3", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/table/list4", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/table/list5", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/demo/table/list6", "anon,captchaValidate");
         filterChainDefinitionMap.put("/netWork", "anon,captchaValidate");
         filterChainDefinitionMap.put("/light", "anon,captchaValidate");
         filterChainDefinitionMap.put("/haier", "anon,captchaValidate");
