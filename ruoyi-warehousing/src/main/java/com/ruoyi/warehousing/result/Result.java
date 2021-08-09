@@ -4,7 +4,8 @@ public class Result {
     private int batch;//批次
     private double cost;//成本
     private double distance;//行走距离
-
+    private double sortdistance;//行走距离
+    private double putawaydistance;//行走距离
 
     private int uploadEmp;//卸货人员数量
     private int tallyEmp;//理货能力
@@ -72,6 +73,22 @@ public class Result {
         this.platform1Num = platform1Num;
         this.platform1Area = platform1Area;
         this.platform1Rate = platform1Rate;
+    }
+
+    public double getSortdistance() {
+        return sortdistance;
+    }
+
+    public void setSortdistance(double sortdistance) {
+        this.sortdistance = sortdistance;
+    }
+
+    public double getPutawaydistance() {
+        return putawaydistance;
+    }
+
+    public void setPutawaydistance(double putawaydistance) {
+        this.putawaydistance = putawaydistance;
     }
 
     public int getTallyEmp() {

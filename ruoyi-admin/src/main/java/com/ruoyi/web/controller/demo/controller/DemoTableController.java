@@ -379,7 +379,16 @@ public class DemoTableController extends BaseController
         int m= 0;
 
         for (long i=0;i<10;i+=1){
-            double d = rate + WarehousingUtil.random(-20, 20);
+            double d = 0;
+            if (rate<10) {
+                d = rate + WarehousingUtil.random(-3, 3);
+
+            }else {
+                d = rate + WarehousingUtil.random(-20, 20);
+            }
+            if (d<0){
+                d=0;
+            }
             if(rate<100) {
                 if (m<=8) {
                     if (d > 100) {

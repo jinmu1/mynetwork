@@ -96,15 +96,15 @@ public  class AreaUtils {
     public static Platform getPlatform1(double  total, String CarType,double uploadEmpCapacity,double unloading_time,double everyDay_unloading_time , double platform_length){
         double car_volumetric = Double.parseDouble(Car.valueOf(CarType).getCode());//计算车辆容积 通过车辆类型
         platform_width = 3 * 1.25;
-
-        double car_num = Math.ceil(total/volumetric_coefficient/car_volumetric);//计算车辆数量 通过车辆容积
+        double milk_run = 1;
+        double car_num = Math.ceil(total/volumetric_coefficient/car_volumetric)*milk_run;//计算车辆数量 通过车辆容积
         double platform_num =  Math.ceil(car_num*peak_rate*unloading_time/everyDay_unloading_time);//月台数量
         double platform_area = platform_num*(platform_width+3)*platform_length;//月台面积
         Platform platform = new Platform();
         platform.setPlatform_num(platform_num);
         platform.setPlatform_area(platform_area);
-        platform.setEmp((int)(total/uploadEmpCapacity));
-        platform.setForklift((int)(total/uploadEmpCapacity));
+        platform.setEmp((int)Math.ceil(total/uploadEmpCapacity));
+        platform.setForklift((int)Math.ceil(total/uploadEmpCapacity));
         platform.setEmpCost(platform.getEmp()*80000);
         platform.setForkliftCost(platform.getForklift()*12000);
         return platform;
@@ -146,7 +146,7 @@ public  class AreaUtils {
         tally.setArea(tally_area);
         tally.setTally_longitudinal(tally_longitudinal);
         tally.setTally_transverse(tally_transverse);
-        tally.setEmp((int)(total/tallyEmpCapacity));
+        tally.setEmp((int)Math.ceil(total/tallyEmpCapacity));
         tally.setEmpCost(tally.getEmp()*80000);
         return tally;
     }
@@ -537,7 +537,7 @@ public  class AreaUtils {
         int cargo = 0;
         double area = 0.0;
         double price =Double.MAX_VALUE;
-        double emp = throughput/workload;
+        double emp = Math.ceil(throughput/workload);
         for (int i=1;i<200;i++){
             for (int j=1;j<200;j++){
                 int cargos = i*j*high_shelf_layer;
@@ -583,7 +583,8 @@ public  class AreaUtils {
         double emp = throughput/workload;
         for (int i=1;i<200;i++){
             for (int j=1;j<200;j++){
-                int cargos =i*j* (int)(height/shelf_height);;
+                int high_shelf_layer = (int)Math.floor(height/shelf_height);
+                int cargos =i*j* high_shelf_layer;
                 if (cargos>total && j>emp && i>5){
                     double num = (i*cargo_box_length+shelf_space)*(j*cargo_box_width*2+forklift_channel);
                     double num1 = i*j*2*high_shelf_layer*high_cargo_price;//货架的价格

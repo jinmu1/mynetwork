@@ -31,6 +31,7 @@ public class Sorting {
         int m=0;
         int n=0;
         int d=0;
+        double distance = 0.0;
         for (Emp emp:emps) {
             d++;
             if (emp.getStatus() == 0 &&emp.getOrders().size()>0) {
@@ -109,6 +110,7 @@ public class Sorting {
                         emp.setStatus(0);
                     }
                 }else{
+                    distance +=WorkTime.v1;
                     emp.setCurr(WarehousingUtil.getPath1(emp.getCurr(),emp.getTar(),WorkTime.v0));
                 }
             }else if (emp.getStatus()==2){
@@ -117,6 +119,7 @@ public class Sorting {
                     emp.setStatus(3);
                     emp.setTar(tally.getPoints().get(0));
                 }else {
+                    distance +=WorkTime.v1;
                     emp.setCurr(WarehousingUtil.getPath1(emp.getCurr(),emp.getTar(),WorkTime.v1));
                 }
             }else if (emp.getStatus()==3){
@@ -125,6 +128,7 @@ public class Sorting {
                     emp.setTar(tally.getPoints().get(tally.getPoints().size()-1));
                     emp.setStatus(4);
                 }else {
+                    distance +=WorkTime.v1;
                     emp.setCurr(WarehousingUtil.getPath1(emp.getCurr(),emp.getTar(),WorkTime.v1));
                 }
             }else if (emp.getStatus()==4){
@@ -135,6 +139,7 @@ public class Sorting {
                     emp.setOrders(new ArrayList<>());
                     d++;
                 }else {
+                    distance +=WorkTime.v1;
                     emp.setCurr(WarehousingUtil.getPath1(emp.getCurr(),emp.getTar(),WorkTime.v1));
                 }
             }else if (emp.getStatus()==5){
@@ -150,9 +155,29 @@ public class Sorting {
 
         empLog.setComPlut(m/emps.size());
         empLog.setAllPlut(d/tally.getTorr());
+        empLog.setDistance(distance);
         return empLog;
     }
 
-
+    public static EmpLog move1(List<Emp> emps2, List<Cargo> cargos, Tally tally1) {
+        EmpLog empLog = new EmpLog();
+        int m=0;
+        for (Emp emp:emps2) {
+            if (emp.getStatus() == 0 && emp.getT0()>0) {
+                emp.setStatus(1);
+                emp.setT1(WarehousingUtil.random(30,40));
+                emp.setCurr(new Point(0, 0, 0));
+            } else if (emp.getStatus() == 1) {
+                emp.fix1();
+                if (emp.getT1()==0){
+                    emp.setStatus(0);
+                    emp.fix();
+                }
+                m++;
+            }
+        }
+        empLog.setComPlut(m/emps2.size());
+        return  empLog;
+    }
 
 }

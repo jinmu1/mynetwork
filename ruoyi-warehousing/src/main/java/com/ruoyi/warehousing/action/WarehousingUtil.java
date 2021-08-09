@@ -1,7 +1,6 @@
 package com.ruoyi.warehousing.action;
 
-import com.ruoyi.warehousing.form.Cargo;
-import com.ruoyi.warehousing.form.Goods;
+import com.ruoyi.warehousing.form.*;
 import com.ruoyi.warehousing.process.Putaway;
 import com.ruoyi.warehousing.process.Sorting;
 import com.ruoyi.warehousing.queue.Order;
@@ -10,12 +9,12 @@ import com.ruoyi.warehousing.resource.equipment.Elevator;
 import com.ruoyi.warehousing.resource.equipment.LightStorage;
 import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
 import com.ruoyi.warehousing.resource.facilities.platform.Platform;
-import com.ruoyi.warehousing.form.WorkTime;
 import com.ruoyi.warehousing.resource.personnel.Emp;
 import com.ruoyi.warehousing.result.EmpLog;
 import com.ruoyi.warehousing.result.Result;
 import com.ruoyi.warehousing.utils.AreaUtils;
 import com.ruoyi.warehousing.utils.DateUtils;
+import com.ruoyi.warehousing.utils.MathUtils;
 import com.ruoyi.warehousing.utils.RandomUtil;
 import org.apache.commons.collections4.ListUtils;
 
@@ -555,6 +554,168 @@ public class WarehousingUtil {
             }
         }
         return cargos;
+    }
+
+    public static List<Supplier> initSupplier(double num) {
+        List<Supplier> suppliers = new ArrayList<>();
+        Random random = new Random();
+        for (int i=0;i<=num;i++){
+                Supplier supplier = new Supplier();
+                supplier.setSupplierCode(RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
+                supplier.setLeadTime(random(3,6));
+                suppliers.add(supplier);
+        }
+        return suppliers;
+    }
+
+
+
+    public static int[] splitInteger(int n, int sum,boolean flag) {
+        //随机抽取n-1个小于sum的数
+        List<Integer> list = new ArrayList();
+        //将0和sum加入到里list中
+        list.add(0);
+        //判断生成的正整数集合中是否允许为0，true元素可以为0  false元素不可以为0
+        if (!flag) {
+            sum = sum - n;
+        }
+        list.add(sum);
+        int temp = 0;
+        for (int i = 0; i < n - 1 ; i++) {
+            temp = (int) (Math.random() * sum);
+            list.add(temp);
+        }
+        Collections.sort(list);
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) {
+            nums[i] = list.get(i + 1) - list.get(i);
+            if (!flag) {
+                nums[i] += 1;
+            }
+        }
+        return nums;
+    }
+
+    public static List<Goods> initMaterialVolume(List<Goods> list, double b, double m, double s) {
+        double all = b + m + s;
+        Random random = new Random();
+        double num3 = 0.0;
+        int i = 0;
+        for (Goods material : list){
+            if (i<=s/all*list.size()){
+                material.setVolume(initNormalDistribution1(100,0.05)[(int)random(0,99)]);
+                num3 += material.getVolume();
+            }else if (i<=(m+s)/all*list.size()){
+                material.setVolume(initNormalDistribution1(100,0.45)[(int)random(0,99)]+0.05);
+                num3 += material.getVolume();
+            }else if (i<=list.size()){
+                material.setVolume(initNormalDistribution1(100,4.5)[(int)random(0,99)]+0.5);
+                num3 += material.getVolume();
+            }
+            i++;
+        }
+        System.out.println(num3);
+        return list;
+
+    }
+
+    public static double[] initNormalDistribution1(int length,double max){
+        double[] num = new double[length];
+        for (int i = 0;i<length;i+=1){
+            num[i] = Math.abs(NormalDistribution(500,(float)10000));
+        }
+        double avg = MathUtils.sum(num)/num.length;
+        for (int i = 0; i<num.length;i++){
+            num[i] = num[i]*max/avg;
+        }
+        return num;
+    }
+
+
+    //普通正态随机分布
+    //参数 u 均值
+    //参数 v 方差
+    public static double NormalDistribution(float u,float v){
+        java.util.Random random = new java.util.Random();
+        return Math.sqrt(v)*random.nextGaussian()+u;
+    }
+
+    public static List<Goods> initMaterialSupplier(List<Supplier> suppliers, List<Goods> list) {
+        Random random = new Random();
+        for (Goods material:list){
+            int i = (int)random(1,suppliers.size());
+            material.setSupplier(suppliers.get(i));
+        }
+        return list;
+    }
+
+    public static List<Customer> initCustomer(int customerNum) {
+        Random random = new Random();
+        List<Customer> customerList = new ArrayList<>();
+
+
+            for (int i=0;i<=customerNum;i++){
+                Customer customer = new Customer();
+                customer.setCustomerCode(RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
+                customerList.add(customer);
+            }
+
+
+
+        return customerList;
+    }
+
+    public static List<Order> initOrdersCustomerList(List<Order> orderList, List<Customer> customerList) {
+        Random random = new Random();
+        for (Order order:orderList){
+            int i = random.nextInt(customerList.size());
+            order.setCustomerCode(customerList.get(i).getCustomerCode());
+        }
+        return  orderList;
+    }
+
+    public static List<Order> getReplenishment(List<Order> orders, List<Goods> list) {
+
+        Map<Date, List<Order>> outOrdersList = orders.stream().collect(Collectors.groupingBy(Order::getCreateDate));//出库单
+        List<Order> orderList = new ArrayList<>();
+        List<Order> runOrder = new ArrayList<>();
+        double replenishmentDate = 0.0;
+        int i = 0;
+        Random random = new Random();
+        double[] in = new double[outOrdersList.keySet().size()];
+        double[] out = new double[outOrdersList.keySet().size()];
+        for (Date date : outOrdersList.keySet()) {
+            List<Order> list1 = outOrdersList.get(date);
+            if (runOrder.size() > 0) {
+                list1.addAll(runOrder);
+                runOrder = new ArrayList<>();
+            }
+            Map<String, List<Order>> listMap = list1.stream().collect(Collectors.groupingBy(Order::getGoodsCode));//出库单
+            double ins = 0.0;
+            double out1 = 0.0;
+            for (Goods material : list) {
+                List<Order> list2 = listMap.get(material.getGoodsCode());
+                if (list2 != null && list2.size() != 0) {
+                    for (Order order : list2) {
+                        material.setPlutNum(material.getPlutNum() - order.getGoodsNum());
+                        out1 += order.getGoodsNum() * material.getVolume();
+                    }
+                    if (material.getPlutNum() < material.getVolume()) {
+                        replenishmentDate = material.getSupplier().getLeadTime();
+
+                    }
+
+
+                }
+            }
+            in[i] = ins;
+            out[i] = out1;
+        }
+//        for(Order order:orderList){
+//            order.setCustomerCode(getCustomerCode(order.getGoodsCode()));
+//        }
+
+        return orderList;
     }
 //    /***
 //     * 按照订单拣选

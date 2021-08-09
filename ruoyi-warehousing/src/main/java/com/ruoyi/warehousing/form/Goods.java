@@ -12,7 +12,8 @@ public class Goods {
     private int status;
     private Point position;//位置
     private String area;//区域
-
+    private double volume;//体积
+    private Supplier supplier;
     public int getStatus() {
         return status;
     }
@@ -22,6 +23,14 @@ public class Goods {
     }
 
     public Goods() {
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     @Override
@@ -105,5 +114,13 @@ public class Goods {
 
     public void setArea(String area) {
         this.area = area;
+    }
+
+    public double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(double volume) {
+        this.volume = volume;
     }
 }

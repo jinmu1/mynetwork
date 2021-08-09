@@ -13,6 +13,8 @@ public class Order {
     private double  volume;//体积
     private double  weight;//重量
     private int status;//完成状态
+    private String customerCode;
+    private String customerCity;
     public Order(){
         super();
     }
@@ -33,6 +35,23 @@ public class Order {
         this.goodsNum = goodsNum;
 
     }
+
+    public String getCustomerCode() {
+        return customerCode;
+    }
+
+    public void setCustomerCode(String customerCode) {
+        this.customerCode = customerCode;
+    }
+
+    public String getCustomerCity() {
+        return customerCity;
+    }
+
+    public void setCustomerCity(String customerCity) {
+        this.customerCity = customerCity;
+    }
+
     public int getStatus() {
         return status;
     }

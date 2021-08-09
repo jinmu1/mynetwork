@@ -102,7 +102,7 @@
             <div class="col-sm-12 border">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5 style="text-align: center">填写数据清单 <small></small></h5>
+
                         <div class="ibox-tools">
                             <a class="collapse-link"> <i class="fa fa-chevron-up"></i> </a>
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
@@ -117,12 +117,15 @@
 
                     <div class="ibox-content">
                         <div class="row">
+
                             <div class="col-lg-12">
-                                <div>卸货</div>
+                                <h4 style="text-align: center">卸货 <small></small></h4>
                                 <form class="form-horizontal m-t" id="signupFormd" onsubmit="post_data3()"
                                       target="nm_iframe">
                                     <div class="row">
+
                                         <div class="col-sm-4">
+                                            <div class="titled-pane">输入</div>
                                             <div class="table-responsive table1">
                                                 <table class="table table-bordered  width1">
                                                     <thead>
@@ -154,6 +157,7 @@
                                                         <th>供应商数量</th>
                                                         <td>
                                                             <input type="value" id="supplier" value="150"
+                                                                   onchange="changeCar()"
                                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;"
                                                                    required=""/>个
                                                         </td>
@@ -200,6 +204,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
+                                            <div class="titled-pane">资源使用情况</div>
                                             <div class="table-responsive table1">
                                                 <table class="table table-bordered  width1">
                                                     <tr>
@@ -240,6 +245,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
+                                            <div class="titled-pane">成本</div>
                                             <div class="table-responsive table1">
                                                 <table class="table table-bordered  width1">
                                                     <tr>
@@ -274,11 +280,12 @@
                                 </form>
                             </div>
                             <div class="col-lg-12">
-                                <div>理货</div>
+                                <h4 style="text-align: center">理货 <small></small></h4>
                                 <form class="form-horizontal m-t" id="signupForm5" onsubmit="post_data4()"
                                       target="nm_iframe">
                                     <div class="row">
                                         <div class="col-sm-4">
+                                            <div class="titled-pane">输入</div>
                                             <div class="table-responsive table1">
                                                 <table class="table table-bordered  width1">
                                                     <thead>
@@ -331,7 +338,9 @@
                                                 </table>
                                             </div>
                                         </div>
+
                                         <div class="col-sm-4">
+                                            <div class="titled-pane">资源使用情况</div>
                                             <div class="table-responsive table1">
                                                 <table class="table table-bordered  width1">
                                                     <tr>
@@ -354,11 +363,18 @@
 
                                                         </td>
                                                     </tr>
+                                                    <tr>
+                                                        <th>理货行走距离</th>
+                                                        <td id="tallyEmpDistance">
+
+                                                        </td>
+                                                    </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
+                                            <div class="titled-pane">成本</div>
                                             <div class="table-responsive table1">
                                                 <table class="table table-bordered  width1">
                                                     <tr>
@@ -386,13 +402,13 @@
                             </div>
                             <div class="col-lg-12">
 
-                                <div>上架、下架
-                                </div>
+                                <h4 style="text-align: center">上架 <small></small></h4>
 
-                                <form class="form-horizontal m-t" id="signupForm" onsubmit="post_data()"
+                                <form class="form-horizontal m-t" id="signupForms" onsubmit="post_datam1()"
                                       target="nm_iframe">
                                     <div class="row">
                                         <div class="col-sm-4">
+                                            <div class="titled-pane">输入</div>
                                             <div class="table-responsive table1">
                                                 <table class="table table-bordered  width1">
                                                     <thead>
@@ -416,24 +432,95 @@
                                                                    onchange="changeplant()" required=""/>
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <th>每日下架托数</th>
-                                                        <td><input name="transportNum" value="1000" id="transportNum3"
-                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                                   data-placement="right" title="请输入" th:type="text"
-                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                                   onchange="changeplant()" required=""/>
-                                                        </td>
-                                                    </tr>
+
                                                     <tr>
                                                         <th>单人日上架能力</th>
                                                         <td>
-                                                            <input type="value" id="putaway" value="300"
+                                                            <input type="value" id="putaway" value="15"
                                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                                   required=""/>件/日
+                                                                   required=""/>件/小时
                                                         </td>
                                                     </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">资源使用情况</div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+
+                                                    <tr>
+                                                        <th>上架人数</th>
+                                                        <td id="workload">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <th style="white-space: nowrap;">上架人员利用率<a
+                                                                style="margin-left: 20%" class="bullet-button"
+                                                                onclick="showImage3()">点击查看</a></th>
+                                                        <td id="workloadRate" onclick="showImage3()">
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>上架人员行走距离</th>
+                                                        <td id="workloadDistance">
+
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">成本</div>
+                                            <div class="table-responsive table1">
+
+                                                <table class="table table-bordered  width1">
+                                                    <tr>
+                                                        <th>人员成本</th>
+                                                        <td id="empCost3">
+
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-8">
+                                                    <div class="ibox float-e-margins" style="height: 60px">
+                                                        <button class="btn btn-primary" type="submit"
+                                                                style="margin-top: -2%;margin-left: 45%;z-index: 9999">
+                                                            确认并提交
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="col-lg-12">
+
+                                <h4 style="text-align: center">存储 <small></small></h4>
+
+                                <form class="form-horizontal m-t" id="signupForm下" onsubmit="post_datam2()"
+                                      target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">输入</div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+
+                                                    </thead>
+                                                    <tbody>
+
+
                                                     <tr>
                                                         <th>存储托数</th>
                                                         <td><input name="transportNum" value="40000" id="transportNum4"
@@ -447,7 +534,7 @@
                                                     <tr>
                                                         <th>存储区高度</th>
                                                         <td>
-                                                            <input type="value" id="height" value="12"
+                                                            <input type="value" id="height" value="9"
                                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;"
                                                                    required=""/>m
                                                         </td>
@@ -482,6 +569,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
+                                            <div class="titled-pane">资源使用情况</div>
                                             <div class="table-responsive table1">
                                                 <table class="table table-bordered  width1">
                                                     <tr>
@@ -497,24 +585,103 @@
                                                         </td>
                                                     </tr>
 
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">成本</div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
                                                     <tr>
-                                                        <th>上架人数</th>
-                                                        <td id="workload">
+                                                        <th>设备成本</th>
+                                                        <td id="eqmCost">
+
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-8">
+                                                    <div class="ibox float-e-margins" style="height: 60px">
+                                                        <button class="btn btn-primary" type="submit"
+                                                                style="margin-top: -2%;margin-left: 45%;z-index: 9999">
+                                                            确认并提交
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="col-lg-12">
+
+                                <h4 style="text-align: center">下架 <small></small></h4>
+
+                                <form class="form-horizontal m-t" id="signupForm" onsubmit="post_datam3()"
+                                      target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">输入</div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+
+                                                    </thead>
+                                                    <tbody>
+
+                                                    <tr>
+                                                        <th>每日下架托数</th>
+                                                        <td><input name="transportNum" value="1000" id="transportNum3"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>
+                                                        </td>
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <th>单人日下架能力</th>
+                                                        <td>
+                                                            <input type="value" id="sorting" value="15"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>件/小时
+                                                        </td>
+                                                    </tr>
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">资源使用情况</div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+
+                                                    <tr>
+                                                        <th>下架人数</th>
+                                                        <td id="workload1">
 
                                                         </td>
                                                     </tr>
                                                     <tr>
 
-                                                        <th style="white-space: nowrap;">上架人员利用率<a
+                                                        <th style="white-space: nowrap;">下架人员利用率<a
                                                                 style="margin-left: 20%" class="bullet-button"
-                                                                onclick="showImage3()">点击查看</a></th>
-                                                        <td id="workloadRate" onclick="showImage3()">
+                                                                onclick="showImaged()">点击查看</a></th>
+                                                        <td id="workloadRate1" onclick="showImaged()">
 
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <th>上架人员行走距离</th>
-                                                        <td id="workloadDistance">
+                                                        <th>下架人员行走距离</th>
+                                                        <td id="workloadDistance1">
 
                                                         </td>
                                                     </tr>
@@ -523,17 +690,12 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
+                                            <div class="titled-pane">成本</div>
                                             <div class="table-responsive table1">
                                                 <table class="table table-bordered  width1">
                                                     <tr>
                                                         <th>人员成本</th>
-                                                        <td id="empCost3">
-
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>设备成本</th>
-                                                        <td id="eqmCost">
+                                                        <td id="empCost31">
 
                                                         </td>
                                                     </tr>
@@ -559,11 +721,12 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
-                            <div>分拣</div>
+                            <h4 style="text-align: center">分拣 <small></small></h4>
                             <form class="form-horizontal m-t" id="signupForm4" onsubmit="post_data6()"
                                   target="nm_iframe">
                                 <div class="row">
                                     <div class="col-sm-4">
+                                        <div class="titled-pane">输入</div>
                                         <div class="table-responsive table1">
                                             <table class="table table-bordered  width1">
                                                 <thead>
@@ -633,6 +796,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
+                                        <div class="titled-pane">资源使用情况</div>
                                         <div class="table-responsive table1">
                                             <table class="table table-bordered  width1">
                                                 <tr>
@@ -668,6 +832,8 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
+
+                                        <div class="titled-pane">成本</div>
                                         <div class="table-responsive table1">
                                             <table class="table table-bordered  width1">
                                                 <tr>
@@ -695,11 +861,12 @@
                             </form>
                         </div>
                         <div class="col-lg-12">
-                            <div>出库</div>
+                            <h4 style="text-align: center">出库 <small></small></h4>
                             <form class="form-horizontal m-t" id="signupForm1" onsubmit="post_data1()"
                                   target="nm_iframe">
                                 <div class="row">
                                     <div class="col-sm-4">
+                                        <div class="titled-pane">输入</div>
                                         <div class="table-responsive table1">
                                             <table class="table table-bordered  width1">
                                                 <thead>
@@ -762,6 +929,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
+                                        <div class="titled-pane">资源使用情况</div>
                                         <div class="table-responsive table1">
                                             <table class="table table-bordered  width1">
                                                 <tr>
@@ -776,11 +944,18 @@
 
                                                     </td>
                                                 </tr>
+
                                                 <tr>
                                                     <th style="white-space: nowrap;">出库理货人员利用率<a
                                                             style="margin-left: 20%" class="bullet-button"
                                                             onclick="showImage5()">点击查看</a></th>
                                                     <td id="tallyEmpRate" onclick="showImage5()">
+
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>出库理货行走距离</th>
+                                                    <td id="tallyEmpDistance3">
 
                                                     </td>
                                                 </tr>
@@ -817,11 +992,12 @@
                             </form>
                         </div>
                         <div class="col-lg-12">
-                            <div>装车</div>
+                            <h4 style="text-align: center">装车 <small></small></h4>
                             <form class="form-horizontal m-t" id="signupForm6" onsubmit="post_data5()"
                                   target="nm_iframe">
                                 <div class="row">
                                     <div class="col-sm-4">
+                                        <div class="titled-pane">输入</div>
                                         <div class="table-responsive table1">
                                             <table class="table table-bordered  width1">
                                                 <thead>
@@ -891,6 +1067,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
+                                        <div class="titled-pane">资源使用情况</div>
                                         <div class="table-responsive table1">
                                             <table class="table table-bordered  width1">
                                                 <tr>
@@ -932,6 +1109,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
+                                        <div class="titled-pane">成本</div>
                                         <div class="table-responsive table1">
                                             <table class="table table-bordered  width1">
                                                 <tr>
@@ -1061,8 +1239,9 @@
         } else if (carlength == "超大车17米5") {
             car = 64;
         }
+        var supplier = $("#supplier").val();
         var num = $("#transportNum").val();
-        $("#car_num").html(parseInt(num / car) + "");
+        $("#car_num").html(parseInt(num / car + supplier / 20) + "");
     }
 
     function changeplant() {
@@ -1096,12 +1275,12 @@
         $('#loadingModal').modal('hide');
     }
 
-    function post_data() {
+    function post_datam1() {
         if (isClick) {
             showLoading();
             isClick = false;
             setTimeout(function () {
-                onStaroge();
+                onStaroged1();
             }, 8000);//一秒内不能重复点击
 
             setTimeout(function () {
@@ -1113,15 +1292,50 @@
         return false;
     }
 
-    function onStaroge() {
+    function post_datam2() {
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            setTimeout(function () {
+                onStaroged2();
+            }, 8000);//一秒内不能重复点击
+
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+
+    function post_datam3() {
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            setTimeout(function () {
+                onStaroged3();
+            }, 8000);//一秒内不能重复点击
+
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+
+    function onStaroged1() {
         var transportNum2 = $("#transportNum2").val();
         var transportNum3 = $("#transportNum3").val();
         var transportNum4 = $("#transportNum4").val();
         var height = $("#height").val();
         var forklift_channel = $("#forklift_channel").val();
         var shelf_space = $("#shelf_space").val();
-        var putaway = $("#putaway").val();
-        var sorting = $("#sorting").val();
+        var putaway = $("#putaway").val() * 8;
+        var shelf_height = $("#shelf_height").val();
+        var sorting = $("#sorting").val() * 8;
         var goods_num = $("#goods_num").val();
         var sort_type = $("#sort_type option:selected").val();
 
@@ -1132,19 +1346,22 @@
             "height": height,
             "forklift_channel": forklift_channel,
             "shelf_space": shelf_space,
+            "shelf_height": shelf_height,
             "putaway": putaway,
             "sorting": sorting,
             "sort_type": sort_type
         }, function (result) {
             var d = result.rows[0];
-            $("#area").html(parseInt(d.storageArea) + "㎡");
-            $("#cargo").html(parseInt(d.cargo) + "个");
+
             $("#workload").html(parseInt(d.putawayEmp) + "人");
-            $("#sortingEmp").html(parseInt(d.sortingEmp) + "人");
-            $("#empCost3").html("¥" + int2str((parseInt(d.putawayEmp) + parseInt(d.sortingEmp)) * 80000));
-            $("#eqmCost").html("¥" + int2str(parseInt(d.cost)));
-            $("#workloadRate").html(parseInt(d.putawayRate * 1000000 / parseInt(transportNum2)) + "%");
-            $("#sortingEmpRate").html(parseInt(d.sortingRate * 1000000 / parseInt(transportNum3)) + "%");
+
+            $("#empCost3").html("¥" + int2str((parseInt(d.putawayEmp)) * 80000));
+            if (transportNum2 > 150) {
+                $("#workloadRate").html(parseInt(d.putawayRate * 1000000 / parseInt(transportNum2)) + "%");
+            } else {
+                $("#workloadRate").html(parseInt(transportNum2 / 160) + "%");
+            }
+
             $("#distance").html(parseInt(d.sortingRate * 1000000 / parseInt(transportNum3)) + "%");
             $("#workloadDistance").html(randomNum(220, 320) * transportNum2 + "米");
             area3 = parseInt(d.storageArea);
@@ -1155,8 +1372,94 @@
             cost7 = parseInt(d.cost);
         });
         hideLoading();
+    }
 
+    function onStaroged2() {
+        var transportNum2 = $("#transportNum2").val();
+        var transportNum3 = $("#transportNum3").val();
+        var transportNum4 = $("#transportNum4").val();
+        var height = $("#height").val();
+        var forklift_channel = $("#forklift_channel").val();
+        var shelf_space = $("#shelf_space").val();
+        var putaway = $("#putaway").val() * 8;
+        var shelf_height = $("#shelf_height").val();
+        var sorting = $("#sorting").val() * 8;
+        var goods_num = $("#goods_num").val();
+        var sort_type = $("#sort_type option:selected").val();
 
+        $.post("/getStoragePoint", {
+            "transportNum2": transportNum2,
+            "transportNum3": transportNum3,
+            "transportNum4": transportNum4,
+            "height": height,
+            "forklift_channel": forklift_channel,
+            "shelf_space": shelf_space,
+            "shelf_height": shelf_height,
+            "putaway": putaway,
+            "sorting": sorting,
+            "sort_type": sort_type
+        }, function (result) {
+            var d = result.rows[0];
+            $("#area").html(parseInt(d.storageArea) + "㎡");
+            $("#cargo").html(parseInt(d.cargo) + "个");
+            $("#eqmCost").html("¥" + int2str(parseInt(d.cost)));
+
+            area3 = parseInt(d.storageArea);
+            emp3 = parseInt(d.putawayEmp);
+            emp4 = parseInt(d.sortingEmp);
+            cost3 = parseInt(d.putawayEmp) * 80000;
+            cost4 = parseInt(d.putawayEmp) * 80000;
+            cost7 = parseInt(d.cost);
+        });
+        hideLoading();
+    }
+
+    function onStaroged3() {
+        var transportNum2 = $("#transportNum2").val();
+        var transportNum3 = $("#transportNum3").val();
+        var transportNum4 = $("#transportNum4").val();
+        var height = $("#height").val();
+        var forklift_channel = $("#forklift_channel").val();
+        var shelf_space = $("#shelf_space").val();
+        var putaway = $("#putaway").val() * 8;
+        var shelf_height = $("#shelf_height").val();
+        var sorting = $("#sorting").val() * 8;
+        var goods_num = $("#goods_num").val();
+        var sort_type = $("#sort_type option:selected").val();
+
+        $.post("/getStoragePoint", {
+            "transportNum2": transportNum2,
+            "transportNum3": transportNum3,
+            "transportNum4": transportNum4,
+            "height": height,
+            "forklift_channel": forklift_channel,
+            "shelf_space": shelf_space,
+            "shelf_height": shelf_height,
+            "putaway": putaway,
+            "sorting": sorting,
+            "sort_type": sort_type
+        }, function (result) {
+            var d = result.rows[0];
+
+            $("#workload1").html(parseInt(d.sortingEmp) + "人");
+            $("#empCost31").html("¥" + int2str(parseInt(d.sortingEmp) * 80000));
+            $("#eqmCost1").html("¥" + int2str(parseInt(d.cost)));
+            if (transportNum3 > 150) {
+                $("#workloadRate1").html(parseInt(d.sortingRate * 1000000 / parseInt(transportNum3)) + "%");
+            } else {
+                $("#workloadRate1").html(parseInt(transportNum3 / 160) + "%");
+            }
+
+            // $("#distance1").html(parseInt(d.sortingRate * 1000000 / parseInt(transportNum3)) + "%");
+            $("#workloadDistance1").html(randomNum(220, 320) * transportNum3 + "米");
+            area3 = parseInt(d.storageArea);
+            emp3 = parseInt(d.putawayEmp);
+            emp4 = parseInt(d.sortingEmp);
+            cost3 = parseInt(d.putawayEmp) * 80000;
+            cost4 = parseInt(d.putawayEmp) * 80000;
+            cost7 = parseInt(d.cost);
+        });
+        hideLoading();
     }
 
     function post_data1() {
@@ -1195,6 +1498,11 @@
             $("#tallyArea2").html(parseInt(d.tallyArea) + "㎡");
             $("#tallyEmp2").html(parseInt(d.tallyEmp) + "个");
             $("#tallyEmpRate").html(randomNum(72, 90) + "%");
+            if (transportNum > 150) {
+                $("#tallyEmpRate").html(randomNum(72, 90) + "%");
+            } else {
+                $("#tallyEmpRate").html(parseInt(transportNum / tallyEmpCapacity) + "%");
+            }
             $("#empCost4").html("¥" + int2str(parseInt(d.empCost)));
             $("#tallyEmpDistance3").html(randomNum(121, 450) * transportNum + "米");
             area5 = parseInt(d.tallyArea);
@@ -1242,7 +1550,8 @@
     }
 
     function onLoadPlatform() {
-        var transportNum = $("#transportNum").val();
+        var supplier = $("#supplier").val();
+        var transportNum = parseInt($("#transportNum").val()) + parseInt(supplier);
         var carlength = $("#carLength option:selected").val();
         var unloading_time = $("#unloading_time").val();
         var everyDay_unloading_time = $("#everyDay_unloading_time").val();
@@ -1256,6 +1565,7 @@
             "everyDay_unloading_time": everyDay_unloading_time,
             "uploadEmpCapacity": uploadEmpCapacity,
             "shelf_height": shelf_height,
+            "supplier": supplier,
             "platform_length": platform_length
         }, function (result) {
             var d = result.rows[0];
@@ -1266,6 +1576,11 @@
             $("#empCost").html("¥" + int2str(parseInt(d.empCost)));
             $("#forkliftCost").html("¥" + int2str(parseInt(d.forkliftCost)));
             $("#uploadEmpRate").html(randomNum(72, 120) + "%");
+            if (transportNum > 150) {
+                $("#uploadEmpRate").html(randomNum(72, 90) + "%");
+            } else {
+                $("#uploadEmpRate").html(parseInt(transportNum / uploadEmpCapacity) + "%");
+            }
             $("#uploadEmpDistance").html(randomNum(121, 450) * transportNum + "米");
             area1 = parseInt(d.platformArea);
             emp1 = parseInt(d.uploadEmp);
@@ -1384,6 +1699,58 @@
         var myChart1 = echarts.init(document.getElementById("lines"));
         rate3 = $("#workloadRate").html();
         $.post("/demo/table/list1", {"emp": emp3, "rate": rate3}, function (result) {
+            var d = result.rows;
+            var XName = [];
+            var yName = [];
+            for (var i = 0; i < d.length; i++) {
+                XName[i] = d[i].time;
+                yName[i] = parseInt(d[i].goods_code);
+            }
+
+            myChart1.setOption(option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['柱状图', '柱状图1', '折线图']
+                },
+                xAxis: [{
+                    type: 'category',
+                    data: XName
+                }],
+                yAxis: [{
+                    type: 'value',
+                    name: '水量',
+                    axisLabel: {
+                        formatter: '{value} %'
+                    }
+                }],
+                series: [{
+                    name: '柱状图',
+                    type: 'bar',
+                    data: yName,
+                    itemStyle: {
+                        normal: {
+                            color: '#be9252',
+                            label: {
+                                show: true,
+                                color: '#be9252',
+                                /*position: 'top',*/
+                                /*formatter: '{b}: {c} '*/
+                            }
+                        }
+                    },
+                },
+                ]
+            });
+        });
+        $('#myModal').modal('show');
+    }
+
+    function showImaged() {
+        var myChart1 = echarts.init(document.getElementById("lines"));
+        var rates = $("#workloadRate1").html();
+        $.post("/demo/table/list1", {"emp": 11, "rate": rates}, function (result) {
             var d = result.rows;
             var XName = [];
             var yName = [];
@@ -1606,7 +1973,7 @@
     }
 
     function onLoadTally() {
-        var transportNum = $("#transportNum").val();
+        var transportNum = $("#transportNum1").val();
         var carlength = $("#carLength option:selected").val();
         var batch = $("#batch").val();
         var tallyEmpCapacity = $("#tallyEmpCapacity").val() * 8;
@@ -1624,7 +1991,12 @@
             $("#tallyArea").html(parseInt(d.tallyArea) + "㎡");
             $("#tallyEmp").html(parseInt(d.tallyEmp) + "个");
             $("#empCost1").html("¥" + int2str(parseInt(d.empCost)));
-            $("#tallyEmpRate1").html(randomNum(72, 120) + "%");
+            if (transportNum > 150) {
+                $("#tallyEmpRate1").html(randomNum(72, 90) + "%");
+            } else {
+                $("#tallyEmpRate1").html(parseInt(transportNum / tallyEmpCapacity) + "%");
+            }
+
             $("#tallyEmpDistance").html(randomNum(121, 450) * transportNum + "米");
             area2 = parseInt(d.tallyArea);
             emp2 = parseInt(d.tallyEmp);
@@ -1655,6 +2027,7 @@
         var transportNum = $("#deliveryNum").val();
         var carlength = $("#carLength option:selected").val();
         var batch = $("#batch1").val();
+        var orderLine = $("#orderLine").val();
         var tallyEmpCapacity = $("#tallyEmpCapacity1").val() * 8;
         var tally_channel = $("#tally_channel1").val();
         var tray_clearance = $("#tray_clearance1").val();
@@ -1675,8 +2048,12 @@
             $("#tallyArea1").html(parseInt(d.tallyArea * m) + "㎡");
             $("#tallyEmp1").html(parseInt(d.tallyEmp * m) + "个");
             $("#empCost2").html("¥" + int2str(parseInt(d.empCost * m)));
-            $("#tallyEmpRate2").html(randomNum(72, 120) * m + "%");
-            $("#tallyEmpDistance2").html(randomNum(121, 450) * m * transportNum + "米");
+            if (transportNum > 150) {
+                $("#tallyEmpRate2").html(randomNum(72, 90) + "%");
+            } else {
+                $("#tallyEmpRate2").html(parseInt(transportNum / tallyEmpCapacity) + "%");
+            }
+            $("#tallyEmpDistance2").html(parseInt(randomNum(121, 450) * m * (transportNum/10)*orderLine*(0.2*batch)/2) + "米");
             area4 = parseInt(d.tallyArea);
             emp4 = parseInt(d.tallyEmp);
             cost4 = parseInt(d.empCost);
@@ -1725,8 +2102,14 @@
             $("#uploadForklift1").html(parseInt(d.forklift) + "台");
             $("#empCostd").html("¥" + int2str(parseInt(d.empCost)));
             $("#forkliftCostd").html("¥" + int2str(parseInt(d.forkliftCost)));
-            $("#uploadEmp1Rate").html(randomNum(72, 120) + "%");
-            $("#uploadEmp1Distance").html(randomNum(121, 450) * transportNum + "米");
+
+            if (transportNum > 150) {
+                $("#uploadEmp1Rate").html(randomNum(72, 90) + "%");
+            } else {
+                $("#uploadEmp1Rate").html(parseInt(transportNum / uploadEmpCapacity) + "%");
+            }
+
+            $("#uploadEmp1Distance").html(parseInt(randomNum(121, 450) * transportNum) + "米");
 
             area6 = parseInt(d.platformArea);
             emp6 = parseInt(d.uploadEmp);

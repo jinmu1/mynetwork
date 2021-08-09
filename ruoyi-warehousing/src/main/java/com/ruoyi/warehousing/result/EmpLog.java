@@ -13,6 +13,7 @@ public class EmpLog {
     private double comPlut;//完成量
     private double nowPlut;//需要完成量
     private double AllPlut;//总量
+    private double distance;//行走距离
 
     public EmpLog() {
         super();
@@ -52,6 +53,15 @@ public class EmpLog {
         this.order = order;
         this.position = position;
     }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
     public String getTime() {
         return time;
     }

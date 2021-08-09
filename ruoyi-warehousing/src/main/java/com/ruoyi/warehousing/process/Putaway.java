@@ -25,7 +25,7 @@ public class Putaway {
     public static EmpLog work(List<Emp> emps, Tally tally, Tally tally1, List<Elevator> elevators, List<Cargo> cargos) {
         EmpLog empLog = new EmpLog();
         int m = 0;
-         
+        double distance = 0.0;
         int empNums = 0;
         for (Emp emp : emps) {
             if (emp.getStatus() == 0 &&emp.getOrders().size()>0) {
@@ -43,6 +43,7 @@ public class Putaway {
                     emp.setStatus(2);
                     emp.setT2(600);
                 } else {
+                    distance+=WorkTime.v1;
                     emp.setCurr(WarehousingUtil.getPath(emp, WorkTime.v1));
                 }
             } else if (emp.getStatus() == 2) { //整理货物到托盘上
@@ -61,6 +62,7 @@ public class Putaway {
                     emp.setT1(WorkTime.t1);
                     WarehousingUtil.emptys1(emp.getTar(), 2, tally1);
                 } else {
+                    distance+=WorkTime.e_v0;
                     emp.setCurr(WarehousingUtil.getPath(emp, WorkTime.v0));
                 }
             } else if (emp.getStatus() == 4) {//卸货
@@ -77,6 +79,7 @@ public class Putaway {
                 if (emp.arrive()) {
                     emp.setStatus(6);
                 } else {
+                    distance+=WorkTime.e_v1;
                     emp.setCurr(WarehousingUtil.getPath(emp, WorkTime.e_v1));
                 }
             } else if (emp.getStatus() == 6) {//电梯下降
@@ -102,9 +105,29 @@ public class Putaway {
         }
         empLog.setComPlut(empNums/emps.size());
         empLog.setAllPlut(m/tally.getTorr());
+        empLog.setDistance(distance);
         return empLog;
     }
 
-
+    public static EmpLog work1(List<Emp> emps1, Tally tally, Tally tally1, List<Elevator> elevators, List<Cargo> cargos) {
+        EmpLog empLog = new EmpLog();
+        int m=0;
+        for (Emp emp:emps1) {
+            if (emp.getStatus() == 0 && emp.getT0()>0) {
+                emp.setStatus(1);
+                emp.setT1(WarehousingUtil.random(60,90));
+                emp.setCurr(new Point(0, 0, 0));
+            } else if (emp.getStatus() == 1) {
+                emp.fix1();
+                if (emp.getT1()==0){
+                    emp.setStatus(0);
+                    emp.fix();
+                }
+                m++;
+            }
+        }
+        empLog.setComPlut(m/emps1.size());
+        return  empLog;
+    }
 
 }
