@@ -1,5 +1,6 @@
 package com.ruoyi.warehousing.action;
 
+import com.ruoyi.warehousing.enumType.CarType;
 import com.ruoyi.warehousing.form.*;
 import com.ruoyi.warehousing.process.Putaway;
 import com.ruoyi.warehousing.process.Sorting;
@@ -7,6 +8,7 @@ import com.ruoyi.warehousing.queue.Order;
 import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.resource.equipment.Elevator;
 import com.ruoyi.warehousing.resource.equipment.LightStorage;
+import com.ruoyi.warehousing.resource.equipment.Tray;
 import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
 import com.ruoyi.warehousing.resource.facilities.platform.Platform;
 import com.ruoyi.warehousing.resource.personnel.Emp;
@@ -17,14 +19,17 @@ import com.ruoyi.warehousing.utils.DateUtils;
 import com.ruoyi.warehousing.utils.MathUtils;
 import com.ruoyi.warehousing.utils.RandomUtil;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static com.ruoyi.warehousing.utils.DateUtils.randomDate;
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.*;
 
 public class WarehousingUtil {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -37,10 +42,10 @@ public class WarehousingUtil {
         endTime = randomDate("2019-12-24 24:00:00", "2019-12-24 24:01:00");
     }
 
-    public static List<Platform> initPlat(double num) {
+    public static List<Platform> initPlat(double num,double platform_width) {
         List<Platform> platforms = new ArrayList<>();
         for (int i = 0; i < num; i++) {
-            platforms.add(new Platform("月台" + 1 + "号", 0, 0, new Point(0 + i * AreaUtils.platform_width, 0, 0)));
+            platforms.add(new Platform("月台" + 1 + "号", 0, 0, new Point(0 + i * platform_width, 0, 0)));
         }
         return platforms;
     }
@@ -99,6 +104,23 @@ public class WarehousingUtil {
         return point;
     }
 
+    /**
+     * 获取月台工作人员
+     *
+     * @param emp
+     * @return
+     */
+    public static Platform getPlatform(List<Platform> platforms) {
+        Platform point = new Platform();
+        for (Platform platform : platforms) {
+            if (platform.getStatus()==0) {
+              point = platform;
+              platform.setStatus(1);
+              return point;
+            }
+        }
+        return point;
+    }
 
     public static Point getPath(Emp emp, double num) {
         Point curr = emp.getCurr();
@@ -441,7 +463,26 @@ public class WarehousingUtil {
 //        tally1.setArea(points1);
         return tally1;
     }
+    /**
+     * 为每个物料分配物料名称
+     *
+     * @param
+     * @param rangeNum
+     * @return
+     */
+    public static List<Goods> createGoodsMessage(double rangeNum,List<Supplier> suppliers) {
+        List<Goods> materialList = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < rangeNum; i++) {
+            Goods material = new Goods();
+            material.setGoodsCode(RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
+            material.setVolume(initNormalDistribution1(100,0.05)[(int)random(0,99)]);
+            material.setSupplier(suppliers.get((int)random(0,suppliers.size())));
+            materialList.add(material);
+        }
+        return materialList;
 
+    }
     /**
      * 为每个物料分配物料名称
      *
@@ -457,7 +498,6 @@ public class WarehousingUtil {
             material.setGoodsCode(RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
             materialList.add(material);
         }
-
         return materialList;
 
     }
@@ -483,7 +523,6 @@ public class WarehousingUtil {
         for (Order order : orderList) {
             String OrderCode = "D" + RandomUtil.toFixdLengthString(random.nextInt(10000), 4);
             String orderDate = sdf.format(randomDate("2021-01-01 08:00:00", "2021-12-31 18:00:00"));
-
             order.setOrderCode(OrderCode);
             order.setGoodsCode(list.get((int)random(0,list.size())).getGoodsCode());
             order.setGoodsNum(random(0,5));
@@ -492,7 +531,6 @@ public class WarehousingUtil {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
         }
         return orderList;
     }
@@ -717,6 +755,82 @@ public class WarehousingUtil {
 
         return orderList;
     }
+
+    public static List<Car> initCar(List<Goods> list, double transportNum,String carLength) {
+        List<Car> carList = new ArrayList<>();
+        int carSize = Integer.parseInt(CarType.valueOf(carLength).getCode());
+        int carNum = (int)(Math.ceil(transportNum/carSize)*1.5);
+        Map<Supplier, List<Goods>> outOrdersList = list.stream().collect(Collectors.groupingBy(Goods::getSupplier));//出库单
+        List<List<Goods>> goodsList = new ArrayList<>();
+        for(Supplier supplier:outOrdersList.keySet()){
+            goodsList.add(outOrdersList.get(supplier));
+        }
+        Random random = new Random();
+        for(int i= 0;i<carNum;i++){
+            Car car=new Car();
+            car.setCarNo("川A"+RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
+            car.setArrinveTime(randomDate("2021-01-01 08:00:00", "2021-01-01 18:00:00"));
+            car.setPoint(new Point(0,0,0,1));
+            car.setGoodsList(goodsList.get(i%goodsList.size()));
+            List<Tray> trays = new ArrayList<>();
+            List<List<Goods>> goods =combinations(car.getGoodsList(),carSize);
+            for (int m=0;m<carSize;m++){
+                Tray tray  =new Tray(goods.get(m));
+                trays.add(tray);
+            }
+            car.setTrays(trays);
+            carList.add(car);
+        }
+        return  carList;
+    }
+
+
+    /**
+     * 从集合中取组合
+     * @param list
+     * @param k
+     * @param <T>
+     * @return
+     */
+    public static <T> List<List<T>> combinations(List<T> list, int k) {
+        if (k == 0 || list.isEmpty()) {//去除K大于list.size的情况。即取出长度不足K时清除此list
+            return Collections.emptyList();
+        }
+        if (k == 1) {//递归调用最后分成的都是1个1个的，从这里面取出元素
+            return list.stream().map(e -> Stream.of(e).collect(toList())).collect(toList());
+        }
+        Map<Boolean, List<T>> headAndTail = split(list, 1);
+        List<T> head = headAndTail.get(true);
+        List<T> tail = headAndTail.get(false);
+        List<List<T>> c1 = combinations(tail, (k - 1)).stream().map(e -> {
+            List<T> l = new ArrayList<>();
+            l.addAll(head);
+            l.addAll(e);
+            return l;
+        }).collect(toList());
+        List<List<T>> c2 = combinations(tail, k);
+        c1.addAll(c2);
+        return c1;
+    }
+
+    /**
+     *根据n将集合分成两组
+     **/
+    public static <T> Map<Boolean, List<T>> split(List<T> list, int n) {
+        return IntStream
+                .range(0, list.size())
+                .mapToObj(i -> new AbstractMap.SimpleEntry<>(i, list.get(i)))
+                .collect(partitioningBy(entry -> entry.getKey() < n, mapping(AbstractMap.SimpleEntry::getValue, toList())));
+    }
+
+    public static Tally initTally2(Tally tally) {
+        Tray tray =new Tray();
+        tally.initTally((int)tally.getTally_transverse(),(int)tally.getTally_longitudinal(),tally.forklift_channel,tally.tally_channel,tray.getWidth(),tray.getLength());
+        return tally;
+    }
+
+
+
 //    /***
 //     * 按照订单拣选
 //     */

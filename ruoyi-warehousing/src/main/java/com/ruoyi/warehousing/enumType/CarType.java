@@ -3,7 +3,7 @@ package com.ruoyi.warehousing.enumType;
 /**
  * 车辆类型枚举类
  */
-public enum Car {
+public enum CarType {
     小车4米6("12"),
     中车7米2("24"),
     大车9米6("32"),
@@ -11,7 +11,7 @@ public enum Car {
 
 
     private String code;
-    private Car(String code){
+    private CarType(String code){
         this.code = code;
     }
     public String getCode(){

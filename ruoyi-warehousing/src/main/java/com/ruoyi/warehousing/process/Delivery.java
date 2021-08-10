@@ -23,6 +23,7 @@ public class Delivery {
     public   static EmpLog move(List<Emp> emps, List<Platform> platforms, List<Point> doors, Tally tally) {
         EmpLog empLog = new EmpLog();
         int m = 0;
+        double distance = 0.0;
         for (Emp emp : emps) {
             if (emp.getStatus() != 0) {
                 m++;
@@ -34,6 +35,7 @@ public class Delivery {
                     emp.setStatus(2);
                     emp.setT0(WorkTime.t0);
                 } else {
+                    distance +=WorkTime.v0;
                     emp.setCurr(WarehousingUtil.getPath(emp,WorkTime.v0));
                 }
             } else if (emp.getStatus() == 2) {//处理卸货
@@ -51,6 +53,7 @@ public class Delivery {
                     emp.setTar(WarehousingUtil.getTally(tally));
                     WarehousingUtil.emptys(tally, emp.getCurr(),1);
                 } else {
+                    distance +=WorkTime.v1;
                     emp.setCurr(WarehousingUtil.getPath(emp,WorkTime.v1));
                 }
             } else if (emp.getStatus() == 4) {//去往理货区
@@ -58,6 +61,7 @@ public class Delivery {
                     emp.setStatus(5);
                     emp.setT1(WorkTime.t1);
                 } else {
+                    distance +=WorkTime.v1;
                     emp.setCurr(WarehousingUtil.getPath(emp,WorkTime.v1));
                 }
             } else if (emp.getStatus() == 5) {//将货物卸在理货区
@@ -75,6 +79,7 @@ public class Delivery {
                     emp.setStatus(1);
                     emp.setTar(WarehousingUtil.getPlatform(emp,platforms));
                 } else {
+                    distance +=WorkTime.v0;
                     emp.setCurr(WarehousingUtil.getPath(emp,WorkTime.v0));
                 }
             }

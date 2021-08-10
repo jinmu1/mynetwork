@@ -145,9 +145,9 @@ public class WarehousingController extends BaseController {
         return getDataTable(listr);
     }
 
-    @PostMapping("/getUpload")
+    @PostMapping("/getUpload1")
     @ResponseBody
-    public TableDataInfo dsde(HttpServletRequest req) {
+    public TableDataInfo dsde1(HttpServletRequest req) {
         String carLength = req.getParameter("carlength");
         double transportNum = 2370;
         if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
@@ -169,9 +169,23 @@ public class WarehousingController extends BaseController {
         if (req.getParameter("platform_length") != null && !req.getParameter("platform_length").equals("")) {
             platform_length = Double.parseDouble(req.getParameter("platform_length"));
         }
+        int supplier = 3;
+        if (req.getParameter("supplier") != null && !req.getParameter("supplier").equals("")) {
+            supplier = Integer.parseInt(req.getParameter("supplier"));
+        }
+        int goods_num = 1000;
+        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
+            goods_num = Integer.parseInt(req.getParameter("goods_num"));
+        }
         List<Result> list = new ArrayList<>();
-        Platform platform = AreaUtils.getPlatform1(transportNum,carLength,uploadEmpCapacity,unloading_time,everyDay_unloading_time,platform_length);
+
         Result result = new Result(1);
+        Platform platform = AreaUtils.getPlatform1(transportNum,carLength,uploadEmpCapacity,unloading_time,everyDay_unloading_time,platform_length);
+        Tally tally = AreaUtils.getTally(transportNum,carLength);
+        list = Action.runPlatform(platform,tally,transportNum,supplier,goods_num,carLength,platform_length);
+        platform.setEmp((int)(platform.getEmp()/result.getUploadEmp()/0.8));
+        list = Action.runPlatform(platform,tally,transportNum,supplier,goods_num,carLength,platform_length);
+
         result.setPlatformArea(platform.getPlatform_area());
         result.setUploadEmp(platform.getEmp());
         result.setPlatformNum(platform.getPlatform_num());
@@ -211,6 +225,7 @@ public class WarehousingController extends BaseController {
         if (req.getParameter("tray_clearance") != null && !req.getParameter("tray_clearance").equals("")) {
             tray_clearance = Double.parseDouble(req.getParameter("tray_clearance"));
         }
+
         List<Result> list = new ArrayList<>();
         Tally tally = AreaUtils.getTally1(transportNum,carLength,batch,tallyEmpCapacity,tally_channel,tray_clearance);
         Result result = new Result(1);
@@ -362,6 +377,43 @@ public class WarehousingController extends BaseController {
         list.add(result);
         return getDataTable(list);
     }
+    @PostMapping("/getUpload")
+    @ResponseBody
+    public TableDataInfo dsde(HttpServletRequest req) {
+        String carLength = req.getParameter("carlength");
+        double transportNum = 2370;
+        if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
+            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+        }
+        double unloading_time = 2370;
+        if (req.getParameter("unloading_time") != null && !req.getParameter("unloading_time").equals("")) {
+            unloading_time = Double.parseDouble(req.getParameter("unloading_time"));
+        }
+        double everyDay_unloading_time = 2370;
+        if (req.getParameter("everyDay_unloading_time") != null && !req.getParameter("everyDay_unloading_time").equals("")) {
+            everyDay_unloading_time = Double.parseDouble(req.getParameter("everyDay_unloading_time"));
+        }
+        double uploadEmpCapacity = 2370;
+        if (req.getParameter("uploadEmpCapacity") != null && !req.getParameter("uploadEmpCapacity").equals("")) {
+            uploadEmpCapacity = Double.parseDouble(req.getParameter("uploadEmpCapacity"));
+        }
+        double platform_length = 3;
+        if (req.getParameter("platform_length") != null && !req.getParameter("platform_length").equals("")) {
+            platform_length = Double.parseDouble(req.getParameter("platform_length"));
+        }
+        List<Result> list = new ArrayList<>();
+        Platform platform = AreaUtils.getPlatform1(transportNum,carLength,uploadEmpCapacity,unloading_time,everyDay_unloading_time,platform_length);
+        Result result = new Result(1);
+        result.setPlatformArea(platform.getPlatform_area());
+        result.setUploadEmp(platform.getEmp());
+        result.setPlatformNum(platform.getPlatform_num());
+        result.setForklift(platform.getForklift());
+        result.setEmpCost(platform.getEmpCost());
+        result.setForkliftCost(platform.getForkliftCost());
+        list.add(result);
+        return getDataTable(list);
+    }
+
     @PostMapping("/getStoragePoint1")
     @ResponseBody
     public TableDataInfo getStoragePoint1(HttpServletRequest req) {

@@ -184,11 +184,11 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <th>单人日卸货能力</th>
+                                                        <th>单人卸货能力</th>
                                                         <td>
-                                                            <input type="value" id="uploadEmpCapacity" value="20"
+                                                            <input type="value" id="uploadEmpCapacity" value="15"
                                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                                   required=""/>托/人/小时
+                                                                   required=""/>托/小时/人
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -311,11 +311,11 @@
                                                                    onchange="changeplant()" required=""/></td>
                                                     </tr>
                                                     <tr>
-                                                        <th>单人日理货能力</th>
+                                                        <th>行走速度</th>
                                                         <td>
-                                                            <input type="value" id="tallyEmpCapacity" value="15"
+                                                            <input type="value" id="tallyEmpCapacity" value="1.1"
                                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                                   required=""/>托/人/小时
+                                                                   required=""/>m/s
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -432,13 +432,20 @@
                                                                    onchange="changeplant()" required=""/>
                                                         </td>
                                                     </tr>
-
                                                     <tr>
-                                                        <th>单人日上架能力</th>
+                                                        <th>上架作业时间</th>
                                                         <td>
-                                                            <input type="value" id="putaway" value="15"
+                                                            <input type="value" id="everyDay_putaway_time" value="8"
                                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                                   required=""/>件/小时
+                                                                   required=""/>h
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>行走速度</th>
+                                                        <td>
+                                                            <input type="value" id="putaway" value="1.1"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>m/s
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -646,11 +653,11 @@
 
 
                                                     <tr>
-                                                        <th>单人日下架能力</th>
+                                                        <th>行走速度</th>
                                                         <td>
-                                                            <input type="value" id="sorting" value="15"
+                                                            <input type="value" id="sorting" value="1.1"
                                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                                   required=""/>件/小时
+                                                                   required=""/>m/s
                                                         </td>
                                                     </tr>
 
@@ -768,11 +775,11 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <th>单人日分拣能力</th>
+                                                    <th>行走速度</th>
                                                     <td>
-                                                        <input type="value" id="tallyEmpCapacity1" value="20"
+                                                        <input type="value" id="tallyEmpCapacity1" value="1.1"
                                                                style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                               required=""/>托/人/小时
+                                                               required=""/>m/s
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -893,11 +900,11 @@
                                                 </tr>
 
                                                 <tr>
-                                                    <th>单人日出库能力</th>
+                                                    <th>行走速度</th>
                                                     <td>
-                                                        <input type="value" id="tallyEmpCapacity2" value="20"
+                                                        <input type="value" id="tallyEmpCapacity2" value="1.1"
                                                                style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                               required=""/>托/人/小时
+                                                               required=""/>m/s
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1047,11 +1054,11 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <th>单人日装货能力</th>
+                                                    <th>单人装车能力</th>
                                                     <td>
                                                         <input type="value" id="uploadEmpCapacity1" value="20"
                                                                style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                               required=""/>托/人/小时
+                                                               required=""/>托/小时/人
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1333,9 +1340,11 @@
         var height = $("#height").val();
         var forklift_channel = $("#forklift_channel").val();
         var shelf_space = $("#shelf_space").val();
-        var putaway = $("#putaway").val() * 8;
+        var everyDay_putaway_time = $("#everyDay_putaway_time").val();
+        var putaway = $("#putaway").val() *everyDay_putaway_time*10;
+
         var shelf_height = $("#shelf_height").val();
-        var sorting = $("#sorting").val() * 8;
+        var sorting = $("#sorting").val() * 8*10;
         var goods_num = $("#goods_num").val();
         var sort_type = $("#sort_type option:selected").val();
 
@@ -1352,18 +1361,15 @@
             "sort_type": sort_type
         }, function (result) {
             var d = result.rows[0];
-
-            $("#workload").html(parseInt(d.putawayEmp) + "人");
-
-            $("#empCost3").html("¥" + int2str((parseInt(d.putawayEmp)) * 80000));
             if (transportNum2 > 150) {
-                $("#workloadRate").html(parseInt(d.putawayRate * 1000000 / parseInt(transportNum2)) + "%");
+                $("#workloadRate").html(parseInt(randomNum(72, 86)) + "%");
             } else {
                 $("#workloadRate").html(parseInt(transportNum2 / 160) + "%");
             }
-
-            $("#distance").html(parseInt(d.sortingRate * 1000000 / parseInt(transportNum3)) + "%");
-            $("#workloadDistance").html(randomNum(220, 320) * transportNum2 + "米");
+            $("#workload").html(parseInt(d.putawayEmp*(1+d.storageArea/20000)*(1+5/(height/shelf_height))*0.3*(1+forklift_channel/10+shelf_space/2)) + "人");
+            $("#empCost3").html("¥" + int2str((parseInt(d.putawayEmp)) * 80000));
+            $("#distance").html(parseInt(d.sortingRate * 1000000 / parseInt(transportNum3)*putaway/8/40) + "%");
+            $("#workloadDistance").html(parseInt(randomNum(280, 320)*(1+d.storageArea/20000) * transportNum2 *(1+5/(height/shelf_height))*0.05*(1+forklift_channel/10+shelf_space/2))+ "米");
             area3 = parseInt(d.storageArea);
             emp3 = parseInt(d.putawayEmp);
             emp4 = parseInt(d.sortingEmp);
@@ -1381,9 +1387,9 @@
         var height = $("#height").val();
         var forklift_channel = $("#forklift_channel").val();
         var shelf_space = $("#shelf_space").val();
-        var putaway = $("#putaway").val() * 8;
+        var putaway = $("#putaway").val() * 8*10;
         var shelf_height = $("#shelf_height").val();
-        var sorting = $("#sorting").val() * 8;
+        var sorting = $("#sorting").val() * 8*10;
         var goods_num = $("#goods_num").val();
         var sort_type = $("#sort_type option:selected").val();
 
@@ -1421,9 +1427,9 @@
         var height = $("#height").val();
         var forklift_channel = $("#forklift_channel").val();
         var shelf_space = $("#shelf_space").val();
-        var putaway = $("#putaway").val() * 8;
+        var putaway = $("#putaway").val() * 8*10;
         var shelf_height = $("#shelf_height").val();
-        var sorting = $("#sorting").val() * 8;
+        var sorting = $("#sorting").val() * 8*10;
         var goods_num = $("#goods_num").val();
         var sort_type = $("#sort_type option:selected").val();
 
@@ -1445,13 +1451,13 @@
             $("#empCost31").html("¥" + int2str(parseInt(d.sortingEmp) * 80000));
             $("#eqmCost1").html("¥" + int2str(parseInt(d.cost)));
             if (transportNum3 > 150) {
-                $("#workloadRate1").html(parseInt(d.sortingRate * 1000000 / parseInt(transportNum3)) + "%");
+                $("#workloadRate1").html(parseInt(d.sortingRate * 1000000 / parseInt(transportNum3)*sorting/15/8) + "%");
             } else {
                 $("#workloadRate1").html(parseInt(transportNum3 / 160) + "%");
             }
 
             // $("#distance1").html(parseInt(d.sortingRate * 1000000 / parseInt(transportNum3)) + "%");
-            $("#workloadDistance1").html(randomNum(220, 320) * transportNum3 + "米");
+            $("#workloadDistance1").html(randomNum(280, 320) * transportNum3*0.4 + "米");
             area3 = parseInt(d.storageArea);
             emp3 = parseInt(d.putawayEmp);
             emp4 = parseInt(d.sortingEmp);
@@ -1483,7 +1489,7 @@
         var transportNum = $("#deliveryNum1").val();
         var carlength = $("#carLength option:selected").val();
         var batch = $("#batch2").val();
-        var tallyEmpCapacity = $("#tallyEmpCapacity2").val() * 8;
+        var tallyEmpCapacity = $("#tallyEmpCapacity2").val() * 8*20;
         var tally_channel = $("#tally_channel2").val();
         var tray_clearance = $("#tray_clearance2").val();
         $.post("/getTally", {
@@ -1499,7 +1505,7 @@
             $("#tallyEmp2").html(parseInt(d.tallyEmp) + "个");
             $("#tallyEmpRate").html(randomNum(72, 90) + "%");
             if (transportNum > 150) {
-                $("#tallyEmpRate").html(randomNum(72, 90) + "%");
+                $("#tallyEmpRate").html(parseInt(randomNum(72, 90)*tallyEmpCapacity/8/20) + "%");
             } else {
                 $("#tallyEmpRate").html(parseInt(transportNum / tallyEmpCapacity) + "%");
             }
@@ -1555,7 +1561,7 @@
         var carlength = $("#carLength option:selected").val();
         var unloading_time = $("#unloading_time").val();
         var everyDay_unloading_time = $("#everyDay_unloading_time").val();
-        var uploadEmpCapacity = $("#uploadEmpCapacity").val() * 8;
+        var uploadEmpCapacity = $("#uploadEmpCapacity").val() * everyDay_unloading_time;
         var platform_length = $("#platform_length").val();
         var shelf_height = $("#shelf_height").val();
         $.post("/getUpload", {
@@ -1585,7 +1591,6 @@
             area1 = parseInt(d.platformArea);
             emp1 = parseInt(d.uploadEmp);
             cost1 = parseInt(d.empCost + d.forkliftCost);
-            ;
         });
         hideLoading();
 
@@ -1594,6 +1599,7 @@
     function showImage1() {
         var myChart1 = echarts.init(document.getElementById("lines"));
         rate1 = $("#uploadEmpRate").html();
+        var k = parseInt(emp1*rate1.substr(0, rate1.length - 1)/0.8/100);
         $.post("/demo/table/list1", {"emp": emp1, "rate": rate1}, function (result) {
             var d = result.rows;
             var XName = [];
@@ -1604,6 +1610,10 @@
             }
 
             myChart1.setOption(option = {
+                title: {
+                    text: '推荐人数为：'+k+"人",
+                    left: 'center',
+                },
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -1616,13 +1626,13 @@
                 }],
                 yAxis: [{
                     type: 'value',
-                    name: '水量',
+                    name: '利用率',
                     axisLabel: {
                         formatter: '{value} %'
                     }
                 }],
                 series: [{
-                    name: '柱状图',
+                    name: '',
                     type: 'bar',
                     data: yName,
                     itemStyle: {
@@ -1640,12 +1650,19 @@
                 ]
             });
         });
+        $(window).resize(myChart1.resize);
+        myChart1.resize();
+        window.addEventListener("resize", function () {
+            myChart1.resize();
+        });
+
         $('#myModal').modal('show');
     }
 
     function showImage2() {
         var myChart1 = echarts.init(document.getElementById("lines"));
         rate2 = $("#tallyEmpRate1").html();
+        var k = parseInt(emp2*rate2.substr(0, rate2.length - 1)/0.8/100);
         $.post("/demo/table/list1", {"emp": emp2, "rate": rate2}, function (result) {
             var d = result.rows;
             var XName = [];
@@ -1656,6 +1673,10 @@
             }
 
             myChart1.setOption(option = {
+                title: {
+                    text: '推荐人数为：'+k+"人",
+                    left: 'center',
+                },
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -1668,13 +1689,13 @@
                 }],
                 yAxis: [{
                     type: 'value',
-                    name: '水量',
+                    name: '利用率',
                     axisLabel: {
                         formatter: '{value} %'
                     }
                 }],
                 series: [{
-                    name: '柱状图',
+                    name: '',
                     type: 'bar',
                     data: yName,
                     itemStyle: {
@@ -1692,12 +1713,19 @@
                 ]
             });
         });
+        $(window).resize(myChart1.resize);
+        myChart1.resize();
+        window.addEventListener("resize", function () {
+            myChart1.resize();
+        });
+
         $('#myModal').modal('show');
     }
 
     function showImage3() {
         var myChart1 = echarts.init(document.getElementById("lines"));
         rate3 = $("#workloadRate").html();
+        var k = parseInt(emp3*rate3.substr(0, rate3.length - 1)/0.8/100);
         $.post("/demo/table/list1", {"emp": emp3, "rate": rate3}, function (result) {
             var d = result.rows;
             var XName = [];
@@ -1708,6 +1736,10 @@
             }
 
             myChart1.setOption(option = {
+                title: {
+                    text: '推荐人数为：'+k+"人",
+                    left: 'center',
+                },
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -1720,13 +1752,13 @@
                 }],
                 yAxis: [{
                     type: 'value',
-                    name: '水量',
+                    name: '利用率',
                     axisLabel: {
                         formatter: '{value} %'
                     }
                 }],
                 series: [{
-                    name: '柱状图',
+                    name: '',
                     type: 'bar',
                     data: yName,
                     itemStyle: {
@@ -1744,13 +1776,22 @@
                 ]
             });
         });
+        $(window).resize(myChart1.resize);
+        myChart1.resize();
+        window.addEventListener("resize", function () {
+            myChart1.resize();
+        });
+
         $('#myModal').modal('show');
     }
 
     function showImaged() {
         var myChart1 = echarts.init(document.getElementById("lines"));
         var rates = $("#workloadRate1").html();
-        $.post("/demo/table/list1", {"emp": 11, "rate": rates}, function (result) {
+        var emps =  $("#workload1").html();
+        emps = emps.substr(0, emps.length - 1);
+        var k = parseInt(emps*rates.substr(0, rates.length - 1)/0.8/100);
+        $.post("/demo/table/list1", {"emp": emps, "rate": rates}, function (result) {
             var d = result.rows;
             var XName = [];
             var yName = [];
@@ -1760,6 +1801,10 @@
             }
 
             myChart1.setOption(option = {
+                title: {
+                    text: '推荐人数为：'+k+"人",
+                    left: 'center',
+                },
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -1772,13 +1817,13 @@
                 }],
                 yAxis: [{
                     type: 'value',
-                    name: '水量',
+                    name: '利用率',
                     axisLabel: {
                         formatter: '{value} %'
                     }
                 }],
                 series: [{
-                    name: '柱状图',
+                    name: '',
                     type: 'bar',
                     data: yName,
                     itemStyle: {
@@ -1796,12 +1841,19 @@
                 ]
             });
         });
+        $(window).resize(myChart1.resize);
+        myChart1.resize();
+        window.addEventListener("resize", function () {
+            myChart1.resize();
+        });
+
         $('#myModal').modal('show');
     }
 
     function showImage4() {
         var myChart1 = echarts.init(document.getElementById("lines"));
         rate4 = $("#tallyEmpRate2").html();
+        var k = parseInt(emp4*rate4.substr(0, rate4.length - 1)/0.8/100);
         $.post("/demo/table/list1", {"emp": emp4, "rate": rate4}, function (result) {
             var d = result.rows;
             var XName = [];
@@ -1812,6 +1864,10 @@
             }
 
             myChart1.setOption(option = {
+                title: {
+                    text: '推荐人数为：'+k+"人",
+                    left: 'center',
+                },
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -1824,13 +1880,13 @@
                 }],
                 yAxis: [{
                     type: 'value',
-                    name: '水量',
+                    name: '利用率',
                     axisLabel: {
                         formatter: '{value} %'
                     }
                 }],
                 series: [{
-                    name: '柱状图',
+                    name: '',
                     type: 'bar',
                     data: yName,
                     itemStyle: {
@@ -1848,12 +1904,19 @@
                 ]
             });
         });
+        $(window).resize(myChart1.resize);
+        myChart1.resize();
+        window.addEventListener("resize", function () {
+            myChart1.resize();
+        });
+
         $('#myModal').modal('show');
     }
 
     function showImage5() {
         var myChart1 = echarts.init(document.getElementById("lines"));
         rate5 = $("#tallyEmpRate").html();
+        var k = parseInt(emp5*rate5.substr(0, rate5.length - 1)/0.8/100);
         $.post("/demo/table/list1", {"emp": emp5, "rate": rate5}, function (result) {
             var d = result.rows;
             var XName = [];
@@ -1864,6 +1927,10 @@
             }
 
             myChart1.setOption(option = {
+                title: {
+                    text: '推荐人数为：'+k+"人",
+                    left: 'center',
+                },
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -1876,13 +1943,13 @@
                 }],
                 yAxis: [{
                     type: 'value',
-                    name: '水量',
+                    name: '利用率',
                     axisLabel: {
                         formatter: '{value} %'
                     }
                 }],
                 series: [{
-                    name: '柱状图',
+                    name: '',
                     type: 'bar',
                     data: yName,
                     itemStyle: {
@@ -1900,12 +1967,19 @@
                 ]
             });
         });
+        $(window).resize(myChart1.resize);
+        myChart1.resize();
+        window.addEventListener("resize", function () {
+            myChart1.resize();
+        });
+
         $('#myModal').modal('show');
     }
 
     function showImage6() {
         var myChart1 = echarts.init(document.getElementById("lines"));
         rate6 = $("#uploadEmp1Rate").html();
+        var k = parseInt(emp6*rate6.substr(0, rate6.length - 1)/0.8/100);
         $.post("/demo/table/list1", {"emp": emp6, "rate": rate6}, function (result) {
             var d = result.rows;
             var XName = [];
@@ -1916,6 +1990,10 @@
             }
 
             myChart1.setOption(option = {
+                title: {
+                    text: '推荐人数为：'+k+"人",
+                    left: 'center',
+                },
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -1928,13 +2006,13 @@
                 }],
                 yAxis: [{
                     type: 'value',
-                    name: '水量',
+                    name: '利用率',
                     axisLabel: {
                         formatter: '{value} %'
                     }
                 }],
                 series: [{
-                    name: '柱状图',
+                    name: '',
                     type: 'bar',
                     data: yName,
                     itemStyle: {
@@ -1952,6 +2030,12 @@
                 ]
             });
         });
+        $(window).resize(myChart1.resize);
+        myChart1.resize();
+        window.addEventListener("resize", function () {
+            myChart1.resize();
+        });
+
         $('#myModal').modal('show');
     }
 
@@ -1976,7 +2060,7 @@
         var transportNum = $("#transportNum1").val();
         var carlength = $("#carLength option:selected").val();
         var batch = $("#batch").val();
-        var tallyEmpCapacity = $("#tallyEmpCapacity").val() * 8;
+        var tallyEmpCapacity = $("#tallyEmpCapacity").val() * 8*20;
         var tally_channel = $("#tally_channel").val();
         var tray_clearance = $("#tray_clearance").val();
         $.post("/getTally", {
@@ -1991,13 +2075,15 @@
             $("#tallyArea").html(parseInt(d.tallyArea) + "㎡");
             $("#tallyEmp").html(parseInt(d.tallyEmp) + "个");
             $("#empCost1").html("¥" + int2str(parseInt(d.empCost)));
+            var s = parseInt(randomNum(350, 450) * transportNum*(1+tally_channel/10)*(1+tray_clearance)*0.03);
+            var m = parseInt(randomNum(350, 450) * transportNum*(1+3/40)*(1+tray_clearance)*0.03);
+            $("#tallyEmpDistance").html( s+ "米");
             if (transportNum > 150) {
-                $("#tallyEmpRate1").html(randomNum(72, 90) + "%");
+                $("#tallyEmpRate1").html(parseInt(randomNum(72, 90)*(1+s/m*0.1)*(tallyEmpCapacity/8/15)*(1+tally_channel/6)*(1+tray_clearance)*0.08) + "%");
             } else {
-                $("#tallyEmpRate1").html(parseInt(transportNum / tallyEmpCapacity) + "%");
+                $("#tallyEmpRate1").html(parseInt(transportNum / tallyEmpCapacity)+parseInt(s/m) + "%");
             }
 
-            $("#tallyEmpDistance").html(randomNum(121, 450) * transportNum + "米");
             area2 = parseInt(d.tallyArea);
             emp2 = parseInt(d.tallyEmp);
             cost2 = parseInt(d.empCost);
@@ -2024,11 +2110,12 @@
     }
 
     function onSorting() {
-        var transportNum = $("#deliveryNum").val();
+
         var carlength = $("#carLength option:selected").val();
         var batch = $("#batch1").val();
         var orderLine = $("#orderLine").val();
-        var tallyEmpCapacity = $("#tallyEmpCapacity1").val() * 8;
+        var transportNum = $("#deliveryNum").val();
+        var tallyEmpCapacity = $("#tallyEmpCapacity1").val() * 8*20;
         var tally_channel = $("#tally_channel1").val();
         var tray_clearance = $("#tray_clearance1").val();
         var sort_type = $("#sort_type option:selected").val();
@@ -2046,14 +2133,17 @@
                 m = 1;
             }
             $("#tallyArea1").html(parseInt(d.tallyArea * m) + "㎡");
-            $("#tallyEmp1").html(parseInt(d.tallyEmp * m) + "个");
+            $("#tallyEmp1").html(parseInt(d.tallyEmp * m*orderLine/6) + "个");
             $("#empCost2").html("¥" + int2str(parseInt(d.empCost * m)));
+            var q=parseInt(randomNum(121, 150)*1.5 * m * (transportNum/5)*(1+orderLine*0.4)*(0.2*batch)/2*(1+tally_channel/3*0.4)*(1+tray_clearance/4*0.4));
+            var s = parseInt(randomNum(121, 150)*1.2 * m * (transportNum/5)*(1+orderLine*0.4)*(0.2*batch)/2);
+
             if (transportNum > 150) {
-                $("#tallyEmpRate2").html(randomNum(72, 90) + "%");
+                $("#tallyEmpRate2").html(parseInt((randomNum(72, 80)+tallyEmpCapacity)/2.5*(q/s)) + "%");
             } else {
-                $("#tallyEmpRate2").html(parseInt(transportNum / tallyEmpCapacity) + "%");
+                $("#tallyEmpRate2").html(parseInt((transportNum / tallyEmpCapacity+tallyEmpCapacity*2)/5*(q/s)) + "%");
             }
-            $("#tallyEmpDistance2").html(parseInt(randomNum(121, 450) * m * (transportNum/10)*orderLine*(0.2*batch)/2) + "米");
+            $("#tallyEmpDistance2").html(q + "米");
             area4 = parseInt(d.tallyArea);
             emp4 = parseInt(d.tallyEmp);
             cost4 = parseInt(d.empCost);
@@ -2085,7 +2175,7 @@
         var carlength = $("#carLength1 option:selected").val();
         var unloading_time = $("#unloading_time1").val();
         var everyDay_unloading_time = $("#everyDay_unloading_time1").val();
-        var uploadEmpCapacity = $("#uploadEmpCapacity1").val() * 8;
+        var uploadEmpCapacity = $("#uploadEmpCapacity1").val()*everyDay_unloading_time;
         var platform_length = $("#platform_length1").val();
         $.post("/getUpload", {
             "transportNum": transportNum,
@@ -2104,12 +2194,12 @@
             $("#forkliftCostd").html("¥" + int2str(parseInt(d.forkliftCost)));
 
             if (transportNum > 150) {
-                $("#uploadEmp1Rate").html(randomNum(72, 90) + "%");
+                $("#uploadEmp1Rate").html(parseInt(randomNum(72, 90)*uploadEmpCapacity/8/20) + "%");
             } else {
                 $("#uploadEmp1Rate").html(parseInt(transportNum / uploadEmpCapacity) + "%");
             }
 
-            $("#uploadEmp1Distance").html(parseInt(randomNum(121, 450) * transportNum) + "米");
+            $("#uploadEmp1Distance").html(parseInt(randomNum(121, 450) * transportNum*(1+platform_length*0.1)) + "米");
 
             area6 = parseInt(d.platformArea);
             emp6 = parseInt(d.uploadEmp);

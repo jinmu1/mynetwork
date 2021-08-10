@@ -1,5 +1,8 @@
 package com.ruoyi.warehousing.form;
 
+import com.ruoyi.warehousing.queue.Point;
+import com.ruoyi.warehousing.resource.equipment.Tray;
+
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +18,8 @@ public class Car {
     private int tora; //托数
     private Date arrinveTime;//到达时间
     private Date leaveTime;//离开时间
+    private Point point;
+    private List<Tray> trays;
     public Car() {
         super();
     }
@@ -32,6 +37,23 @@ public class Car {
         this.arrinveTime = arrinveTime;
         this.tora = tora;
     }
+
+    public Point getPoint() {
+        return point;
+    }
+
+    public void setPoint(Point point) {
+        this.point = point;
+    }
+
+    public List<Tray> getTrays() {
+        return trays;
+    }
+
+    public void setTrays(List<Tray> trays) {
+        this.trays = trays;
+    }
+
     public String getCarNo() {
         return carNo;
     }

@@ -4,6 +4,7 @@ import com.ruoyi.warehousing.form.Goods;
 import com.ruoyi.warehousing.queue.Order;
 import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.resource.equipment.Elevator;
+import com.ruoyi.warehousing.resource.equipment.Tray;
 
 import java.util.List;
 
@@ -18,12 +19,20 @@ public class Emp {
     private  double e_t0;//进入电梯的时间
     private int status;//工作状态 0-没工作,1-到达月台,2-装,3-达到门,4-到达理货区,5-卸货,6-理货区到门,7-门到月台
     private Elevator elevator;
+    private Tray tary;
     private Point curr;//当前位置
     private Point tar;//目标位置
     private List<Goods> goods;
     private List<Order> orders;
+    private double distance;
 
+    public double getDistance() {
+        return distance;
+    }
 
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
 
     public Emp(String name, int status, Point curr) {
         this.name = name;
@@ -69,6 +78,14 @@ public class Emp {
         }else {
             return false;
         }
+    }
+
+    public Tray getTary() {
+        return tary;
+    }
+
+    public void setTary(Tray tary) {
+        this.tary = tary;
     }
 
     public double getE_t0() {

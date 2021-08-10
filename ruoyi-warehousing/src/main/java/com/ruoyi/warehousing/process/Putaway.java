@@ -3,6 +3,7 @@ package com.ruoyi.warehousing.process;
 
 import com.ruoyi.warehousing.form.Cargo;
 import com.ruoyi.warehousing.resource.equipment.Elevator;
+import com.ruoyi.warehousing.resource.equipment.LightStorage;
 import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
 import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.form.WorkTime;
@@ -22,16 +23,16 @@ public class Putaway {
      * @param elevators 电梯
      * @param cargos  货位
      */
-    public static EmpLog work(List<Emp> emps, Tally tally, Tally tally1, List<Elevator> elevators, List<Cargo> cargos) {
+    public static EmpLog work(List<Emp> emps, Tally tally, Tally tally1, List<Elevator> elevators, LightStorage storage) {
         EmpLog empLog = new EmpLog();
         int m = 0;
         double distance = 0.0;
         int empNums = 0;
         for (Emp emp : emps) {
             if (emp.getStatus() == 0 &&emp.getOrders().size()>0) {
-//                emp.setStatus(1);
-//                emp.setCurr(new Point(0,0,0));
-//                emp.setTar(WarehousingUtil.getTally(tally));
+                emp.setStatus(1);
+                emp.setCurr(new Point(0,0,0));
+                emp.setTar(WarehousingUtil.getTally(tally));
                 empNums++;
              
             }
@@ -65,7 +66,7 @@ public class Putaway {
                     distance+=WorkTime.e_v0;
                     emp.setCurr(WarehousingUtil.getPath(emp, WorkTime.v0));
                 }
-            } else if (emp.getStatus() == 4) {//卸货
+            } else if (emp.getStatus() == 4) {//装货
                 if (emp.getT1() > 0) {
                     emp.fix1();
                 } else {
@@ -73,16 +74,16 @@ public class Putaway {
                     tally1.add();
                     tally1.add(emp.getGoods());
                     emp.setGoods(new ArrayList<>());
-                    emp.setTar(WarehousingUtil.getTally(tally));
+                    emp.setTar(storage.getEmpTar(emp));
                 }
-            } else if (emp.getStatus() == 5) {//推入电梯
+            } else if (emp.getStatus() == 5) {//到达存储区
                 if (emp.arrive()) {
                     emp.setStatus(6);
                 } else {
                     distance+=WorkTime.e_v1;
                     emp.setCurr(WarehousingUtil.getPath(emp, WorkTime.e_v1));
                 }
-            } else if (emp.getStatus() == 6) {//电梯下降
+            } else if (emp.getStatus() == 6) {//上架
                 if (emp.eleArrive()) {
                     emp.setStatus(7);
                     emp.getElevator().getTar().setZ(0);

@@ -1,7 +1,7 @@
 package com.ruoyi.warehousing.utils;
 
 
-import com.ruoyi.warehousing.enumType.Car;
+import com.ruoyi.warehousing.enumType.CarType;
 import com.ruoyi.warehousing.enumType.StorageType;
 import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
 import com.ruoyi.warehousing.resource.facilities.platform.Platform;
@@ -69,8 +69,8 @@ public  class AreaUtils {
      * @param
      * @return
      */
-    public static Platform getPlatform(double  total, String CarType){
-        double car_volumetric = Double.parseDouble(Car.valueOf(CarType).getCode());//计算车辆容积 通过车辆类型
+    public static Platform getPlatform(double  total, String carType){
+        double car_volumetric = Double.parseDouble(CarType.valueOf(carType).getCode());//计算车辆容积 通过车辆类型
         platform_width = 3 * 1.25;
 
         double car_num = Math.ceil(total/volumetric_coefficient/car_volumetric);//计算车辆数量 通过车辆容积
@@ -93,8 +93,8 @@ public  class AreaUtils {
      * @param
      * @return
      */
-    public static Platform getPlatform1(double  total, String CarType,double uploadEmpCapacity,double unloading_time,double everyDay_unloading_time , double platform_length){
-        double car_volumetric = Double.parseDouble(Car.valueOf(CarType).getCode());//计算车辆容积 通过车辆类型
+    public static Platform getPlatform1(double  total, String carType,double uploadEmpCapacity,double unloading_time,double everyDay_unloading_time , double platform_length){
+        double car_volumetric = Double.parseDouble(CarType.valueOf(carType).getCode());//计算车辆容积 通过车辆类型
         platform_width = 3 * 1.25;
         double milk_run = 1;
         double car_num = Math.ceil(total/volumetric_coefficient/car_volumetric)*milk_run;//计算车辆数量 通过车辆容积

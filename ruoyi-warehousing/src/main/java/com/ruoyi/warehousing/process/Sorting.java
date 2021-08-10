@@ -3,6 +3,7 @@ package com.ruoyi.warehousing.process;
 import com.ruoyi.warehousing.form.Cargo;
 import com.ruoyi.warehousing.form.Goods;
 import com.ruoyi.warehousing.queue.Order;
+import com.ruoyi.warehousing.resource.equipment.LightStorage;
 import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
 import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.form.WorkTime;
@@ -23,10 +24,10 @@ public class Sorting {
     /***
      * 分拣流程数据
      * @param emps
-     * @param cargos
+     * @param
      * @param tally
      */
-    public static EmpLog move(List<Emp> emps, List<Cargo> cargos, Tally tally){
+    public static EmpLog move(List<Emp> emps, LightStorage storage, Tally tally){
         EmpLog empLog = new EmpLog();
         int m=0;
         int n=0;
@@ -53,13 +54,12 @@ public class Sorting {
                             }
                         }
                         if (goodsd.getGoodsCode() != null) {
-                            for (Cargo cargo : cargos) {
+                            for (Cargo cargo : storage.getCargos()) {
                                 if (cargo.getGoods() != null && cargo.getPoint() != null && cargo.getGoods().getGoodsCode() != null && goodsd != null && cargo.getGoods().getGoodsCode().equals(goodsd.getGoodsCode())) {
                                     point = cargo.getPoint();
                                 }
                             }
                         } else {
-                            point = new Point(65, 10, 15);
                             tally.getOrders().add(emp.getOrders().get(0));
                             if (emp.getOrders().size()>1) {
                                 emp.getOrders().remove(0);
@@ -88,7 +88,7 @@ public class Sorting {
                             }
                         }
                         if (goodsd.getGoodsCode() != null) {
-                            for (Cargo cargo : cargos) {
+                            for (Cargo cargo : storage.getCargos()) {
                                 if (cargo.getGoods() != null && cargo.getPoint() != null && cargo.getGoods().getGoodsCode() != null && goodsd != null && cargo.getGoods().getGoodsCode().equals(goodsd.getGoodsCode())) {
                                     point = cargo.getPoint();
                                 }
