@@ -1,9 +1,11 @@
 package com.ruoyi.warehousing.resource.facilities.platform;
 
 import com.ruoyi.warehousing.action.WarehousingUtil;
+import com.ruoyi.warehousing.enumType.CarType;
 import com.ruoyi.warehousing.form.Car;
 import com.ruoyi.warehousing.form.Goods;
 import com.ruoyi.warehousing.queue.Point;
+import com.ruoyi.warehousing.resource.personnel.Emp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,7 @@ public class Platform {
     private Car carLine;//车辆队列
     private String code;//编号
     private Point position;//位置
-    private int emp;//月台人员数量
+
     private int sign;//签单
     private int status;//状态 0-无车辆等待 1-有车辆等待 -1车辆签单状态
     private List<Goods> goodsList;
@@ -29,22 +31,48 @@ public class Platform {
     private double forkliftCost;//叉车成本
     private List<Car> cars;//停靠车辆编号
     private List<Point> points;
+    public static double peak_rate = 1.5;//高峰概率
+    public static double volumetric_coefficient=0.8;//容积系数
     public  double platform_width;//月台的宽度
     public  double platform_length;//单个月台的宽度 车辆宽度一般在1.8-2米之间
     private double platform_clearance;//月台间隙 3
     private static double x=0;//初始化点的x坐标
     private static double y=0;//初始点的y坐标
+    private List<Emp> emps;
     /**
      * 按车位数和列数
      * @param parkNum
      * @param
      */
-    private void initPoints(int parkNum){
+    public void initPoints(int parkNum){
         points = new ArrayList<>();
         for (int i=0;i<parkNum;i++){
             Point point = new Point(x+i*(platform_width+platform_clearance)+platform_width/2,y+platform_length/2,1,0);
             points.add(point);
         }
+    }
+    /**
+     * 计算泊车位数量的方法
+      */
+    public int getParking_num(String  carType,double total,double unloading_time,double everyDay_unloading_time){
+        double car_volumetric = Double.parseDouble(CarType.valueOf(carType).getCode());//计算车辆容积 通过车辆类型
+        platform_width = 3 * 1.25;
+
+        double car_num = Math.ceil(total/volumetric_coefficient/car_volumetric);//计算车辆数量 通过车辆容积
+        int platform_num =  (int) Math.ceil(car_num*peak_rate*unloading_time/everyDay_unloading_time);//月台数量
+        return platform_num;
+    }
+
+    /**
+     * 计算月台面积的方法
+     * @param parking_num
+     * @param platform_width
+     * @param platform_length
+     * @return
+     */
+    public double getPlatformArea(int parking_num,double platform_width,double platform_length){
+        double platform_area = parking_num*(3+platform_width)*platform_length;//月台面积
+        return platform_area;
     }
 
     /**
@@ -71,18 +99,21 @@ public class Platform {
     public Platform() {
     }
 
-    public void addEmp(){
-        this.emp++;
-    }
-    public void remoteEmp(){
-        this.emp--;
-    }
-    public Platform(String code, int status,int emp,Point position) {
+    public Platform(String code,int status,Point point ) {
         this.code = code;
         this.status = status;
-        this.emp = emp;
-        this.position = position;
+        this.position = point;
     }
+
+    public List<Emp> getEmps() {
+        return emps;
+    }
+
+    public void setEmps(List<Emp> emps) {
+        this.emps = emps;
+    }
+
+
 
     public double getPlatform_num() {
         return platform_num;
@@ -128,13 +159,7 @@ public class Platform {
         return status;
     }
 
-    public int getEmp() {
-        return emp;
-    }
 
-    public void setEmp(int emp) {
-        this.emp = emp;
-    }
 
     public void setStatus(int status) {
         this.status = status;
@@ -182,5 +207,16 @@ public class Platform {
 
     public void setForkliftCost(double forkliftCost) {
         this.forkliftCost = forkliftCost;
+    }
+
+    public void addEmp(Emp emp) {
+        if (emps==null){
+            emps = new ArrayList<>();
+        }
+        emps.add(emp);
+    }
+
+    public void addCarLine(Car car) {
+        this.carLine = car;
     }
 }

@@ -73,8 +73,8 @@ public final class DateUtils {
     }
     public static Date randomDate(String beginDate,String endDate){
         try {
-            Date start = sdf1.parse(beginDate);
-            Date end = sdf1.parse(endDate);
+            Date start = sdf.parse(beginDate);
+            Date end = sdf.parse(endDate);
             if(start.getTime() >= end.getTime()){
                 return null;
             }

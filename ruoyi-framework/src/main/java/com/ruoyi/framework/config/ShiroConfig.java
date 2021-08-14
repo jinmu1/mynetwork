@@ -322,9 +322,13 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/warehousePlan", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getUpload", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getTally", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/putaway", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getStorage", "anon,captchaValidate");
-        filterChainDefinitionMap.put("/getStoragePoint", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/getSorting", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/getDelivery", "anon,captchaValidate");
         filterChainDefinitionMap.put("/warehouse", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/takeDown", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/getLoading", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getBatch", "anon,captchaValidate");
         filterChainDefinitionMap.put("/demo/modal/demo1", "anon,captchaValidate");
         filterChainDefinitionMap.put("/demo/modal/demo2", "anon,captchaValidate");

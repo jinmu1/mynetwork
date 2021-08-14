@@ -133,4 +133,17 @@ public class EmpLog {
     public void setAllPlut(double allPlut) {
         AllPlut = allPlut;
     }
+
+    @Override
+    public String toString() {
+        return "EmpLog{" +
+                "time='" + time + '\'' +
+                ", empNo='" + empNo + '\'' +
+                ", goods_code='" + goods_code + '\'' +
+                ", empStatus=" + empStatus +
+                ", order='" + order + '\'' +
+                ", position='" + position + '\'' +
+                ", distance=" + distance +
+                '}';
+    }
 }

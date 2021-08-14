@@ -103,6 +103,7 @@ public class Car {
     }
 
     public void removeCar() {
+        this.trays.remove(trays.get(0));
         this.tora=this.tora-1;
     }
 }

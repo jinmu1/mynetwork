@@ -61,140 +61,9 @@ public class WarehousingController extends BaseController {
     @GetMapping("/warehousePlan")
     public String warehousePlan()
     {
-        return prefix + "/index1";
-    }
-    @PostMapping("/getWarehouse")
-    @ResponseBody
-    public TableDataInfo upload(HttpServletRequest req) {
-        String provinces = req.getParameter("provinces");
-        String carLength = req.getParameter("carLength");
-        double transportNum = 2370 * 365;
-        if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
-            transportNum = Double.parseDouble(req.getParameter("transportNum"));
-        }
-        double warehousing = 80000;
-        if (req.getParameter("warehousing") != null && !req.getParameter("warehousing").equals("")) {
-            warehousing = Double.parseDouble(req.getParameter("warehousing"));
-        }
-        double h_price = 15;
-        if (req.getParameter("h_price") != null && !req.getParameter("h_price").equals("")) {
-            h_price = Double.parseDouble(req.getParameter("h_price"));
-        }
-        double m_price = 15;
-        if (req.getParameter("m_price") != null && !req.getParameter("m_price").equals("")) {
-            m_price = Double.parseDouble(req.getParameter("m_price"));
-        }
-        double l_price = 60;
-        if (req.getParameter("s_price") != null && !req.getParameter("s_price").equals("")) {
-            l_price = Double.parseDouble(req.getParameter("s_price"));
-        }
-        double inventory_loss = 0.5;
-        if (req.getParameter("inventory_loss") != null && !req.getParameter("inventory_loss").equals("")) {
-            inventory_loss = Double.parseDouble(req.getParameter("inventory_loss"));
-        }
-        double managementFee = 0;
-        if (req.getParameter("managementFee") != null && !req.getParameter("managementFee").equals("")) {
-            managementFee = Double.parseDouble(req.getParameter("managementFee"));
-        }
-        double times = 72;
-        if (req.getParameter("times") != null && !req.getParameter("times").equals("")) {
-            times = Integer.parseInt(req.getParameter("times"));
-        }
-        double order = 95;
-        if (req.getParameter("order") != null && !req.getParameter("order").equals("")) {
-            order = Integer.parseInt(req.getParameter("order"));
-        }
-        int goods_num = 6000;
-        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
-            goods_num = Integer.parseInt(req.getParameter("goods_num"));
-        }
-        double b_goods_size = 20;
-        if (req.getParameter("b_goods_size") != null && !req.getParameter("b_goods_size").equals("")) {
-            b_goods_size = Integer.parseInt(req.getParameter("b_goods_size"));
-        }
-        double m_goods_size = 20;
-        if (req.getParameter("m_goods_size") != null && !req.getParameter("m_goods_size").equals("")) {
-            m_goods_size = Double.parseDouble(req.getParameter("m_goods_size"));
-        }
-        double s_goods_size = 60;
-        if (req.getParameter("s_goods_size") != null && !req.getParameter("s_goods_size").equals("")) {
-            s_goods_size = Double.parseDouble(req.getParameter("s_goods_size"));
-        }
-        double orderLine = 60;
-        if (req.getParameter("orderLine") != null && !req.getParameter("orderLine").equals("")) {
-            orderLine = Double.parseDouble(req.getParameter("orderLine"));
-        }
-        int customerNum = 200;
-        if (req.getParameter("customerNum") != null && !req.getParameter("customerNum").equals("")) {
-            customerNum = Integer.parseInt(req.getParameter("customerNum"));
-        }
-        int supplier = 100;
-        if (req.getParameter("supplier") != null && !req.getParameter("supplier").equals("")) {
-            supplier = Integer.parseInt(req.getParameter("supplier"));
-        }
-        double orderTime= 72;
-        if (req.getParameter("orderTime") != null && !req.getParameter("orderTime").equals("")) {
-            orderTime = Integer.parseInt(req.getParameter("orderTime"));
-        }
-
-        //订单数量 供应商- 客户  订单完成时效
-        List<Result> listr = Action.runAction(transportNum,customerNum,carLength,goods_num,supplier,b_goods_size,m_goods_size,s_goods_size);
-
-
-
-        return getDataTable(listr);
+        return prefix + "/index2";
     }
 
-    @PostMapping("/getUpload1")
-    @ResponseBody
-    public TableDataInfo dsde1(HttpServletRequest req) {
-        String carLength = req.getParameter("carlength");
-        double transportNum = 2370;
-        if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
-            transportNum = Double.parseDouble(req.getParameter("transportNum"));
-        }
-        double unloading_time = 2370;
-        if (req.getParameter("unloading_time") != null && !req.getParameter("unloading_time").equals("")) {
-            unloading_time = Double.parseDouble(req.getParameter("unloading_time"));
-        }
-        double everyDay_unloading_time = 2370;
-        if (req.getParameter("everyDay_unloading_time") != null && !req.getParameter("everyDay_unloading_time").equals("")) {
-            everyDay_unloading_time = Double.parseDouble(req.getParameter("everyDay_unloading_time"));
-        }
-        double uploadEmpCapacity = 2370;
-        if (req.getParameter("uploadEmpCapacity") != null && !req.getParameter("uploadEmpCapacity").equals("")) {
-            uploadEmpCapacity = Double.parseDouble(req.getParameter("uploadEmpCapacity"));
-        }
-        double platform_length = 3;
-        if (req.getParameter("platform_length") != null && !req.getParameter("platform_length").equals("")) {
-            platform_length = Double.parseDouble(req.getParameter("platform_length"));
-        }
-        int supplier = 3;
-        if (req.getParameter("supplier") != null && !req.getParameter("supplier").equals("")) {
-            supplier = Integer.parseInt(req.getParameter("supplier"));
-        }
-        int goods_num = 1000;
-        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
-            goods_num = Integer.parseInt(req.getParameter("goods_num"));
-        }
-        List<Result> list = new ArrayList<>();
-
-        Result result = new Result(1);
-        Platform platform = AreaUtils.getPlatform1(transportNum,carLength,uploadEmpCapacity,unloading_time,everyDay_unloading_time,platform_length);
-        Tally tally = AreaUtils.getTally(transportNum,carLength);
-        list = Action.runPlatform(platform,tally,transportNum,supplier,goods_num,carLength,platform_length);
-        platform.setEmp((int)(platform.getEmp()/result.getUploadEmp()/0.8));
-        list = Action.runPlatform(platform,tally,transportNum,supplier,goods_num,carLength,platform_length);
-
-        result.setPlatformArea(platform.getPlatform_area());
-        result.setUploadEmp(platform.getEmp());
-        result.setPlatformNum(platform.getPlatform_num());
-        result.setForklift(platform.getForklift());
-        result.setEmpCost(platform.getEmpCost());
-        result.setForkliftCost(platform.getForkliftCost());
-        list.add(result);
-        return getDataTable(list);
-    }
 
 
     @PostMapping("/getTally")
@@ -225,65 +94,87 @@ public class WarehousingController extends BaseController {
         if (req.getParameter("tray_clearance") != null && !req.getParameter("tray_clearance").equals("")) {
             tray_clearance = Double.parseDouble(req.getParameter("tray_clearance"));
         }
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
 
         List<Result> list = new ArrayList<>();
-        Tally tally = AreaUtils.getTally1(transportNum,carLength,batch,tallyEmpCapacity,tally_channel,tray_clearance);
-        Result result = new Result(1);
-        result.setTallyArea(tally.getArea());
-        result.setTallyEmp(tally.getEmp());
-        result.setEmpCost(tally.getEmpCost());
+        Result result= Action.getTally(transportNum,carLength,batch,tallyEmpCapacity,tally_channel,tray_clearance,utilization);
+
         list.add(result);
         return getDataTable(list);
     }
-
-    @PostMapping("/getStorage")
+    @PostMapping("/putaway")
     @ResponseBody
-    public TableDataInfo getStorage(HttpServletRequest req) {
+    public TableDataInfo putaway(HttpServletRequest req) {
 
-        double transportNum2 = 2370;
-        if (req.getParameter("transportNum2") != null && !req.getParameter("transportNum2").equals("")) {
-            transportNum2 = Double.parseDouble(req.getParameter("transportNum2"));
+        double putawayNum = 2370;
+        if (req.getParameter("putawayNum") != null && !req.getParameter("putawayNum").equals("")) {
+            putawayNum = Double.parseDouble(req.getParameter("putawayNum"));
         }
-        double transportNum3 = 2370;
-        if (req.getParameter("transportNum3") != null && !req.getParameter("transportNum3").equals("")) {
-            transportNum3 = Double.parseDouble(req.getParameter("transportNum3"));
+        double storageNum = 40000;
+        if (req.getParameter("storageNum") != null && !req.getParameter("storageNum").equals("")) {
+            storageNum = Double.parseDouble(req.getParameter("storageNum"));
         }
-        double transportNum4 = 2370;
-        if (req.getParameter("transportNum4") != null && !req.getParameter("transportNum4").equals("")) {
-            transportNum4 = Double.parseDouble(req.getParameter("transportNum4"));
-        }
-        double height = 10;
+
+        double height = 12;
         if (req.getParameter("height") != null && !req.getParameter("height").equals("")) {
             height = Double.parseDouble(req.getParameter("height"));
         }
-        double forklift_channel = 2370;
+        double forklift_channel = 3;
         if (req.getParameter("forklift_channel") != null && !req.getParameter("forklift_channel").equals("")) {
             forklift_channel = Double.parseDouble(req.getParameter("forklift_channel"));
         }
-        double shelf_space = 3;
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
+        double putaway_speed = 1.1;
+        if (req.getParameter("putaway_speed") != null && !req.getParameter("putaway_speed").equals("")) {
+            putaway_speed = Double.parseDouble(req.getParameter("putaway_speed"));
+        }
+        double shelf_space = 0.2;
         if (req.getParameter("shelf_space") != null && !req.getParameter("shelf_space").equals("")) {
             shelf_space = Double.parseDouble(req.getParameter("shelf_space"));
         }
-        double putaway = 0.2;
-        if (req.getParameter("putaway") != null && !req.getParameter("putaway").equals("")) {
-            putaway = Double.parseDouble(req.getParameter("putaway"));
-        }
-        double sorting = 0.2;
-        if (req.getParameter("sorting") != null && !req.getParameter("sorting").equals("")) {
-            sorting = Double.parseDouble(req.getParameter("sorting"));
-        }
-        double shelf_height  = 1.65;
+        double shelf_height = 1.5;
         if (req.getParameter("shelf_height") != null && !req.getParameter("shelf_height").equals("")) {
             shelf_height = Double.parseDouble(req.getParameter("shelf_height"));
         }
         List<Result> list = new ArrayList<>();
-        LightStorage storage = AreaUtils.getHightStorage1(transportNum4,transportNum2,transportNum3,putaway,sorting,height,forklift_channel,shelf_space,shelf_height);
-        Result result =new Result(1);
-        result.setStorageArea(storage.getArea());
-        result.setCargo(storage.getCargo());
-        result.setPutawayEmp(storage.getPutawayemp());
-        result.setSortingEmp(storage.getSortingemp());
-        result.setCost(storage.getPrice()*storage.getCargo());
+        Result result= Action.getPutaway(putawayNum,storageNum,height,forklift_channel,utilization,putaway_speed,shelf_space,shelf_height);
+
+        list.add(result);
+        return getDataTable(list);
+    }
+    @PostMapping("/getStorage")
+    @ResponseBody
+    public TableDataInfo getStorage(HttpServletRequest req) {
+
+        double storageNum = 40000;
+        if (req.getParameter("storageNum") != null && !req.getParameter("storageNum").equals("")) {
+            storageNum = Double.parseDouble(req.getParameter("storageNum"));
+        }
+
+        double height = 12;
+        if (req.getParameter("height") != null && !req.getParameter("height").equals("")) {
+            height = Double.parseDouble(req.getParameter("height"));
+        }
+        double forklift_channel = 3;
+        if (req.getParameter("forklift_channel") != null && !req.getParameter("forklift_channel").equals("")) {
+            forklift_channel = Double.parseDouble(req.getParameter("forklift_channel"));
+        }
+        double shelf_space = 0.2;
+        if (req.getParameter("shelf_space") != null && !req.getParameter("shelf_space").equals("")) {
+            shelf_space = Double.parseDouble(req.getParameter("shelf_space"));
+        }
+        double shelf_height = 1.5;
+        if (req.getParameter("shelf_height") != null && !req.getParameter("shelf_height").equals("")) {
+            shelf_height = Double.parseDouble(req.getParameter("shelf_height"));
+        }
+        List<Result> list = new ArrayList<>();
+        Result result= Action.getStorage(storageNum,height,forklift_channel,shelf_space,shelf_height);
 
         list.add(result);
         return getDataTable(list);
@@ -319,64 +210,6 @@ public class WarehousingController extends BaseController {
         return cargos;
     }
 
-    @PostMapping("/getStoragePoint")
-    @ResponseBody
-    public TableDataInfo getStoragePoint(HttpServletRequest req) {
-
-        double transportNum2 = 2370;
-        if (req.getParameter("transportNum2") != null && !req.getParameter("transportNum2").equals("")) {
-            transportNum2 = Double.parseDouble(req.getParameter("transportNum2"));
-        }
-        double transportNum3 = 2370;
-        if (req.getParameter("transportNum3") != null && !req.getParameter("transportNum3").equals("")) {
-            transportNum3 = Double.parseDouble(req.getParameter("transportNum3"));
-        }
-        double transportNum4 = 2370;
-        if (req.getParameter("transportNum4") != null && !req.getParameter("transportNum4").equals("")) {
-            transportNum4 = Double.parseDouble(req.getParameter("transportNum4"));
-        }
-        double height = 10;
-        if (req.getParameter("height") != null && !req.getParameter("height").equals("")) {
-            height = Double.parseDouble(req.getParameter("height"));
-        }
-        double forklift_channel = 2370;
-        if (req.getParameter("forklift_channel") != null && !req.getParameter("forklift_channel").equals("")) {
-            forklift_channel = Double.parseDouble(req.getParameter("forklift_channel"));
-        }
-        double shelf_space = 3;
-        if (req.getParameter("shelf_space") != null && !req.getParameter("shelf_space").equals("")) {
-            shelf_space = Double.parseDouble(req.getParameter("shelf_space"));
-        }
-        double putaway = 150;
-        if (req.getParameter("putaway") != null && !req.getParameter("putaway").equals("")) {
-            putaway = Double.parseDouble(req.getParameter("putaway"));
-        }
-        double sorting =100;
-        if (req.getParameter("sorting") != null && !req.getParameter("sorting").equals("")) {
-            sorting = Double.parseDouble(req.getParameter("sorting"));
-        }
-        double shelf_height  = 1.65;
-        if (req.getParameter("shelf_height") != null && !req.getParameter("shelf_height").equals("")) {
-            shelf_height = Double.parseDouble(req.getParameter("shelf_height"));
-        }
-        String sort_type = req.getParameter("sort_type");
-        double goods_num= 2000;
-        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
-            goods_num = Integer.parseInt(req.getParameter("goods_num"));
-        }
-
-        List<Result> list = new ArrayList<>();
-        LightStorage storage = AreaUtils.getHightStorage1(transportNum4,transportNum2,transportNum3,putaway,sorting,height,forklift_channel,shelf_space,shelf_height);
-        Result result = Action.action(goods_num,sort_type,transportNum2,transportNum3,storage);
-
-        result.setStorageArea(storage.getArea());
-        result.setCargo(storage.getCargo());
-        result.setPutawayEmp(storage.getPutawayemp());
-        result.setSortingEmp(storage.getSortingemp());
-        result.setCost(storage.getPrice()*storage.getCargo());
-        list.add(result);
-        return getDataTable(list);
-    }
     @PostMapping("/getUpload")
     @ResponseBody
     public TableDataInfo dsde(HttpServletRequest req) {
@@ -385,148 +218,201 @@ public class WarehousingController extends BaseController {
         if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
             transportNum = Double.parseDouble(req.getParameter("transportNum"));
         }
-        double unloading_time = 2370;
+        double unloading_time = 0.5;
         if (req.getParameter("unloading_time") != null && !req.getParameter("unloading_time").equals("")) {
             unloading_time = Double.parseDouble(req.getParameter("unloading_time"));
         }
-        double everyDay_unloading_time = 2370;
+        double everyDay_unloading_time = 8;
         if (req.getParameter("everyDay_unloading_time") != null && !req.getParameter("everyDay_unloading_time").equals("")) {
             everyDay_unloading_time = Double.parseDouble(req.getParameter("everyDay_unloading_time"));
         }
-        double uploadEmpCapacity = 2370;
-        if (req.getParameter("uploadEmpCapacity") != null && !req.getParameter("uploadEmpCapacity").equals("")) {
-            uploadEmpCapacity = Double.parseDouble(req.getParameter("uploadEmpCapacity"));
+        double platform_width = 3;
+        if (req.getParameter("platform_width") != null && !req.getParameter("platform_width").equals("")) {
+            platform_width = Double.parseDouble(req.getParameter("platform_width"));
         }
         double platform_length = 3;
         if (req.getParameter("platform_length") != null && !req.getParameter("platform_length").equals("")) {
             platform_length = Double.parseDouble(req.getParameter("platform_length"));
         }
+        double supplier = 300;
+        if (req.getParameter("supplier") != null && !req.getParameter("supplier").equals("")) {
+            supplier = Double.parseDouble(req.getParameter("supplier"));
+        }
+        double goods_num = 100;
+        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
+            goods_num = Double.parseDouble(req.getParameter("goods_num"));
+        }
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
         List<Result> list = new ArrayList<>();
-        Platform platform = AreaUtils.getPlatform1(transportNum,carLength,uploadEmpCapacity,unloading_time,everyDay_unloading_time,platform_length);
-        Result result = new Result(1);
-        result.setPlatformArea(platform.getPlatform_area());
-        result.setUploadEmp(platform.getEmp());
-        result.setPlatformNum(platform.getPlatform_num());
-        result.setForklift(platform.getForklift());
-        result.setEmpCost(platform.getEmpCost());
-        result.setForkliftCost(platform.getForkliftCost());
+        Result result = Action.runPlatform(carLength,transportNum,unloading_time,everyDay_unloading_time,platform_width,platform_length,supplier,goods_num,utilization);
+
+
         list.add(result);
         return getDataTable(list);
     }
 
-    @PostMapping("/getStoragePoint1")
+    @PostMapping("/takeDown")
     @ResponseBody
-    public TableDataInfo getStoragePoint1(HttpServletRequest req) {
+    public TableDataInfo takeDown(HttpServletRequest req) {
 
-        double transportNum2 = 2370;
-        if (req.getParameter("transportNum2") != null && !req.getParameter("transportNum2").equals("")) {
-            transportNum2 = Double.parseDouble(req.getParameter("transportNum2"));
+        double take_downNum = 2370;
+        if (req.getParameter("take_downNum") != null && !req.getParameter("take_downNum").equals("")) {
+            take_downNum = Double.parseDouble(req.getParameter("take_downNum"));
         }
-        double transportNum3 = 2370;
-        if (req.getParameter("transportNum3") != null && !req.getParameter("transportNum3").equals("")) {
-            transportNum3 = Double.parseDouble(req.getParameter("transportNum3"));
+        double storageNum = 40000;
+        if (req.getParameter("storageNum") != null && !req.getParameter("storageNum").equals("")) {
+            storageNum = Double.parseDouble(req.getParameter("storageNum"));
         }
-        double transportNum4 = 2370;
-        if (req.getParameter("transportNum4") != null && !req.getParameter("transportNum4").equals("")) {
-            transportNum4 = Double.parseDouble(req.getParameter("transportNum4"));
-        }
-        double height = 10;
+
+        double height = 12;
         if (req.getParameter("height") != null && !req.getParameter("height").equals("")) {
             height = Double.parseDouble(req.getParameter("height"));
         }
-        double forklift_channel = 2370;
+        double forklift_channel = 3;
         if (req.getParameter("forklift_channel") != null && !req.getParameter("forklift_channel").equals("")) {
             forklift_channel = Double.parseDouble(req.getParameter("forklift_channel"));
         }
-        double shelf_space = 3;
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
+        double putaway_speed = 1.1;
+        if (req.getParameter("putaway_speed") != null && !req.getParameter("putaway_speed").equals("")) {
+            putaway_speed = Double.parseDouble(req.getParameter("putaway_speed"));
+        }
+        double shelf_space = 0.2;
         if (req.getParameter("shelf_space") != null && !req.getParameter("shelf_space").equals("")) {
             shelf_space = Double.parseDouble(req.getParameter("shelf_space"));
         }
-        double putaway = 150;
-        if (req.getParameter("putaway") != null && !req.getParameter("putaway").equals("")) {
-            putaway = Double.parseDouble(req.getParameter("putaway"));
-        }
-        double sorting =68;
-        if (req.getParameter("sorting") != null && !req.getParameter("sorting").equals("")) {
-            sorting = Double.parseDouble(req.getParameter("sorting"));
-        }
-        double shelf_height  = 1.65;
+        double shelf_height = 1.5;
         if (req.getParameter("shelf_height") != null && !req.getParameter("shelf_height").equals("")) {
             shelf_height = Double.parseDouble(req.getParameter("shelf_height"));
         }
-        String sort_type = req.getParameter("sort_type");
-        double goods_num= 2000;
-        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
-            goods_num = Integer.parseInt(req.getParameter("goods_num"));
-        }
-
         List<Result> list = new ArrayList<>();
-        LightStorage storage = AreaUtils.getHightStorage1(transportNum4,transportNum2,transportNum3,putaway,sorting,height,forklift_channel,shelf_space,shelf_height);
-        Result result = Action.action(goods_num,sort_type,transportNum2,transportNum3,storage);
+        Result result= Action.getTakeDown(take_downNum,storageNum,height,forklift_channel,utilization,putaway_speed,shelf_space,shelf_height);
 
-        result.setStorageArea(storage.getArea());
-        result.setCargo(storage.getCargo());
-        result.setPutawayEmp(storage.getPutawayemp());
-        result.setSortingEmp(storage.getSortingemp());
-        result.setCost(storage.getPrice()*storage.getCargo());
         list.add(result);
         return getDataTable(list);
     }
-    @PostMapping("/getStoragePoint2")
-    @ResponseBody
-    public TableDataInfo getStoragePoint2(HttpServletRequest req) {
 
-        double transportNum2 = 2370;
-        if (req.getParameter("transportNum2") != null && !req.getParameter("transportNum2").equals("")) {
-            transportNum2 = Double.parseDouble(req.getParameter("transportNum2"));
-        }
-        double transportNum3 = 2370;
-        if (req.getParameter("transportNum3") != null && !req.getParameter("transportNum3").equals("")) {
-            transportNum3 = Double.parseDouble(req.getParameter("transportNum3"));
-        }
-        double transportNum4 = 2370;
-        if (req.getParameter("transportNum4") != null && !req.getParameter("transportNum4").equals("")) {
-            transportNum4 = Double.parseDouble(req.getParameter("transportNum4"));
-        }
-        double height = 10;
-        if (req.getParameter("height") != null && !req.getParameter("height").equals("")) {
-            height = Double.parseDouble(req.getParameter("height"));
-        }
-        double forklift_channel = 2370;
-        if (req.getParameter("forklift_channel") != null && !req.getParameter("forklift_channel").equals("")) {
-            forklift_channel = Double.parseDouble(req.getParameter("forklift_channel"));
-        }
-        double shelf_space = 3;
-        if (req.getParameter("shelf_space") != null && !req.getParameter("shelf_space").equals("")) {
-            shelf_space = Double.parseDouble(req.getParameter("shelf_space"));
-        }
-        double putaway = 150;
-        if (req.getParameter("putaway") != null && !req.getParameter("putaway").equals("")) {
-            putaway = Double.parseDouble(req.getParameter("putaway"));
-        }
-        double sorting =68;
-        if (req.getParameter("sorting") != null && !req.getParameter("sorting").equals("")) {
-            sorting = Double.parseDouble(req.getParameter("sorting"));
-        }
-        double shelf_height  = 1.65;
-        if (req.getParameter("shelf_height") != null && !req.getParameter("shelf_height").equals("")) {
-            shelf_height = Double.parseDouble(req.getParameter("shelf_height"));
-        }
+    @PostMapping("/getSorting")
+    @ResponseBody
+    public TableDataInfo getSorting(HttpServletRequest req) {
         String sort_type = req.getParameter("sort_type");
-        double goods_num= 2000;
-        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
-            goods_num = Integer.parseInt(req.getParameter("goods_num"));
+        double transportNum = 2370;
+        if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
+            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+        }
+        double batch = 3;
+        if (req.getParameter("batch") != null && !req.getParameter("batch").equals("")) {
+            batch = Double.parseDouble(req.getParameter("batch"));
+        }
+        double sortingSpeed = 1.1;
+        if (req.getParameter("sortingSpeed") != null && !req.getParameter("sortingSpeed").equals("")) {
+            sortingSpeed = Double.parseDouble(req.getParameter("sortingSpeed"));
+        }
+        double tally_channel = 3;
+        if (req.getParameter("tally_channel") != null && !req.getParameter("tally_channel").equals("")) {
+            tally_channel = Double.parseDouble(req.getParameter("tally_channel"));
+        }
+        double tray_clearance = 0.2;
+        if (req.getParameter("tray_clearance") != null && !req.getParameter("tray_clearance").equals("")) {
+            tray_clearance = Double.parseDouble(req.getParameter("tray_clearance"));
+        }
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
+        int orderLine= 7;
+        if (req.getParameter("orderLine") != null && !req.getParameter("orderLine").equals("")) {
+            orderLine = Integer.parseInt(req.getParameter("orderLine"));
         }
 
         List<Result> list = new ArrayList<>();
-        LightStorage storage = AreaUtils.getHightStorage1(transportNum4,transportNum2,transportNum3,putaway,sorting,height,forklift_channel,shelf_space,shelf_height);
-        Result result = Action.action1(goods_num,sort_type,transportNum2,transportNum3,storage);
+        Result result= Action.getSorting(transportNum,batch,orderLine,sortingSpeed,tally_channel,tray_clearance,utilization,sort_type);
 
-        result.setStorageArea(storage.getArea());
-        result.setCargo(storage.getCargo());
-        result.setPutawayEmp(storage.getPutawayemp());
-        result.setSortingEmp(storage.getSortingemp());
-        result.setCost(storage.getPrice()*storage.getCargo());
+        list.add(result);
+        return getDataTable(list);
+    }
+    @PostMapping("/getDelivery")
+    @ResponseBody
+    public TableDataInfo getDelivery(HttpServletRequest req) {
+
+        double deliveryNum = 2370;
+        if (req.getParameter("deliveryNum") != null && !req.getParameter("deliveryNum").equals("")) {
+            deliveryNum = Double.parseDouble(req.getParameter("deliveryNum"));
+        }
+        double batch = 3;
+        if (req.getParameter("batch") != null && !req.getParameter("batch").equals("")) {
+            batch = Double.parseDouble(req.getParameter("batch"));
+        }
+        double delivery_speed = 1.1;
+        if (req.getParameter("delivery_speed") != null && !req.getParameter("delivery_speed").equals("")) {
+            delivery_speed = Double.parseDouble(req.getParameter("delivery_speed"));
+        }
+        double tally_channel = 3;
+        if (req.getParameter("tally_channel") != null && !req.getParameter("tally_channel").equals("")) {
+            tally_channel = Double.parseDouble(req.getParameter("tally_channel"));
+        }
+        double tray_clearance = 0.2;
+        if (req.getParameter("tray_clearance") != null && !req.getParameter("tray_clearance").equals("")) {
+            tray_clearance = Double.parseDouble(req.getParameter("tray_clearance"));
+        }
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
+
+        List<Result> list = new ArrayList<>();
+        Result result= Action.getDelivery(deliveryNum,batch,delivery_speed,tally_channel,tray_clearance,utilization);
+
+        list.add(result);
+        return getDataTable(list);
+    }
+
+    @PostMapping("/getLoading")
+    @ResponseBody
+    public TableDataInfo getLoading(HttpServletRequest req) {
+        String carLength = req.getParameter("carlength");
+        double transportNum = 2370;
+        if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
+            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+        }
+        double unloading_time = 0.5;
+        if (req.getParameter("unloading_time") != null && !req.getParameter("unloading_time").equals("")) {
+            unloading_time = Double.parseDouble(req.getParameter("unloading_time"));
+        }
+        double everyDay_unloading_time = 8;
+        if (req.getParameter("everyDay_unloading_time") != null && !req.getParameter("everyDay_unloading_time").equals("")) {
+            everyDay_unloading_time = Double.parseDouble(req.getParameter("everyDay_unloading_time"));
+        }
+        double platform_width = 3;
+        if (req.getParameter("platform_width") != null && !req.getParameter("platform_width").equals("")) {
+            platform_width = Double.parseDouble(req.getParameter("platform_width"));
+        }
+        double platform_length = 3;
+        if (req.getParameter("platform_length") != null && !req.getParameter("platform_length").equals("")) {
+            platform_length = Double.parseDouble(req.getParameter("platform_length"));
+        }
+        double customer = 200;
+        if (req.getParameter("supplier") != null && !req.getParameter("supplier").equals("")) {
+            customer = Double.parseDouble(req.getParameter("supplier"));
+        }
+        double goods_num = 100;
+        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
+            goods_num = Double.parseDouble(req.getParameter("goods_num"));
+        }
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
+        List<Result> list = new ArrayList<>();
+        Result result = Action.runLoading(carLength,transportNum,unloading_time,everyDay_unloading_time,platform_width,platform_length,customer,goods_num,utilization);
+
+
         list.add(result);
         return getDataTable(list);
     }

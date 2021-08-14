@@ -79,9 +79,7 @@ public  class AreaUtils {
         Platform platform = new Platform();
         platform.setPlatform_num(platform_num);
         platform.setPlatform_area(platform_area);
-        platform.setEmp((int)(total/uploadEmpCapacity));
         platform.setForklift((int)(total/uploadEmpCapacity));
-        platform.setEmpCost(platform.getEmp()*80000);
         platform.setForkliftCost(platform.getForklift()*12000);
         return platform;
 
@@ -103,9 +101,8 @@ public  class AreaUtils {
         Platform platform = new Platform();
         platform.setPlatform_num(platform_num);
         platform.setPlatform_area(platform_area);
-        platform.setEmp((int)Math.ceil(total/uploadEmpCapacity));
         platform.setForklift((int)Math.ceil(total/uploadEmpCapacity));
-        platform.setEmpCost(platform.getEmp()*80000);
+
         platform.setForkliftCost(platform.getForklift()*12000);
         return platform;
 
@@ -116,10 +113,10 @@ public  class AreaUtils {
      */
     public static Tally getTally(double  total, String carType){
         double pallet_num = total*tally_rate/tally_batch;//理货平均托盘量
-        double tally_transverse = 1;//纵向数量
+        int tally_transverse = 1;//纵向数量
 
 
-        double tally_longitudinal= Math.ceil(pallet_num/tally_transverse);//横向数量
+        int tally_longitudinal= (int)Math.ceil(pallet_num/tally_transverse);//横向数量
         double tally_area = tally_longitudinal*(tray_length+tray_clearance)*(tray_width+tally_channel+3)*tally_transverse/tally_area_rate;//理货区面积
         Tally tally = new Tally();
         tally.setPallet(pallet_num);
@@ -128,28 +125,7 @@ public  class AreaUtils {
         tally.setTally_transverse(tally_transverse);
         return tally;
     }
-    /**
-     * 计算理货区面积
-     *
-     */
-    public static Tally getTally1(double  total, String carType,double batch,double tallyEmpCapacity,double tally_channel,double tray_clearance){
-        double pallet_num = total*tally_rate/batch;//理货平均托盘量
-        double tally_transverse = getPlatform(total,carType).getPlatform_num();//纵向数量
-        if (tally_transverse>pallet_num){
-            tally_transverse = 1;
-        }
 
-        double tally_longitudinal= Math.ceil(pallet_num/tally_transverse);//横向数量
-        double tally_area = tally_longitudinal*(tray_length+tray_clearance)*(tray_width+tally_channel)*tally_transverse/tally_area_rate;//理货区面积
-        Tally tally = new Tally();
-        tally.setPallet(pallet_num);
-        tally.setArea(tally_area);
-        tally.setTally_longitudinal(tally_longitudinal);
-        tally.setTally_transverse(tally_transverse);
-        tally.setEmp((int)Math.ceil(total/tallyEmpCapacity));
-        tally.setEmpCost(tally.getEmp()*80000);
-        return tally;
-    }
 
     /***
      * 计算地堆存储区面积

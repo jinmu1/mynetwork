@@ -14,6 +14,7 @@ public class Goods {
     private String area;//区域
     private double volume;//体积
     private Supplier supplier;
+    private Customer customer;//客户
     public int getStatus() {
         return status;
     }
@@ -38,9 +39,15 @@ public class Goods {
         if (this == o) return true;
         if (!(o instanceof Goods)) return false;
         Goods goods = (Goods) o;
-        return Double.compare(goods.getPlutNum(), getPlutNum()) == 0 &&
-                getType().equals(goods.getType()) &&
-                getGoodsCode().equals(goods.getGoodsCode());
+        return getGoodsCode().equals(goods.getGoodsCode());
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     @Override

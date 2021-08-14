@@ -1,45 +1,37 @@
 package com.ruoyi.warehousing.process;
 
-
+import com.ruoyi.warehousing.action.WarehousingUtil;
 import com.ruoyi.warehousing.form.Car;
-import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.form.Supplier;
+import com.ruoyi.warehousing.form.WorkTime;
 import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.resource.facilities.buffer.Park;
-import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
 import com.ruoyi.warehousing.resource.facilities.platform.Platform;
-import com.ruoyi.warehousing.form.WorkTime;
-import com.ruoyi.warehousing.action.WarehousingUtil;
 import com.ruoyi.warehousing.resource.personnel.Emp;
 import com.ruoyi.warehousing.result.EmpLog;
 import com.ruoyi.warehousing.utils.DateUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
-import static java.util.stream.Collectors.groupingBy;
-
-/**
- * 卸货流程模拟
- */
-public class Upload{
-
+public class Loading {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     /**
-     * 卸货流程仿真
+     * 装车流程仿真
      * @param emps
      * @param platforms
      */
-    public static List<EmpLog> work(List<Car> cars, List<Platform> platforms,  List<Emp> emps,Park park) {
+    public static List<EmpLog> work(List<Car> cars, List<Platform> platforms, List<Emp> emps, Park park) {
         Date runTime = DateUtils.convertString2Date("yyyy-MM-dd HH:mm:ss", "2021-01-01 08:00:00");//当前时间
         Date endTime = DateUtils.convertString2Date("yyyy-MM-dd HH:mm:ss", "2021-01-01 20:00:00");//当前时间
-       //获取当前时间节点的倒库车辆
+        //获取当前时间节点的倒库车辆
         List<EmpLog> list = new ArrayList<>();
         while (runTime.getTime() < endTime.getTime()) {
             while (isPlatformNotNull(platforms)&&parkIsNotNull(park)){
-                    PlatforAddParkCar(park,platforms);
-                }
+                PlatforAddParkCar(park,platforms);
+            }
             List<Car> carList = new ArrayList<>();
             for (Car car:cars){
 
@@ -148,17 +140,17 @@ public class Upload{
 
     /**
      * 判断是否月台人员为空
-      * @param platforms
+     * @param platforms
      * @return
      */
     private static boolean isPlatformEmpNotNull(List<Platform> platforms) {
         boolean isNull = false;
-         for (Platform platform:platforms){
-             if (platform.getEmps()==null||platform.getEmps().size()==0){
-                  isNull = true;
-             }
-         }
-         return isNull;
+        for (Platform platform:platforms){
+            if (platform.getEmps()==null||platform.getEmps().size()==0){
+                isNull = true;
+            }
+        }
+        return isNull;
     }
 
     /**
@@ -212,9 +204,9 @@ public class Upload{
      */
     private static void AriveCar(List<Car> carsMap, Park park, List<Platform> platforms) {
         if (!isPlatformNotNull(platforms)){
-           for (Car car: carsMap){
-               park.add(car);
-           }
+            for (Car car: carsMap){
+                park.add(car);
+            }
         }else {
             if (ArriveCarIsNotNull(carsMap)){
                 PlatformAddCarFormArrive(carsMap,platforms);
@@ -258,12 +250,11 @@ public class Upload{
     private static boolean isPlatformNotNull(List<Platform> platforms) {
         boolean isnull = false;
         for (Platform platform:platforms){
-             if (platform.getStatus()==0){
-                 isnull = true;
-             }
+            if (platform.getStatus()==0){
+                isnull = true;
+            }
         }
         return isnull;
     }
-
 
 }

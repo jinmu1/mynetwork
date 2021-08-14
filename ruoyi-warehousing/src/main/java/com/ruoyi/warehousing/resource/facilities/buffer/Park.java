@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Park {
     private int num;//
-    private List<Car> cars;//停靠车辆编号
+    private List<Car> cars =new ArrayList<>();//停靠车辆编号
     private List<Point> points;
     private static double park_width = 3.5;
     private static double park_Length = 9.6;
@@ -69,7 +69,7 @@ public class Park {
     }
 
     public void add(Car car){
-        cars.add(car);
+        this.cars.add(car);
         num++;
     }
     public void remove(Car car){
@@ -94,6 +94,7 @@ public class Park {
     }
 
     public Car getCar() {
+
         return cars.get(0);
     }
 }

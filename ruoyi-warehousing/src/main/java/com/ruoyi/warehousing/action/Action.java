@@ -1,14 +1,12 @@
 package com.ruoyi.warehousing.action;
 
 import com.ruoyi.warehousing.form.*;
-import com.ruoyi.warehousing.process.Delivery;
-import com.ruoyi.warehousing.process.Putaway;
-import com.ruoyi.warehousing.process.Sorting;
-import com.ruoyi.warehousing.process.Upload;
+import com.ruoyi.warehousing.process.*;
 import com.ruoyi.warehousing.queue.Order;
 import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.resource.equipment.Elevator;
 import com.ruoyi.warehousing.resource.equipment.LightStorage;
+import com.ruoyi.warehousing.resource.equipment.Tray;
 import com.ruoyi.warehousing.resource.facilities.buffer.Park;
 import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
 import com.ruoyi.warehousing.resource.facilities.platform.Platform;
@@ -19,6 +17,7 @@ import com.ruoyi.warehousing.result.Result;
 import com.ruoyi.warehousing.utils.AreaUtils;
 import com.ruoyi.warehousing.utils.DateUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.util.*;
 
@@ -30,245 +29,247 @@ public class Action {
     private static Date endTime = new Date();//工作结束时间
 
     /**
-     * 根据输入的上架和分拣量，计算上架和分拣的人员利用率
+     * 月台卸货初始化类
      *
-     * @param sort_type
-     * @param transportNum2
-     * @param transportNum3
-     * @param storage
+     * @param carLength               车辆类型
+     * @param transportNum            运输托数
+     * @param unloading_time          卸货车辆数
+     * @param everyDay_unloading_time 每日卸货时间
+     * @param platform_width          月台宽度
+     * @param platform_length         月台长度
+     * @param supplier                供应商数量
+     * @param goods_num               物料数量
+     * @param utilization             最大利用率
      * @return
      */
-    public static Result action(double goods_num, String sort_type, double transportNum2, double transportNum3, LightStorage storage) {
-        List<Goods> list = WarehousingUtil.createGoods(goods_num);
-        Tally tally = WarehousingUtil.initTally();
-        Tally tally1 = WarehousingUtil.initTally1();
-        List<Order> orderList = WarehousingUtil.initOrders(list, transportNum2);
-        List<Order> orderList1 = WarehousingUtil.initOrders(list, transportNum3);
-        List<Elevator> elevators = WarehousingUtil.initElevator(5, 1);
-        double total = 0.0;
-        List<Cargo> cargos = WarehousingUtil.initCargo(orderList, total);
-        List<Emp> emps1 = WarehousingUtil.initEmp(storage.getPutawayemp());
-        List<Emp> emps2 = WarehousingUtil.initEmp(storage.getSortingemp());
-        emps1 = WarehousingUtil.initEmpOrder(emps1, orderList);
-        emps2 = WarehousingUtil.initEmpSortingOrder(emps2, orderList1, sort_type);
-
-        double work1 = 0.0;
-        double work2 = 0.0;
-        Date runTime = DateUtils.convertString2Date("HH:mm:ss", "08:00:00");//当前时间
-        Date endTime = DateUtils.convertString2Date("HH:mm:ss", "16:00:00");//当前时间
-        while (runTime.getTime() < endTime.getTime()) {
-            EmpLog empLog2 = Putaway.work1(emps1, tally, tally1, elevators, cargos);
-            EmpLog empLog3 = Sorting.move1(emps2, cargos, tally1);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(runTime);
-            calendar.add(Calendar.SECOND, 1);
-            runTime = calendar.getTime();
-            work1 += empLog2.getComPlut();
-            work2 += empLog3.getComPlut();
-
-        }
-        Result result = new Result();
-        result.setPutawayRate(work1 / 60 / 60);
-        result.setSortingRate(work2 / 60 / 60);
-        return result;
-    }
-
-    public static List<Result> runAction(double transportNum, int customerNum, String carLength, int goods_num, double supplier, double b_goods_size, double m_goods_size, double s_goods_size) {
-        List<Result> listr = new ArrayList<>();
-        List<Goods> list = WarehousingUtil.createGoods(goods_num);
-        List<Supplier> suppliers = WarehousingUtil.initSupplier(supplier);
-        list = WarehousingUtil.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
-        list = WarehousingUtil.initMaterialSupplier(suppliers, list);
-        List<Order> orderList = WarehousingUtil.initOrders(list, transportNum);
-        List<Customer> customerList = WarehousingUtil.initCustomer(customerNum);
-
-        orderList = WarehousingUtil.initOrdersCustomerList(orderList, customerList);
-        WarehousingUtil.initTime(runTime, startTime, endTime);//初始化时间
-        List<Emp> list1 = WarehousingUtil.initEmp(100);//卸货人员
-        List<Emp> list2 = WarehousingUtil.initEmp(100);//上架人员、
-        List<Emp> list3 = WarehousingUtil.initEmp(100);//分拣人员
-        List<Emp> list4 = WarehousingUtil.initEmp(100);//装车人员
-
-        List<Platform> platforms = WarehousingUtil.initPlat(AreaUtils.getPlatform(transportNum / 365, carLength).getPlatform_num(), 3.5);
-        List<Point> doors = WarehousingUtil.initDoor();
-        List<Point> elevatorPark = WarehousingUtil.initElevatorPark();
-        List<Order> inOrder = WarehousingUtil.getReplenishment(orderList, list);
-        List<Elevator> elevators = WarehousingUtil.initElevator(5, 1);
-        double total = 0.0;
-        List<Cargo> cargos = WarehousingUtil.initCargo(orderList, total);
-        Tally tally = WarehousingUtil.initTally();
-        Tally tally1 = WarehousingUtil.initTally1();
-
-        for (int i = 1; i < 10; i++) {
-            Result result = new Result(i);
-            result.setStorageArea(AreaUtils.getHightStorage(total, transportNum / 365).getArea());
-            result.setPlatformArea(AreaUtils.getPlatform(transportNum / 365, carLength).getPlatform_area());
-            result.setPlatformNum(AreaUtils.getPlatform(transportNum / 365, carLength).getPlatform_num());
-            result.setTallyArea(AreaUtils.getTally(transportNum / 365, carLength).getArea());
-            result.setTally1Area(AreaUtils.getTally(transportNum / 365, carLength).getArea());
-            List<String> batch = DateUtils.getIntervalTimeList("8:00:00", "18:00:00", 600 / i);
-            int j = 0;
-            List<com.ruoyi.warehousing.queue.Order> outOrderList = new ArrayList<>();
-            List<com.ruoyi.warehousing.queue.Order> inOrderList = new ArrayList<>();
-            for (Order order1 : orderList) {
-                if (order1.getCompleteDate().getTime() > DateUtils.convertString2Date("HH:mm:ss", batch.get(j)).getTime()
-                        && order1.getCreateDate().getTime() < DateUtils.convertString2Date("HH:mm:ss", batch.get(j + 1)).getTime()) {
-                    outOrderList.add(new com.ruoyi.warehousing.queue.Order(order1.getOrderCode(), order1.getGoodsCode(), order1.getCreateDate(), order1.getCompleteDate(), order1.getGoodsNum(), order1.getVolume()));
-                }
-            }
-            for (Order order1 : inOrder) {
-                if (order1.getCreateDate().getTime() > DateUtils.convertString2Date("HH:mm:ss", batch.get(j)).getTime()
-                        && order1.getCreateDate().getTime() < DateUtils.convertString2Date("HH:mm:ss", batch.get(j + 1)).getTime()) {
-                    inOrderList.add(new com.ruoyi.warehousing.queue.Order(order1.getOrderCode(), order1.getGoodsCode(), order1.getCreateDate(), order1.getCreateDate(), order1.getGoodsNum(), order1.getVolume()));
-                }
-            }
-            Map<Date, List<Order>> pm = outOrderList.stream().collect(groupingBy(com.ruoyi.warehousing.queue.Order::getCreateDate));
-            List<EmpLog> empLogs1 = new ArrayList<>();
-            List<EmpLog> empLogs2 = new ArrayList<>();
-            List<EmpLog> empLogs3 = new ArrayList<>();
-            List<EmpLog> empLogs4 = new ArrayList<>();
-
-            while (runTime.getTime() < DateUtils.convertString2Date("HH:mm:ss", batch.get(j + 1)).getTime()) {
-                List<com.ruoyi.warehousing.queue.Order> orders = pm.get(runTime);
-                if (orders != null && orders.size() > 0) {
-                    List<List<com.ruoyi.warehousing.queue.Order>> sprateList = ListUtils.partition(orders, orders.size() / list1.size());
-
-                    for (int s = 0; s < list1.size(); s++) {
-                        list1.get(s).getOrders().addAll(sprateList.get(s));
-                    }
-                }
-
-
-                EmpLog empLog1 = Upload.move(list1, platforms, doors, tally);
-                EmpLog empLog2 = Putaway.work1(list2, tally, tally1, elevators, cargos);
-
-                EmpLog empLog3 = Sorting.move1(list3, cargos, tally1);
-                EmpLog empLog4 = Delivery.move(list4, platforms, doors, tally1);
-
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(runTime);
-                calendar.add(Calendar.SECOND, 1);
-                runTime = calendar.getTime();
-                if (DateUtils.convertDate2String("HH:mm:ss", runTime).equals(batch.get(j))) {
-                    j++;
-                }
-                empLogs1.add(empLog1);
-                empLogs2.add(empLog2);
-                empLogs3.add(empLog3);
-                empLogs4.add(empLog4);
-            }
-            double empRate = 0.0;
-            double areaRate = 0.0;
-            for (EmpLog empLog : empLogs1) {
-                empRate += empLog.getComPlut();
-                areaRate += empLog.getAllPlut();
-            }
-            double empRate1 = 0.0;
-            double areaRate1 = 0.0;
-            for (EmpLog empLog : empLogs2) {
-                empRate1 += empLog.getComPlut();
-                areaRate1 += empLog.getAllPlut();
-            }
-            double empRate2 = 0.0;
-            double areaRate2 = 0.0;
-            for (EmpLog empLog : empLogs3) {
-                empRate2 += empLog.getComPlut();
-                areaRate2 += empLog.getAllPlut();
-            }
-            double empRate3 = 0.0;
-            double areaRate3 = 0.0;
-            for (EmpLog empLog : empLogs4) {
-                empRate3 += empLog.getComPlut();
-                areaRate3 += empLog.getAllPlut();
-            }
-
-            result.setUploadEmp((int) Math.round(empRate / list1.size() / 60 / 10 / 0.85));
-            result.setPutawayEmp((int) Math.round(empRate1 / list2.size() / 60 / 10 / 0.85));
-            result.setSortingEmp((int) Math.round(empRate2 / list3.size() / 60 / 10 / 0.85));
-            result.setDeliveryEmp((int) Math.round(empRate3 / list4.size() / 60 / 10 / 0.85));
-
-            listr.add(result);
-        }
-        return listr;
-    }
-
-    public static Result action1(double goods_num, String sort_type, double transportNum2, double transportNum3, LightStorage storage) {
-        List<Goods> list = WarehousingUtil.createGoods(goods_num);
-        Tally tally = WarehousingUtil.initTally();
-        Tally tally1 = WarehousingUtil.initTally1();
-        List<Order> orderList = WarehousingUtil.initOrders(list, transportNum2);
-        List<Order> orderList1 = WarehousingUtil.initOrders(list, transportNum3);
-        List<Elevator> elevators = WarehousingUtil.initElevator(5, 1);
-        double total = 0.0;
-        List<Cargo> cargos = WarehousingUtil.initCargo(orderList, total);
-        storage.initStorage(storage,cargos);
-
-        List<Emp> emps1 = WarehousingUtil.initEmp(storage.getPutawayemp());
-        List<Emp> emps2 = WarehousingUtil.initEmp(storage.getSortingemp());
-        emps1 = WarehousingUtil.initEmpOrder(emps1, orderList);
-        emps2 = WarehousingUtil.initEmpSortingOrder(emps2, orderList1, sort_type);
-
-        double work1 = 0.0;
-        double work2 = 0.0;
-        double distance = 0.0;
-        double distance1 = 0.0;
-        Date runTime = DateUtils.convertString2Date("HH:mm:ss", "08:00:00");//当前时间
-        Date endTime = DateUtils.convertString2Date("HH:mm:ss", "16:00:00");//当前时间
-        while (runTime.getTime() < endTime.getTime()) {
-            EmpLog empLog2 = Putaway.work(emps1, tally, tally1, elevators, storage);
-            EmpLog empLog3 = Sorting.move(emps2, storage, tally1);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(runTime);
-            calendar.add(Calendar.SECOND, 1);
-            runTime = calendar.getTime();
-            work1 += empLog2.getComPlut();
-            work2 += empLog3.getComPlut();
-            distance += empLog2.getDistance();
-            distance1 += empLog3.getDistance();
-
-        }
-        Result result = new Result();
-        result.setDistance(work1);
-        result.setPutawayRate(work1 / 60 / 60);
-        result.setSortingRate(work2 / 60 / 60);
-        result.setPutawaydistance(distance);
-        result.setSortdistance(distance1);
-        return result;
-    }
-
-    public static List<Result> runPlatform(Platform platform, Tally tally, double transportNum, int supplier, int goods_num, String carLength, double platform_length) {
+    public static Result runPlatform(String carLength, double transportNum, double unloading_time, double everyDay_unloading_time, double platform_width, double platform_length, double supplier, double goods_num, double utilization) {
+        Platform platform = new Platform();
+        int parking_num = platform.getParking_num(carLength, transportNum, unloading_time, everyDay_unloading_time);
+        double area = platform.getPlatformArea(parking_num, platform_width, platform_length);
         List<Supplier> suppliers = WarehousingUtil.initSupplier(supplier);
         List<Goods> list = WarehousingUtil.createGoodsMessage(goods_num, suppliers);
         List<Car> cars = WarehousingUtil.initCar(list, transportNum, carLength);
-        List<Platform> platforms = WarehousingUtil.initPlat(platform.getPlatform_num(), platform_length);
-        Tally tally1 = WarehousingUtil.initTally2(tally);
-        List<Emp> emps = WarehousingUtil.initEmp(platform.getEmp());
+        List<Platform> platforms = WarehousingUtil.initPlat(parking_num, platform_length);
+        List<Emp> emps = WarehousingUtil.initEmp(parking_num);
         List<Point> doors = WarehousingUtil.initDoor();
         Park park = new Park();
         park.initPoints(cars.size(), 2);
-        Date runTime = DateUtils.convertString2Date("yyyy-MM-dd HH:mm:ss", "2021-01-01 08:00:00");//当前时间
-        Date endTime = DateUtils.convertString2Date("yyyy-MM-dd HH:mm:ss", "2021-01-01 20:00:00");//当前时间
-        List<Result> results = new ArrayList<>();
+
         double distance = 0.0;
         double rate = 0.0;
-        while (runTime.getTime() < endTime.getTime()) {
-            EmpLog empLog = Upload.work(cars, platforms, tally1, emps, runTime, park, doors);
-
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(runTime);
-            calendar.add(Calendar.SECOND, 1);
-            runTime = calendar.getTime();
+        List<EmpLog> list1 = Upload.work(cars, platforms, emps, park);
+        for (EmpLog empLog : list1) {
             distance += empLog.getDistance();
-            rate +=empLog.getComPlut();
+            rate += empLog.getEmpStatus();
         }
+
         Result result = new Result();
-        result.setUploadEmp(emps.size());
-        result.setCost(platform.getEmpCost());
-        result.setPlatformNum(platform.getPlatform_num());
-        result.setUploadRate(rate/8/60/60/emps.size());
-        results.add(result);
-        return results;
+        result.setPlatformArea(area);
+        result.setPlatformNum(parking_num);
+        result.setDistance(distance);
+        result.setCarNum(cars.size());
+        result.setUploadRate(rate / 12 / 60 / 60 / emps.size());
+        int emp = (int) Math.ceil(emps.size() * everyDay_unloading_time / 8);
+        int emp1 = (int) Math.ceil(emps.size() * everyDay_unloading_time / 8 * result.getUploadRate() / (utilization / 100));
+        result.setUploadEmp(emp1);
+        result.setUploadRate(emp * result.getUploadRate() / emp1);
+        return result;
+    }
+
+    /**
+     * @param transportNum
+     * @param carLength
+     * @param batch
+     * @param tallyEmpCapacity
+     * @param tally_channel
+     * @param tray_clearance
+     * @return
+     */
+    public static Result getTally(double transportNum, String carLength, double batch, double tallyEmpCapacity, double tally_channel, double tray_clearance,double utilization) {
+        Tally tally = new Tally();
+        tally = tally.getTallyArea(transportNum, carLength, batch, tally_channel, tray_clearance);
+        Tray tray = new Tray();
+
+        tally.initTally(tally.getTally_transverse(), tally.getTally_longitudinal(), tally_channel, tray_clearance, tray.getWidth(), tray.getLength());
+        List<Goods> list = WarehousingUtil.createGoods(transportNum);
+        List<Tray> trays = Tray.initTrays(list);
+;
+        List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
+
+        double distance = 0.0;
+        double rate = 0.0;
+        List<EmpLog> list1 = Tallying.work(tally,trays,tallyEmpCapacity,emps,batch);
+        for (EmpLog empLog : list1) {
+            distance += empLog.getDistance();
+            rate += empLog.getEmpStatus();
+        }
+
+        Result result = new Result();
+        result.setTallyArea(tally.getArea());
+        result.setDistance(distance);
+        result.setTallyRate(rate / 10 / 60 / 60 / emps.size());
+        int emp = (int) Math.ceil(emps.size() );
+        int emp1 = (int) Math.ceil(emps.size()*result.getTallyRate() / (utilization / 100));
+        result.setTallyEmp(emp1);
+        result.setTallyRate(emp * result.getTallyRate() / emp1);
+        return result;
+    }
+
+    public static Result getPutaway(double putawayNum, double storageNum, double height, double forklift_channel, double utilization, double putaway_speed, double shelf_space, double shelf_height) {
+        Storage storage = new Storage();
+        storage = storage.getHightStorage(storageNum,height,forklift_channel,shelf_space,shelf_height);
+        List<Goods> list = WarehousingUtil.createGoods(putawayNum);
+        List<Cargo> cargos = WarehousingUtil.initCargos(list,storageNum,storage);
+        storage.initStorage(storage,cargos);
+        List<Emp> emps = WarehousingUtil.initEmp((int)(putawayNum/50));
+        List<Tray> trays = Tray.initTrays(list);
+        double distance = 0.0;
+        double rate = 0.0;
+        List<EmpLog> list1 = Putaway.work(storage,trays,putaway_speed,emps);
+        for (EmpLog empLog : list1) {
+            distance += empLog.getDistance();
+            rate += empLog.getEmpStatus();
+        }
+
+        Result result = new Result();
+        result.setStorageArea(storage.getArea());
+        result.setDistance(distance);
+        result.setCargo(storage.getCargo());
+        result.setPutawayRate(rate / 10 / 60 / 60 / emps.size());
+        int emp = (int) Math.ceil(emps.size() );
+        int emp1 = (int) Math.ceil(emps.size()*result.getPutawayRate() / (utilization / 100));
+        result.setPutawayEmp(emp1);
+        result.setPutawayRate(emp * result.getPutawayRate() / emp1);
+        return result;
+    }
+
+    public static Result getStorage(double storageNum, double height, double forklift_channel,  double shelf_space, double shelf_height) {
+        Storage storage = new Storage();
+        storage = storage.getHightStorage(storageNum,height,forklift_channel,shelf_space,shelf_height);
+        Result result = new Result();
+        result.setStorageArea(storage.getArea());
+        result.setCargo(storage.getCargo());
+        return result;
+    }
+
+    public static Result getTakeDown(double take_downNum, double storageNum, double height, double forklift_channel, double utilization, double putaway_speed, double shelf_space, double shelf_height) {
+        Storage storage = new Storage();
+        storage = storage.getHightStorage(storageNum,height,forklift_channel,shelf_space,shelf_height);
+        List<Goods> list = WarehousingUtil.createGoods(take_downNum);
+        List<Cargo> cargos = WarehousingUtil.initCargos(list,storageNum,storage);
+        storage.initStorage(storage,cargos);
+        List<Emp> emps = WarehousingUtil.initEmp((int)(take_downNum/50));
+        List<Tray> trays = Tray.initTrays(list);
+        double distance = 0.0;
+        double rate = 0.0;
+        List<EmpLog> list1 = TakeDown.work(storage,trays,putaway_speed,emps);
+        for (EmpLog empLog : list1) {
+            distance += empLog.getDistance();
+            rate += empLog.getEmpStatus();
+        }
+
+        Result result = new Result();
+        result.setStorageArea(storage.getArea());
+        result.setDistance(distance);
+        result.setCargo(storage.getCargo());
+        result.setTakeDownEmpRate(rate / 10 / 60 / 60 / emps.size());
+        int emp = (int) Math.ceil(emps.size() );
+        int emp1 = (int) Math.ceil(emps.size()*result.getTakeDownEmpRate() / (utilization / 100));
+        result.setTakeDownEmp(emp1);
+        result.setTakeDownEmpRate(emp * result.getTakeDownEmpRate() / emp1);
+        return result;
+    }
+
+    public static Result getSorting(double transportNum, double batch, int orderLine, double sortingSpeed, double tally_channel, double tray_clearance, double utilization,String sort_type) {
+        Tally tally = new Tally();
+        tally = tally.getTallyArea(transportNum, "小车4米6", batch, tally_channel, tray_clearance);
+        Tray tray = new Tray();
+
+        tally.initTally(tally.getTally_transverse()*orderLine, tally.getTally_longitudinal()*orderLine, tally_channel, tray_clearance, tray.getWidth(), tray.getLength());
+        List<Goods> list = WarehousingUtil.createGoods(transportNum*orderLine/2);
+        List<Tray> trays = Tray.initTrays(list);
+        List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
+
+        double distance = 0.0;
+        double rate = 0.0;
+        List<EmpLog> list1 = Sorting.work(tally,trays,sortingSpeed,emps,batch,sort_type,orderLine/2);
+        for (EmpLog empLog : list1) {
+            distance += empLog.getDistance();
+            rate += empLog.getEmpStatus();
+        }
+
+        Result result = new Result();
+        result.setSortingArea(tally.getArea());
+        result.setDistance(distance);
+        result.setSortingRate(rate / 10 / 60 / 60 / emps.size());
+        int emp = (int) Math.ceil(emps.size() );
+        int emp1 = (int) Math.ceil(emps.size()*result.getSortingRate() / (utilization / 100));
+        result.setSortingEmp(emp1);
+        result.setSortingRate(emp * result.getSortingRate() / emp1);
+        return result;
+    }
+
+    public static Result getDelivery(double deliveryNum, double batch, double delivery_speed, double tally_channel, double tray_clearance, double utilization) {
+        Tally tally = new Tally();
+        tally = tally.getTallyArea(deliveryNum, "小车4米6", batch, tally_channel, tray_clearance);
+        Tray tray = new Tray();
+
+        tally.initTally(tally.getTally_transverse(), tally.getTally_longitudinal(), tally_channel, tray_clearance, tray.getWidth(), tray.getLength());
+        List<Goods> list = WarehousingUtil.createGoods(deliveryNum);
+        List<Tray> trays = Tray.initTrays(list);
+        List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
+
+        double distance = 0.0;
+        double rate = 0.0;
+        List<EmpLog> list1 = Delivery.work(tally,trays,delivery_speed,emps,batch);
+        for (EmpLog empLog : list1) {
+            distance += empLog.getDistance();
+            rate += empLog.getEmpStatus();
+        }
+
+        Result result = new Result();
+        result.setDeliveryArea(tally.getArea());
+        result.setDistance(distance);
+        result.setDeliveryRate(rate / 10 / 60 / 60 / emps.size());
+        int emp = (int) Math.ceil(emps.size() );
+        int emp1 = (int) Math.ceil(emps.size()*result.getDeliveryRate() / (utilization / 100));
+        result.setDeliveryEmp(emp1);
+        result.setDeliveryRate(emp * result.getDeliveryRate() / emp1);
+        return result;
+
+    }
+
+    public static Result runLoading(String carLength, double transportNum, double unloading_time, double everyDay_unloading_time, double platform_width, double platform_length, double customer, double goods_num, double utilization) {
+        Platform platform = new Platform();
+        int parking_num = platform.getParking_num(carLength, transportNum, unloading_time, everyDay_unloading_time);
+        double area = platform.getPlatformArea(parking_num, platform_width, platform_length);
+        List<Customer> coustomers = WarehousingUtil.initCustomer(customer);
+        List<Goods> list = WarehousingUtil.createGoodsDeliveryMessage(goods_num, coustomers);
+        List<Car> cars = WarehousingUtil.initCar1(list, transportNum, carLength);
+        List<Platform> platforms = WarehousingUtil.initPlat(parking_num, platform_length);
+        List<Emp> emps = WarehousingUtil.initEmp(parking_num);
+        Park park = new Park();
+        park.initPoints(cars.size(), 2);
+
+        double distance = 0.0;
+        double rate = 0.0;
+        List<EmpLog> list1 = Loading.work(cars, platforms, emps, park);
+        for (EmpLog empLog : list1) {
+            distance += empLog.getDistance();
+            rate += empLog.getEmpStatus();
+        }
+
+        Result result = new Result();
+        result.setPlatformArea(area);
+        result.setPlatformNum(parking_num);
+        result.setDistance(distance);
+        result.setCarNum(cars.size());
+        result.setUploadRate(rate / 12 / 60 / 60 / emps.size());
+        int emp = (int) Math.ceil(emps.size() * everyDay_unloading_time / 8);
+        int emp1 = (int) Math.ceil(emps.size() * everyDay_unloading_time / 8 * result.getUploadRate() / (utilization / 100));
+        result.setUploadEmp(emp1);
+        result.setUploadRate(emp * result.getUploadRate() / emp1);
+        return result;
+
     }
 }

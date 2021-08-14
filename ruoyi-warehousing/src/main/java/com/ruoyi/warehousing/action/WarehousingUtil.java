@@ -11,6 +11,7 @@ import com.ruoyi.warehousing.resource.equipment.LightStorage;
 import com.ruoyi.warehousing.resource.equipment.Tray;
 import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
 import com.ruoyi.warehousing.resource.facilities.platform.Platform;
+import com.ruoyi.warehousing.resource.facilities.storage.Storage;
 import com.ruoyi.warehousing.resource.personnel.Emp;
 import com.ruoyi.warehousing.result.EmpLog;
 import com.ruoyi.warehousing.result.Result;
@@ -45,7 +46,7 @@ public class WarehousingUtil {
     public static List<Platform> initPlat(double num,double platform_width) {
         List<Platform> platforms = new ArrayList<>();
         for (int i = 0; i < num; i++) {
-            platforms.add(new Platform("月台" + 1 + "号", 0, 0, new Point(0 + i * platform_width, 0, 0)));
+            platforms.add(new Platform("月台" + 1 + "号", 0,  new Point(0 + i * platform_width, 0, 0)));
         }
         return platforms;
     }
@@ -107,7 +108,7 @@ public class WarehousingUtil {
     /**
      * 获取月台工作人员
      *
-     * @param emp
+     * @param
      * @return
      */
     public static Platform getPlatform(List<Platform> platforms) {
@@ -379,7 +380,7 @@ public class WarehousingUtil {
             Platform platform = platformIterator.next();
             if (platform.getCode().equals(code)) {
                 platform.getCarLine().removeCar();
-                platform.remoteEmp();
+
 
                 if (platform.getCarLine().getTora() <= 0) {
                     platform.setStatus(-1);
@@ -478,6 +479,19 @@ public class WarehousingUtil {
             material.setGoodsCode(RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
             material.setVolume(initNormalDistribution1(100,0.05)[(int)random(0,99)]);
             material.setSupplier(suppliers.get((int)random(0,suppliers.size())));
+            materialList.add(material);
+        }
+        return materialList;
+
+    }
+    public static List<Goods> createGoodsDeliveryMessage(double rangeNum,List<Customer> customerList) {
+        List<Goods> materialList = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < rangeNum; i++) {
+            Goods material = new Goods();
+            material.setGoodsCode(RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
+            material.setVolume(initNormalDistribution1(100,0.05)[(int)random(0,99)]);
+            material.setCustomer(customerList.get((int)random(0,customerList.size())));
             materialList.add(material);
         }
         return materialList;
@@ -593,7 +607,20 @@ public class WarehousingUtil {
         }
         return cargos;
     }
-
+    public static List<Cargo> initCargos(List<Goods> list, double total, Storage storage) {
+        LinkedList<Goods> materials = new LinkedList<>(list);
+        List<Cargo> cargos = new ArrayList<>();
+        for (int i = 1; i <= storage.getLayer(); i++) {
+            for (int j = 1; j <= storage.getLine(); j++) {
+                for (int k = 1; k <= storage.getRow(); k++) {
+                    Goods goods1 = materials.poll();
+                    Point point = new Point(i, j, k);
+                    cargos.add(new Cargo(point, goods1));
+                }
+            }
+        }
+        return cargos;
+    }
     public static List<Supplier> initSupplier(double num) {
         List<Supplier> suppliers = new ArrayList<>();
         Random random = new Random();
@@ -605,7 +632,16 @@ public class WarehousingUtil {
         }
         return suppliers;
     }
-
+    public static List<Customer> initCustomer(double num) {
+        List<Customer> customerList = new ArrayList<>();
+        Random random = new Random();
+        for (int i=0;i<=num;i++){
+            Customer customer = new Customer();
+            customer.setCustomerCode(RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
+            customerList.add(customer);
+        }
+        return customerList;
+    }
 
 
     public static int[] splitInteger(int n, int sum,boolean flag) {
@@ -768,12 +804,12 @@ public class WarehousingUtil {
         Random random = new Random();
         for(int i= 0;i<carNum;i++){
             Car car=new Car();
-            car.setCarNo("川A"+RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
+            car.setCarNo("川A"+RandomUtil.toFixdLengthString(random.nextInt(1000),5));
             car.setArrinveTime(randomDate("2021-01-01 08:00:00", "2021-01-01 18:00:00"));
             car.setPoint(new Point(0,0,0,1));
             car.setGoodsList(goodsList.get(i%goodsList.size()));
             List<Tray> trays = new ArrayList<>();
-            List<List<Goods>> goods =combinations(car.getGoodsList(),carSize);
+            List<List<Goods>> goods =averageAssign(car.getGoodsList(),carSize);
             for (int m=0;m<carSize;m++){
                 Tray tray  =new Tray(goods.get(m));
                 trays.add(tray);
@@ -785,6 +821,30 @@ public class WarehousingUtil {
     }
 
 
+
+    /**
+     * 将一个list均分成n个list,主要通过偏移量来实现的
+     * @param source
+     * @return
+     */
+    public static <T> List<List<T>> averageAssign(List<T> source,int n) {
+        List<List<T>> result = new ArrayList<List<T>>();
+        int remaider = source.size() % n;  //(先计算出余数)
+        int number = source.size() / n;  //然后是商
+        int offset = 0;//偏移量
+        for (int i = 0; i < n; i++) {
+            List<T> value = null;
+            if (remaider > 0) {
+                value = source.subList(i * number + offset, (i + 1) * number + offset + 1);
+                remaider--;
+                offset++;
+            } else {
+                value = source.subList(i * number + offset, (i + 1) * number + offset);
+            }
+            result.add(value);
+        }
+        return result;
+    }
     /**
      * 从集合中取组合
      * @param list
@@ -829,45 +889,35 @@ public class WarehousingUtil {
         return tally;
     }
 
+    public static List<Car> initCar1(List<Goods> list, double transportNum, String carLength) {
+        List<Car> carList = new ArrayList<>();
+        int carSize = Integer.parseInt(CarType.valueOf(carLength).getCode());
+        int carNum = (int)(Math.ceil(transportNum/carSize)*1.5);
+        Map<Customer, List<Goods>> outOrdersList = list.stream().collect(Collectors.groupingBy(Goods::getCustomer));//出库单
+        List<List<Goods>> goodsList = new ArrayList<>();
+        for(Customer customer:outOrdersList.keySet()){
+            goodsList.add(outOrdersList.get(customer));
+        }
+        Random random = new Random();
+        for(int i= 0;i<carNum;i++){
+            Car car=new Car();
+            car.setCarNo("川A"+RandomUtil.toFixdLengthString(random.nextInt(1000),5));
+            car.setArrinveTime(randomDate("2021-01-01 08:00:00", "2021-01-01 18:00:00"));
+            car.setPoint(new Point(0,0,0,1));
+            car.setGoodsList(goodsList.get(i%goodsList.size()));
+            List<Tray> trays = new ArrayList<>();
+            List<List<Goods>> goods =averageAssign(car.getGoodsList(),carSize);
+            for (int m=0;m<carSize;m++){
+                Tray tray  =new Tray(goods.get(m));
+                trays.add(tray);
+            }
+            car.setTrays(trays);
+            carList.add(car);
+        }
+        return  carList;
+    }
 
 
-//    /***
-//     * 按照订单拣选
-//     */
-//    private void runTOEmp(List<Order> orders) {
-//        Map<String,List<Order>> map = orders.stream().collect(groupingBy(Order::getGroups));
-//        List<String> strings=new ArrayList<>(map.keySet());
-//        List<List<String>> list = ListUtils.partition(strings,map.keySet().size()/empList.size());
-//        for (int i=0;i<empList.size();i++){
-//            List<String> str = list.get(i);
-//            List<Order> orders = new ArrayList<>();
-//            for (String s:str){
-//                Order order = new Order();
-//                List<Chuku> chukuList = map.get(s);
-//                List<Goods> goodsList = new ArrayList<>();
-//                for (Chuku chuku:chukuList){
-//                    goodsList.add(new Goods(chuku.getGoodsCode(),Double.parseDouble(chuku.getTime()),chuku.getGroups(),chuku.getGroupLine()));
-//                }
-//                order.setProductLine(chukuList.get(0).getGroupLine());
-//
-//                order.setGoodsList(goodsList);
-//                order.setType(chukuList.get(0).getGroups());
-//                orders.add(order);
-//            }
-//            empList.get(i).setOrders(orders);
-//        }
-//        for (Emp emp:empList){
-//            List<Goods> list1 = new ArrayList<>();
-//            for (Order order :emp.getOrders()){
-//                list1.addAll(order.getGoodsList());
-//            }
-//            Set<String> namesAlreadySeen = new HashSet<>();
-//            list1.removeIf(p -> !namesAlreadySeen.add(p.getGoodsCode()));
-//            emp.setGoods(list1);
-//        }
 
-
-//
-//    }
 
 }

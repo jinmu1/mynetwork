@@ -10,17 +10,21 @@ public class Result {
     private int uploadEmp;//卸货人员数量
     private int tallyEmp;//理货能力
     private int putawayEmp;//上架人员
+    private int takeDownEmp;//下架人员
     private int sortingEmp;//分拣人员
     private int deliveryEmp;//装车人员
     private double uploadRate;//卸货人员利用率
     private double putawayRate;//上架人员利用率
+    private double takeDownEmpRate;//下架人员利用率
     private double sortingRate;//分拣人员利用率
     private double deliveryRate;//装车人员利用率
     private double forklift;//卸货叉车
     private double empCost;//人员成本
     private double forkliftCost;//设备成本
+    private int carNum;
+    private double deliveryArea;//出库理货面积
 
-
+    private double sortingArea;//分拣区面积
     private double platformNum;//卸货月台数量
     private double platformArea;//卸货月台面积
     private double platformRate;//卸货月台利用率
@@ -35,9 +39,24 @@ public class Result {
 
     private int cargo;//货位数量
 
+    public double getDeliveryArea() {
+        return deliveryArea;
+    }
+
+    public void setDeliveryArea(double deliveryArea) {
+        this.deliveryArea = deliveryArea;
+    }
 
     public int getCargo() {
         return cargo;
+    }
+
+    public double getSortingArea() {
+        return sortingArea;
+    }
+
+    public void setSortingArea(double sortingArea) {
+        this.sortingArea = sortingArea;
     }
 
     public void setCargo(int cargo) {
@@ -48,6 +67,30 @@ public class Result {
     }
     public Result(int batch) {
         this.batch = batch;
+    }
+
+    public int getCarNum() {
+        return carNum;
+    }
+
+    public void setCarNum(int carNum) {
+        this.carNum = carNum;
+    }
+
+    public int getTakeDownEmp() {
+        return takeDownEmp;
+    }
+
+    public void setTakeDownEmp(int takeDownEmp) {
+        this.takeDownEmp = takeDownEmp;
+    }
+
+    public double getTakeDownEmpRate() {
+        return takeDownEmpRate;
+    }
+
+    public void setTakeDownEmpRate(double takeDownEmpRate) {
+        this.takeDownEmpRate = takeDownEmpRate;
     }
 
     public Result(int batch, double cost, double distance, int uploadEmp, int putawayEmp, int sortingEmp, int deliveryEmp, double uploadRate, double putawayRate, double sortingRate, double deliveryRate, double platformNum, double platformArea, double platformRate, double tallyArea, double tallyRate, double storageArea, double tally1Area, double tally1Rate, double platform1Num, double platform1Area, double platform1Rate) {

@@ -3,6 +3,7 @@ package com.ruoyi.warehousing.resource.equipment;
 import com.ruoyi.warehousing.form.Goods;
 import com.ruoyi.warehousing.queue.Point;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ public class Tray {
     private static double length=1.2;//托盘的长
     private static double thickness=0.6;//托盘的厚度
     private static double height=1.6;//托盘的高度---限高
-    private List<Goods> goodsList;//存储的物料数量
+    private List<Goods> goodsList = new ArrayList<>();//存储的物料数量
     private Point point;
     private int status;//托盘的状态 0-空 1-有物料 2-满载了
 
@@ -31,6 +32,17 @@ public class Tray {
         this.goodsList = goodsList;
         this.point = point;
         this.status = status;
+    }
+
+    public static List<Tray> initTrays(List<Goods> list) {
+        List<Tray> list1 =new ArrayList<>();
+        for (Goods goods:list){
+            Tray tray = new Tray();
+            tray.getGoodsList().add(goods);
+            tray.setPoint(new Point(0,0,0));
+            list1.add(tray);
+        }
+        return list1;
     }
 
     private void init(){

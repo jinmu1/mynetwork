@@ -7,6 +7,8 @@ import com.ruoyi.warehousing.form.Goods;
 import com.ruoyi.warehousing.queue.Order;
 import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.resource.equipment.Tray;
+import com.ruoyi.warehousing.utils.AreaUtils;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,17 +18,20 @@ public class Tally {
     private double torr;//托
     private List<Goods> goodsList;
     private List<Order> orders;
-    private List<Tray> trays;//托盘
+    private List<Tray> trays  = new ArrayList<>();//托盘
     private double pallet;//托盘量
     private double area;//区域面积
-    private double tally_transverse;// 纵向数量
-    private double tally_longitudinal;//横向数量
+    private int tally_transverse;// 纵向数量
+    private int tally_longitudinal;//横向数量
     public static double tally_channel = 0.6;//托盘间隙
     public static double forklift_channel=3;//叉车通道
     private int emp;//人员数量
     private double empCost;//人员成本
     private static double x=60;//初始化点的x坐标
     private static double y=40;//初始点的y坐标
+
+
+
     /**
      * 初始化分拣区位置
      * @param tally_transverse 横向托盘数量
@@ -153,19 +158,19 @@ public class Tally {
         this.area = area;
     }
 
-    public double getTally_transverse() {
+    public int getTally_transverse() {
         return tally_transverse;
     }
 
-    public void setTally_transverse(double tally_transverse) {
+    public void setTally_transverse(int tally_transverse) {
         this.tally_transverse = tally_transverse;
     }
 
-    public double getTally_longitudinal() {
+    public int getTally_longitudinal() {
         return tally_longitudinal;
     }
 
-    public void setTally_longitudinal(double tally_longitudinal) {
+    public void setTally_longitudinal(int tally_longitudinal) {
         this.tally_longitudinal = tally_longitudinal;
     }
 
@@ -202,5 +207,32 @@ public class Tally {
 
     public void setOrders(List<Order> orders) {
         this.orders = orders;
+    }
+
+    public Tally getTallyArea(double transportNum,String carType, double batch, double tally_channel, double tray_clearance) {
+        double pallet_num = transportNum/batch;//理货平均托盘量
+        int tally_transverse = (int)AreaUtils.getPlatform(transportNum,carType).getPlatform_num();//纵向数量
+        if (tally_transverse>pallet_num){
+            tally_transverse = 1;
+        }
+        Tray tray = new Tray();
+
+        int tally_longitudinal= (int)Math.ceil(pallet_num/tally_transverse);//横向数量
+        double tally_area = tally_longitudinal*(tray.getLength()+tray_clearance)*(tray.getWidth()+tally_channel+3)*tally_transverse/0.7;//理货区面积
+        Tally tally = new Tally();
+        tally.setPallet(pallet_num);
+        tally.setArea(tally_area);
+        tally.setTally_longitudinal(tally_longitudinal);
+        tally.setTally_transverse(tally_transverse);
+        return tally;
+    }
+
+    public void putInTrays(List<Tray> trays) {
+
+        for (int i=0;i<trays.size();i++){
+             trays.get(i).setPoint(points.get(i));
+             points.get(i).setStatus(1);
+        }
+        this.trays.addAll(trays) ;
     }
 }
