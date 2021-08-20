@@ -27,8 +27,7 @@ public class TakeDown {
         Date runTime = DateUtils.convertString2Date("HH:mm:ss", "08:00:00");//当前时间
         Date endTime = DateUtils.convertString2Date("HH:mm:ss", "18:00:00");//当前时间
         List<EmpLog> list = new ArrayList<>();
-        while (runTime.getTime() < endTime.getTime()) {
-
+        while (runTime.getTime()<endTime.getTime()) {
             if (isEmpNull(emps) && TrayisNotNull(trays)) {
                 EmpToStorage(emps, trays, storage);
             }
@@ -47,9 +46,24 @@ public class TakeDown {
                             emp.addStatus();
                             emp.setT2(40);
                         } else {
-                            empLog.setDistance(putaway_speed);
+                            double distance = 0.0;
                             emp.setCurr(WarehousingUtil.getPath(emp, putaway_speed));
+                            if (putaway_speed>1) {
+                                for (int speed = 0;speed < putaway_speed-1;speed++){
+                                    emp.setCurr(WarehousingUtil.getPath(emp, 1));
+                                    if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar())>0){
+                                        distance++;
+                                    }
+
+                                }
+                                emp.setCurr(WarehousingUtil.getPath(emp, putaway_speed-Math.floor(putaway_speed)));
+                            }else {
+                                emp.setCurr(WarehousingUtil.getPath(emp, putaway_speed));
+                                distance+=putaway_speed;
+                            }
+                            empLog.setDistance(distance);
                         }
+
                         break;
                     case 2:
                         empLog.setEmpStatus(1);
@@ -68,6 +82,7 @@ public class TakeDown {
                             empLog.setDistance(putaway_speed);
                             emp.setCurr(WarehousingUtil.getPath(emp, putaway_speed));
                         }
+
                         break;
                 }
                 list.add(empLog);

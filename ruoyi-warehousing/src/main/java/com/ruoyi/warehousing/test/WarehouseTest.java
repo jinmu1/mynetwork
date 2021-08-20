@@ -25,7 +25,8 @@ public class WarehouseTest {
     @Test
     public void  getCar(){
         Platform platform = new Platform();
-        int parking_num = platform.getParking_num("小车4米6",1000,0.5,8);
+        for(int i=0;i<10;i++) {
+        int parking_num = platform.getParking_num("小车4米6",1000,0.5,8,2);
         double area = platform.getPlatformArea(parking_num,3.5,3);
         List<Supplier> suppliers = WarehousingUtil.initSupplier(100);
         List<Goods> list = WarehousingUtil.createGoodsMessage(1000, suppliers);
@@ -37,11 +38,13 @@ public class WarehouseTest {
 
         double distance = 0.0;
         double rate = 0.0;
-        List<EmpLog> list1 = Upload.work(cars, platforms, emps,park);
-        for (EmpLog empLog:list1){
-            distance +=empLog.getDistance();
+
+            List<EmpLog> list1 = Upload.work(cars, platforms, emps, park, 300);
+            for (EmpLog empLog : list1) {
+                distance += empLog.getEmpStatus();
+            }
+            System.out.println(distance);
         }
-        System.out.println(distance);
     }
 
     @Test
@@ -63,18 +66,21 @@ public class WarehouseTest {
         Tray tray = new Tray();
 
         tally.initTally(tally.getTally_transverse(), tally.getTally_longitudinal(), 3.5, 0.2, tray.getWidth(), tray.getLength());
-        List<Goods> list = WarehousingUtil.createGoods(1000);
-        List<Tray> trays = Tray.initTrays(list);
+        List<Goods> list = WarehousingUtil.createGoods(500);
+        List<Tray> trays = Tray.initTrays(list,1000);
         ;
         List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
+        for (double i=1;i<2;i++ ) {
+            List<EmpLog> list1 = Tallying.work(tally, trays,1, emps, i,120);
+            double distance = 0.0;
+            double rate = 0.0;
+            for (EmpLog empLog : list1) {
+                distance += empLog.getDistance();
+                rate+=empLog.getEmpStatus();
+            }
+            System.out.println(i+":"+Math.ceil(rate));
 
-        List<EmpLog> list1 = Tallying.work(tally,trays,1.1,emps,3);
-        double distance = 0.0;
-        double rate = 0.0;
-        for (EmpLog empLog:list1){
-            distance +=empLog.getDistance();
         }
-        System.out.println(distance);
     }
 
     @Test
@@ -85,7 +91,7 @@ public class WarehouseTest {
         List<Cargo> cargos = WarehousingUtil.initCargos(list,40000,storage);
         storage.initStorage(storage,cargos);
         List<Emp> emps = WarehousingUtil.initEmp((int)(1000/50));
-        List<Tray> trays = Tray.initTrays(list);
+        List<Tray> trays = Tray.initTrays(list,1000);
         double distance = 0.0;
         double rate = 0.0;
         List<EmpLog> list1 = Putaway.work(storage,trays,1.1,emps);
@@ -96,31 +102,57 @@ public class WarehouseTest {
         System.out.println(distance);
     }
     @Test
-    public void getSorting(){
+    public void getSorting() {
+        for (int i =1;i<=6;i++) {
+            Tally tally = new Tally();
+            int orderLine = 5;
+            tally = tally.getTallyArea(1000, "小车4米6", 3, 3, 0.2);
+            Tray tray = new Tray();
+
+            tally.initTally(tally.getTally_transverse() * orderLine, tally.getTally_longitudinal() * orderLine, 3, 0.2, tray.getWidth(), tray.getLength());
+            List<Goods> list = WarehousingUtil.createGoods(1000 );
+            List<Tray> trays = Tray.initTrays(list, 1000*orderLine/10);
+            List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
+
+            double distance = 0.0;
+            double rate = 0.0;
+
+            List<EmpLog> list1 = Sorting.work(tally, trays, 1.1, emps,1, "按单分拣", 7, 120);
+            for (EmpLog empLog : list1) {
+                distance += empLog.getDistance();
+                rate += empLog.getEmpStatus();
+            }
+            System.out.println(rate);
+        }
+
+    }
+    @Test
+    public void  getDelivery(){
         Tally tally = new Tally();
-        int orderLine = 5;
-        tally = tally.getTallyArea(1000, "小车4米6", 3, 3, 0.2);
+        tally = tally.getTallyArea(1000, "小车4米6", 3, 3.5, 0.2);
         Tray tray = new Tray();
 
-        tally.initTally(tally.getTally_transverse()*orderLine, tally.getTally_longitudinal()*orderLine, 3, 0.2, tray.getWidth(), tray.getLength());
-        List<Goods> list = WarehousingUtil.createGoods(1000*orderLine);
-        List<Tray> trays = Tray.initTrays(list);
+        tally.initTally(tally.getTally_transverse(), tally.getTally_longitudinal(), 3.5, 0.2, tray.getWidth(), tray.getLength());
+        List<Goods> list = WarehousingUtil.createGoods(20);
+        List<Tray> trays = Tray.initTrays(list,1000);
+        ;
         List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
+        for (double i=1;i<100;i++ ) {
+            List<EmpLog> list1 = Delivery.work(tally, trays, i, emps, 3,120);
+            double distance = 0.0;
+            double rate = 0.0;
+            for (EmpLog empLog : list1) {
+                distance += empLog.getDistance();
+                rate+=empLog.getEmpStatus();
+            }
+            System.out.println(i+":"+Math.ceil(distance));
 
-        double distance = 0.0;
-        double rate = 0.0;
-        List<EmpLog> list1 = Sorting.work(tally,trays,1.1,emps,3,"按单分拣",7);
-        for (EmpLog empLog : list1) {
-            distance += empLog.getDistance();
-            rate += empLog.getEmpStatus();
         }
-        System.out.println(distance);
     }
-
     @Test
     public void loading(){
         Platform platform = new Platform();
-        int parking_num = platform.getParking_num("小车4米6", 5000, 0.5, 8);
+        int parking_num = platform.getParking_num("小车4米6", 5000, 0.5, 8,2);
         double area = platform.getPlatformArea(parking_num, 3.5, 3);
         List<Customer> coustomers = WarehousingUtil.initCustomer(200);
 
@@ -133,7 +165,7 @@ public class WarehouseTest {
 
         double distance = 0.0;
         double rate = 0.0;
-        List<EmpLog> list1 = Loading.work(cars, platforms, emps, park);
+        List<EmpLog> list1 = Loading.work(cars, platforms, emps, park,10800/12);
         for (EmpLog empLog : list1) {
             distance += empLog.getDistance();
             rate += empLog.getEmpStatus();

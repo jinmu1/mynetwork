@@ -54,12 +54,12 @@ public class Platform {
     /**
      * 计算泊车位数量的方法
       */
-    public int getParking_num(String  carType,double total,double unloading_time,double everyDay_unloading_time){
+    public int getParking_num(String  carType,double total,double unloading_time,double everyDay_unloading_time,double batch){
         double car_volumetric = Double.parseDouble(CarType.valueOf(carType).getCode());//计算车辆容积 通过车辆类型
         platform_width = 3 * 1.25;
 
         double car_num = Math.ceil(total/volumetric_coefficient/car_volumetric);//计算车辆数量 通过车辆容积
-        int platform_num =  (int) Math.ceil(car_num*peak_rate*unloading_time/everyDay_unloading_time);//月台数量
+        int platform_num =  (int) Math.ceil(car_num*peak_rate*unloading_time/everyDay_unloading_time/batch);//月台数量
         return platform_num;
     }
 

@@ -26,22 +26,27 @@ public class Delivery {
      * @param tally
      */
 
-    public static List<EmpLog> work(Tally tally, List<Tray> trays, double delivery_speed, List<Emp> emps, double batch) {
+    public static List<EmpLog> work(Tally tally, List<Tray> trays, double delivery_speed, List<Emp> emps, double batch,double delivery_Time) {
         Date runTime = DateUtils.convertString2Date("HH:mm:ss", "08:00:00");//当前时间
         Date endTime = DateUtils.convertString2Date("HH:mm:ss", "18:00:00");//当前时间
         List<EmpLog> list = new ArrayList<>();
-        List<String> dates = DateUtils.getIntervalTimeList(sdf.format(runTime),sdf.format(endTime),(int)(10*60/batch));
+        List<String> dates = DateUtils.getIntervalTimeList(sdf.format(runTime),sdf.format(endTime),(int)((endTime.getTime()-runTime.getTime())/1000/60/batch));
         List<List<Tray>> lists = WarehousingUtil.averageAssign(trays,(int)batch);
         int i = 0;
-        while (runTime.getTime() < endTime.getTime()) {
+
+        while (i<batch||TallyIsNotNull(tally)||runTime.getTime() < (endTime.getTime()+36000)) {
             if (TimeBatch(runTime,dates)){
-                List<Tray> trays1 = lists.get(i);
-                tally.putInTrays(trays1);
+                if (i<batch) {
+                    List<Tray> trays1 = lists.get(i);
+                    tally.putInTrays(trays1);
+                }
                 i++;
             }
+
             if (isEmpNull(emps)&&TallyIsNotNull(tally)) {
                 EmpToTally(emps,tally);
             }
+
 
             for (Emp emp:emps){
                 EmpLog empLog = new EmpLog();
@@ -53,13 +58,28 @@ public class Delivery {
                         break;
                     case 1:
                         empLog.setEmpStatus(1);
-                        if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar()) < 1){
+                        double distance = 0.0;
+                        if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar()) ==0){
                             emp.addStatus();
-                            emp.setT2(90);
+                            emp.setT2(delivery_Time);
                         }else {
-                            empLog.setDistance(delivery_speed);
-                            emp.setCurr(WarehousingUtil.getPath(emp, delivery_speed));
+
+                            if (delivery_speed>1) {
+                                for (int speed = 0;speed < delivery_speed-1;speed++){
+                                    emp.setCurr(WarehousingUtil.getPath(emp, 1));
+                                    if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar())>0){
+                                        distance++;
+                                    }
+
+                                }
+                                emp.setCurr(WarehousingUtil.getPath(emp, delivery_speed-Math.floor(delivery_speed)));
+                            }else {
+                                emp.setCurr(WarehousingUtil.getPath(emp, delivery_speed));
+                                distance+=delivery_speed;
+                            }
+
                         }
+                        empLog.setDistance(distance);
                         break;
                     case 2:
                         empLog.setEmpStatus(1);
@@ -79,9 +99,10 @@ public class Delivery {
             runTime = calendar.getTime();
 
         }
-        return list;
 
+        return list;
     }
+
     /**
      * 为空闲的人员分配任务
      * @param emps

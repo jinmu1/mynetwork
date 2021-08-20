@@ -42,33 +42,33 @@ public class Action {
      * @param utilization             最大利用率
      * @return
      */
-    public static Result runPlatform(String carLength, double transportNum, double unloading_time, double everyDay_unloading_time, double platform_width, double platform_length, double supplier, double goods_num, double utilization) {
+    public static Result runPlatform(String carLength, double transportNum, double unloading_time, double everyDay_unloading_time, double platform_width, double platform_length, double supplier, double goods_num, double utilization,double batch,double platform_a) {
         Platform platform = new Platform();
-        int parking_num = platform.getParking_num(carLength, transportNum, unloading_time, everyDay_unloading_time);
+        int parking_num = platform.getParking_num(carLength, transportNum, unloading_time, everyDay_unloading_time,batch); //计算月台数量
         double area = platform.getPlatformArea(parking_num, platform_width, platform_length);
         List<Supplier> suppliers = WarehousingUtil.initSupplier(supplier);
         List<Goods> list = WarehousingUtil.createGoodsMessage(goods_num, suppliers);
         List<Car> cars = WarehousingUtil.initCar(list, transportNum, carLength);
-        List<Platform> platforms = WarehousingUtil.initPlat(parking_num, platform_length);
-        List<Emp> emps = WarehousingUtil.initEmp(parking_num);
-        List<Point> doors = WarehousingUtil.initDoor();
+        List<Platform> platforms = WarehousingUtil.initPlat(parking_num, platform_width);
+        List<Emp> emps = WarehousingUtil.initEmp(10);
         Park park = new Park();
         park.initPoints(cars.size(), 2);
-
+        Result result = new Result();
+        result.setCarNum(cars.size());
         double distance = 0.0;
         double rate = 0.0;
-        List<EmpLog> list1 = Upload.work(cars, platforms, emps, park);
+        List<EmpLog> list1 = Upload.work(cars, platforms, emps, park,platform_a);
         for (EmpLog empLog : list1) {
             distance += empLog.getDistance();
             rate += empLog.getEmpStatus();
         }
 
-        Result result = new Result();
+
         result.setPlatformArea(area);
         result.setPlatformNum(parking_num);
         result.setDistance(distance);
-        result.setCarNum(cars.size());
-        result.setUploadRate(rate / 12 / 60 / 60 / emps.size());
+
+        result.setUploadRate(rate / 10 / 60 / 60 / emps.size());
         int emp = (int) Math.ceil(emps.size() * everyDay_unloading_time / 8);
         int emp1 = (int) Math.ceil(emps.size() * everyDay_unloading_time / 8 * result.getUploadRate() / (utilization / 100));
         result.setUploadEmp(emp1);
@@ -77,28 +77,27 @@ public class Action {
     }
 
     /**
-     * @param transportNum
-     * @param carLength
-     * @param batch
-     * @param tallyEmpCapacity
-     * @param tally_channel
+     * @param transportNum 理货总托盘量
+     * @param batch 理货批次
+     * @param tallyEmpCapacity 理货行走速度
+     * @param tally_channel 理货通道
      * @param tray_clearance
      * @return
      */
-    public static Result getTally(double transportNum, String carLength, double batch, double tallyEmpCapacity, double tally_channel, double tray_clearance,double utilization) {
+    public static Result getTally(double transportNum, String carLength, double batch, double tallyEmpCapacity, double tally_channel, double tray_clearance,double utilization,double tallyTime,double goods_num) {
         Tally tally = new Tally();
         tally = tally.getTallyArea(transportNum, carLength, batch, tally_channel, tray_clearance);
         Tray tray = new Tray();
 
         tally.initTally(tally.getTally_transverse(), tally.getTally_longitudinal(), tally_channel, tray_clearance, tray.getWidth(), tray.getLength());
-        List<Goods> list = WarehousingUtil.createGoods(transportNum);
-        List<Tray> trays = Tray.initTrays(list);
-;
+        List<Goods> list = WarehousingUtil.createGoods(goods_num);
+        List<Tray> trays = Tray.initTrays(list,transportNum);
+
         List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
 
         double distance = 0.0;
         double rate = 0.0;
-        List<EmpLog> list1 = Tallying.work(tally,trays,tallyEmpCapacity,emps,batch);
+        List<EmpLog> list1 = Tallying.work(tally,trays,tallyEmpCapacity,emps,batch,tallyTime);
         for (EmpLog empLog : list1) {
             distance += empLog.getDistance();
             rate += empLog.getEmpStatus();
@@ -107,7 +106,7 @@ public class Action {
         Result result = new Result();
         result.setTallyArea(tally.getArea());
         result.setDistance(distance);
-        result.setTallyRate(rate / 10 / 60 / 60 / emps.size());
+        result.setTallyRate(rate /10/60/60/emps.size());
         int emp = (int) Math.ceil(emps.size() );
         int emp1 = (int) Math.ceil(emps.size()*result.getTallyRate() / (utilization / 100));
         result.setTallyEmp(emp1);
@@ -122,7 +121,7 @@ public class Action {
         List<Cargo> cargos = WarehousingUtil.initCargos(list,storageNum,storage);
         storage.initStorage(storage,cargos);
         List<Emp> emps = WarehousingUtil.initEmp((int)(putawayNum/50));
-        List<Tray> trays = Tray.initTrays(list);
+        List<Tray> trays = Tray.initTrays(list,putawayNum);
         double distance = 0.0;
         double rate = 0.0;
         List<EmpLog> list1 = Putaway.work(storage,trays,putaway_speed,emps);
@@ -159,7 +158,7 @@ public class Action {
         List<Cargo> cargos = WarehousingUtil.initCargos(list,storageNum,storage);
         storage.initStorage(storage,cargos);
         List<Emp> emps = WarehousingUtil.initEmp((int)(take_downNum/50));
-        List<Tray> trays = Tray.initTrays(list);
+        List<Tray> trays = Tray.initTrays(list,take_downNum);
         double distance = 0.0;
         double rate = 0.0;
         List<EmpLog> list1 = TakeDown.work(storage,trays,putaway_speed,emps);
@@ -180,19 +179,19 @@ public class Action {
         return result;
     }
 
-    public static Result getSorting(double transportNum, double batch, int orderLine, double sortingSpeed, double tally_channel, double tray_clearance, double utilization,String sort_type) {
+    public static Result getSorting(double transportNum, double batch, int orderLine, double sortingSpeed, double tally_channel, double tray_clearance, double utilization,String sort_type,double goods_num,double sortingTime) {
         Tally tally = new Tally();
         tally = tally.getTallyArea(transportNum, "小车4米6", batch, tally_channel, tray_clearance);
         Tray tray = new Tray();
 
         tally.initTally(tally.getTally_transverse()*orderLine, tally.getTally_longitudinal()*orderLine, tally_channel, tray_clearance, tray.getWidth(), tray.getLength());
-        List<Goods> list = WarehousingUtil.createGoods(transportNum*orderLine/2);
-        List<Tray> trays = Tray.initTrays(list);
+        List<Goods> list = WarehousingUtil.createGoods(goods_num);
+        List<Tray> trays = Tray.initTrays(list,transportNum*orderLine);
         List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
 
         double distance = 0.0;
         double rate = 0.0;
-        List<EmpLog> list1 = Sorting.work(tally,trays,sortingSpeed,emps,batch,sort_type,orderLine/2);
+        List<EmpLog> list1 = Sorting.work(tally,trays,sortingSpeed,emps,batch,sort_type,orderLine/2,sortingTime);
         for (EmpLog empLog : list1) {
             distance += empLog.getDistance();
             rate += empLog.getEmpStatus();
@@ -209,19 +208,20 @@ public class Action {
         return result;
     }
 
-    public static Result getDelivery(double deliveryNum, double batch, double delivery_speed, double tally_channel, double tray_clearance, double utilization) {
+    public static Result getDelivery(double deliveryNum, double batch, double delivery_speed, double tally_channel, double tray_clearance, double utilization,double delivery_Time) {
         Tally tally = new Tally();
         tally = tally.getTallyArea(deliveryNum, "小车4米6", batch, tally_channel, tray_clearance);
         Tray tray = new Tray();
 
         tally.initTally(tally.getTally_transverse(), tally.getTally_longitudinal(), tally_channel, tray_clearance, tray.getWidth(), tray.getLength());
-        List<Goods> list = WarehousingUtil.createGoods(deliveryNum);
-        List<Tray> trays = Tray.initTrays(list);
+        List<Goods> list = WarehousingUtil.createGoods(150);
+        List<Tray> trays = Tray.initTrays(list,deliveryNum);
+
         List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
 
         double distance = 0.0;
         double rate = 0.0;
-        List<EmpLog> list1 = Delivery.work(tally,trays,delivery_speed,emps,batch);
+        List<EmpLog> list1 = Delivery.work(tally,trays,delivery_speed,emps,batch,delivery_Time);
         for (EmpLog empLog : list1) {
             distance += empLog.getDistance();
             rate += empLog.getEmpStatus();
@@ -230,7 +230,7 @@ public class Action {
         Result result = new Result();
         result.setDeliveryArea(tally.getArea());
         result.setDistance(distance);
-        result.setDeliveryRate(rate / 10 / 60 / 60 / emps.size());
+        result.setDeliveryRate(rate /10/60/60/emps.size());
         int emp = (int) Math.ceil(emps.size() );
         int emp1 = (int) Math.ceil(emps.size()*result.getDeliveryRate() / (utilization / 100));
         result.setDeliveryEmp(emp1);
@@ -239,9 +239,9 @@ public class Action {
 
     }
 
-    public static Result runLoading(String carLength, double transportNum, double unloading_time, double everyDay_unloading_time, double platform_width, double platform_length, double customer, double goods_num, double utilization) {
+    public static Result runLoading(String carLength, double transportNum, double unloading_time, double everyDay_unloading_time, double platform_width, double platform_length, double customer, double goods_num, double utilization,double platform_a) {
         Platform platform = new Platform();
-        int parking_num = platform.getParking_num(carLength, transportNum, unloading_time, everyDay_unloading_time);
+        int parking_num = platform.getParking_num(carLength, transportNum, unloading_time, everyDay_unloading_time,2);
         double area = platform.getPlatformArea(parking_num, platform_width, platform_length);
         List<Customer> coustomers = WarehousingUtil.initCustomer(customer);
         List<Goods> list = WarehousingUtil.createGoodsDeliveryMessage(goods_num, coustomers);
@@ -250,20 +250,21 @@ public class Action {
         List<Emp> emps = WarehousingUtil.initEmp(parking_num);
         Park park = new Park();
         park.initPoints(cars.size(), 2);
-
+        Result result = new Result();
+        result.setCarNum(cars.size());
         double distance = 0.0;
         double rate = 0.0;
-        List<EmpLog> list1 = Loading.work(cars, platforms, emps, park);
+        List<EmpLog> list1 = Loading.work(cars, platforms, emps, park,platform_a);
         for (EmpLog empLog : list1) {
             distance += empLog.getDistance();
             rate += empLog.getEmpStatus();
         }
 
-        Result result = new Result();
+
         result.setPlatformArea(area);
         result.setPlatformNum(parking_num);
         result.setDistance(distance);
-        result.setCarNum(cars.size());
+
         result.setUploadRate(rate / 12 / 60 / 60 / emps.size());
         int emp = (int) Math.ceil(emps.size() * everyDay_unloading_time / 8);
         int emp1 = (int) Math.ceil(emps.size() * everyDay_unloading_time / 8 * result.getUploadRate() / (utilization / 100));

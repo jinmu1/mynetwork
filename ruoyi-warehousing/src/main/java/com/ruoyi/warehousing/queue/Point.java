@@ -103,7 +103,7 @@ public class Point {
         }
     }
     public Point north(double m) {
-        double yNorth = y + 1;
+        double yNorth = y + m;
         Point newPt = new Point(x, yNorth,z);
         //if yNorth > Floor.Width, stay at the old place
         if (yNorth > Warehouse.Width) {
@@ -115,7 +115,7 @@ public class Point {
     }
 
     public Point south(double m) {
-        double ySou = y - 1;
+        double ySou = y - m;
         Point newPt = new Point(x, ySou,z);
         //if ySou < 0, stay at the old place
         if (ySou < 0) {

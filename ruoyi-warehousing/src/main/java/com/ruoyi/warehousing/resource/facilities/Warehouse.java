@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Warehouse {
-    public final static int Length = 200;  //x坐标
-    public final static int Width = 300;   //y坐标
-    public final static int height = 25;   //z坐标
+    public final static int Length = 1000000;  //x坐标
+    public final static int Width = 300000;   //y坐标
+    public final static int height = 250000;   //z坐标
 
     private static boolean isAtChargingStation;
     private static final Point start_station = new Point(3, 0, 0);

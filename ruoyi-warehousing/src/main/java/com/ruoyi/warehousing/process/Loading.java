@@ -11,38 +11,38 @@ import com.ruoyi.warehousing.result.EmpLog;
 import com.ruoyi.warehousing.utils.DateUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class Loading {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     /**
-     * 装车流程仿真
+     * 卸货流程仿真
      * @param emps
      * @param platforms
      */
-    public static List<EmpLog> work(List<Car> cars, List<Platform> platforms, List<Emp> emps, Park park) {
+    public static List<EmpLog> work(List<Car> cars, List<Platform> platforms,  List<Emp> emps,Park park,double platform_a) {
         Date runTime = DateUtils.convertString2Date("yyyy-MM-dd HH:mm:ss", "2021-01-01 08:00:00");//当前时间
         Date endTime = DateUtils.convertString2Date("yyyy-MM-dd HH:mm:ss", "2021-01-01 20:00:00");//当前时间
         //获取当前时间节点的倒库车辆
         List<EmpLog> list = new ArrayList<>();
-        while (runTime.getTime() < endTime.getTime()) {
+        while (runTime.getTime() < (endTime.getTime()+36000)||isPlatformEmpNotNull(platforms)&&parkIsNotNull(park)||!parkIsNotNull(park)) {
             while (isPlatformNotNull(platforms)&&parkIsNotNull(park)){
                 PlatforAddParkCar(park,platforms);
             }
-            List<Car> carList = new ArrayList<>();
-            for (Car car:cars){
 
+            Iterator<Car> iterator = cars.listIterator();
+            List<Car> carList = new ArrayList<>();
+            while (iterator.hasNext()){
+                Car car = iterator.next();
                 if (sdf.format(car.getArrinveTime()).equals(sdf.format(runTime))){
                     carList.add(car);
+                    iterator.remove();
                 }
             }
             if (carList!=null&&carList.size()>0){
                 AriveCar(carList,park,platforms);
             }
-            isEmpToPlatformIsNull(emps,platforms);
+            isEmpToPlatformIsNull(emps,platforms,platform_a);
 
             for (Emp emp:emps){
                 EmpLog empLog = new EmpLog();
@@ -54,38 +54,13 @@ public class Loading {
                         break;
                     case 1:
                         empLog.setEmpStatus(1);
-                        if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar()) < 1){
-                            emp.addStatus();
-                            emp.setT2(80);
-                        }else {
-                            empLog.setDistance(WorkTime.v0);
-                            emp.setCurr(WarehousingUtil.getPath(emp, WorkTime.v0));
-                        }
-                        break;
-                    case 2:
-                        empLog.setEmpStatus(1);
                         if (emp.getT2() > 0) {
                             emp.dispose();
                         } else {
-                            emp.addStatus();
+                            emp.setStatus(0);
                             emp.setTar(new Point(platforms.size()*platforms.get(0).platform_width*2, platforms.get(0).platform_length*platforms.size()/2,0));
                         }
                         break;
-                    case 3:
-                        empLog.setEmpStatus(1);
-                        if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar()) < 1){
-                            emp.addStatus();
-                            emp.setT2(80);
-                        }else {
-                            empLog.setDistance(WorkTime.v1);
-                            emp.setCurr(WarehousingUtil.getPath(emp, WorkTime.v1));
-                        }
-                        break;
-                    case 4:
-                        empLog.setEmpStatus(0);
-                        emp.setStatus(0);
-                        break;
-
                 }
                 list.add(empLog);
             }
@@ -106,7 +81,7 @@ public class Loading {
      * @param platforms
      * @return
      */
-    private static void isEmpToPlatformIsNull(List<Emp> emps, List<Platform> platforms) {
+    private static void isEmpToPlatformIsNull(List<Emp> emps, List<Platform> platforms,double platform_a) {
 
         if (!isEmpIsNull(emps)&&isPlatformEmpNotNull(platforms)){
             for (Platform platform:platforms){
@@ -121,13 +96,14 @@ public class Loading {
                         if (platform.getEmps() == null && emp.getStatus() == 0) {
                             emp.setStatus(1);
                             platform.addEmp(emp);
+                            emp.setT2(platform_a);
                             emp.setTar(platform.getPosition());
                             emp.setTary(platform.getCarLine().getTrays().get(0));
                             platform.getCarLine().removeCar();
-                        }
-                        if (platform.getStatus()==1&&platform.getEmps()!=null&&emp.getStatus()==0&&platform.getEmps().get(0).getName().equals(emp.getName())){
+                        }else if (platform.getStatus()==1&&platform.getEmps()!=null&&emp.getStatus()==0&&platform.getEmps().get(0).getName().equals(emp.getName())){
                             emp.setStatus(1);
                             platform.addEmp(emp);
+                            emp.setT2(platform_a);
                             emp.setTar(platform.getPosition());
                             emp.setTary(platform.getCarLine().getTrays().get(0));
                             platform.getCarLine().removeCar();
@@ -208,9 +184,7 @@ public class Loading {
                 park.add(car);
             }
         }else {
-            if (ArriveCarIsNotNull(carsMap)){
-                PlatformAddCarFormArrive(carsMap,platforms);
-            }
+            PlatformAddCarFormArrive(carsMap,platforms);
         }
 
     }

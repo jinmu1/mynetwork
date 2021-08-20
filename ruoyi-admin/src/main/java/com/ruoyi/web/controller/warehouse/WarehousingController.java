@@ -8,6 +8,7 @@ import com.ruoyi.network.utils.NetWorkPlanUtils;
 import com.ruoyi.network.utils.NetworkUtils;
 import com.ruoyi.system.service.IGlcPointService;
 import com.ruoyi.warehousing.action.Action;
+import com.ruoyi.warehousing.enumType.CarType;
 import com.ruoyi.warehousing.form.Cargo;
 import com.ruoyi.warehousing.form.Goods;
 import com.ruoyi.warehousing.process.Delivery;
@@ -53,26 +54,26 @@ public class WarehousingController extends BaseController {
     private IGlcPointService glcPointService;
 
     private String prefix = "system/warehouse";
+
     @GetMapping("/warehouse")
-    public String point()
-    {
+    public String point() {
         return prefix + "/index";
     }
+
     @GetMapping("/warehousePlan")
-    public String warehousePlan()
-    {
+    public String warehousePlan() {
         return prefix + "/index2";
     }
-
 
 
     @PostMapping("/getTally")
     @ResponseBody
     public TableDataInfo getTally(HttpServletRequest req) {
-        String carLength  = "小车4米6";
+        String carLength = "小车4米6";
         if (req.getParameter("carLength") != null && !req.getParameter("carLength").equals("")) {
             carLength = req.getParameter("carLength");
         }
+
 
         double transportNum = 2370;
         if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
@@ -98,13 +99,76 @@ public class WarehousingController extends BaseController {
         if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
             utilization = Double.parseDouble(req.getParameter("utilization"));
         }
-
+        double tallyTime = 80;
+        if (req.getParameter("tallyTime") != null && !req.getParameter("tallyTime").equals("")) {
+            tallyTime = Double.parseDouble(req.getParameter("tallyTime"));
+        }
+        double goods_num = 80;
+        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
+            goods_num = Double.parseDouble(req.getParameter("goods_num"));
+        }
         List<Result> list = new ArrayList<>();
-        Result result= Action.getTally(transportNum,carLength,batch,tallyEmpCapacity,tally_channel,tray_clearance,utilization);
+        Result result = Action.getTally(transportNum, carLength, batch, tallyEmpCapacity, tally_channel, tray_clearance, utilization, tallyTime,goods_num);
 
         list.add(result);
         return getDataTable(list);
     }
+
+    @PostMapping("/getTallyLine")
+    @ResponseBody
+    public TableDataInfo getTallyLine(HttpServletRequest req) {
+        String carLength = "小车4米6";
+        if (req.getParameter("carLength") != null && !req.getParameter("carLength").equals("")) {
+            carLength = req.getParameter("carLength");
+        }
+
+
+        double transportNum = 2370;
+        if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
+            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+        }
+        double batch = 3;
+        if (req.getParameter("batch") != null && !req.getParameter("batch").equals("")) {
+            batch = Double.parseDouble(req.getParameter("batch"));
+        }
+        double tallyEmpCapacity = 2370;
+        if (req.getParameter("tallyEmpCapacity") != null && !req.getParameter("tallyEmpCapacity").equals("")) {
+            tallyEmpCapacity = Double.parseDouble(req.getParameter("tallyEmpCapacity"));
+        }
+        double tally_channel = 3;
+        if (req.getParameter("tally_channel") != null && !req.getParameter("tally_channel").equals("")) {
+            tally_channel = Double.parseDouble(req.getParameter("tally_channel"));
+        }
+        double tray_clearance = 0.2;
+        if (req.getParameter("tray_clearance") != null && !req.getParameter("tray_clearance").equals("")) {
+            tray_clearance = Double.parseDouble(req.getParameter("tray_clearance"));
+        }
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
+        double tallyTime = 80;
+        if (req.getParameter("tallyTime") != null && !req.getParameter("tallyTime").equals("")) {
+            tallyTime = Double.parseDouble(req.getParameter("tallyTime"));
+        }
+        double batchNum = 80;
+        if (req.getParameter("batchNum") != null && !req.getParameter("batchNum").equals("")) {
+            batchNum = Double.parseDouble(req.getParameter("batchNum"));
+        }
+        double goods_num = 80;
+        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
+            goods_num = Double.parseDouble(req.getParameter("goods_num"));
+        }
+        List<Result> list = new ArrayList<>();
+        for (int i = 1; i <= batchNum; i++) {
+            Result result = Action.getTally(transportNum, carLength, i, tallyEmpCapacity, tally_channel, tray_clearance, utilization, tallyTime,goods_num);
+            result.setCost(i);
+            list.add(result);
+        }
+
+        return getDataTable(list);
+    }
+
     @PostMapping("/putaway")
     @ResponseBody
     public TableDataInfo putaway(HttpServletRequest req) {
@@ -143,11 +207,12 @@ public class WarehousingController extends BaseController {
             shelf_height = Double.parseDouble(req.getParameter("shelf_height"));
         }
         List<Result> list = new ArrayList<>();
-        Result result= Action.getPutaway(putawayNum,storageNum,height,forklift_channel,utilization,putaway_speed,shelf_space,shelf_height);
+        Result result = Action.getPutaway(putawayNum, storageNum, height, forklift_channel, utilization, putaway_speed, shelf_space, shelf_height);
 
         list.add(result);
         return getDataTable(list);
     }
+
     @PostMapping("/getStorage")
     @ResponseBody
     public TableDataInfo getStorage(HttpServletRequest req) {
@@ -174,17 +239,18 @@ public class WarehousingController extends BaseController {
             shelf_height = Double.parseDouble(req.getParameter("shelf_height"));
         }
         List<Result> list = new ArrayList<>();
-        Result result= Action.getStorage(storageNum,height,forklift_channel,shelf_space,shelf_height);
+        Result result = Action.getStorage(storageNum, height, forklift_channel, shelf_space, shelf_height);
 
         list.add(result);
         return getDataTable(list);
     }
+
     private static double plat = 1.1 * 1.25 * 1.5;
 
-    public static List<Cargo> initCargo(List<Order> list,double total) {
+    public static List<Cargo> initCargo(List<Order> list, double total) {
         LinkedList<Goods> materials = new LinkedList<>();
         Map<String, List<Order>> outOrdersList = list.stream().collect(Collectors.groupingBy(Order::getGoodsCode));//出库单
-         total = 0.0;//总托数
+        total = 0.0;//总托数
         for (String goodsCode : outOrdersList.keySet()) {
             List<Order> orders = outOrdersList.get(goodsCode);
             double safeInventory = NetWorkPlanUtils.getSafeInventory(orders, 95); //获取安全库存
@@ -247,10 +313,60 @@ public class WarehousingController extends BaseController {
             utilization = Double.parseDouble(req.getParameter("utilization"));
         }
         List<Result> list = new ArrayList<>();
-        Result result = Action.runPlatform(carLength,transportNum,unloading_time,everyDay_unloading_time,platform_width,platform_length,supplier,goods_num,utilization);
+        Result result = Action.runPlatform(carLength, transportNum, unloading_time, everyDay_unloading_time, platform_width, platform_length, supplier, goods_num, utilization,2 ,unloading_time * 60 * 60 / Integer.parseInt(CarType.valueOf(carLength).getCode()));
 
 
         list.add(result);
+        return getDataTable(list);
+    }
+
+    @PostMapping("/getUploadLine")
+    @ResponseBody
+    public TableDataInfo getUploadLine(HttpServletRequest req) {
+        String carLength = req.getParameter("carlength");
+        double transportNum = 2370;
+        if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
+            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+        }
+        double unloading_time = 0.5;
+        if (req.getParameter("unloading_time") != null && !req.getParameter("unloading_time").equals("")) {
+            unloading_time = Double.parseDouble(req.getParameter("unloading_time"));
+        }
+        double everyDay_unloading_time = 8;
+        if (req.getParameter("everyDay_unloading_time") != null && !req.getParameter("everyDay_unloading_time").equals("")) {
+            everyDay_unloading_time = Double.parseDouble(req.getParameter("everyDay_unloading_time"));
+        }
+        double platform_width = 3;
+        if (req.getParameter("platform_width") != null && !req.getParameter("platform_width").equals("")) {
+            platform_width = Double.parseDouble(req.getParameter("platform_width"));
+        }
+        double platform_length = 3;
+        if (req.getParameter("platform_length") != null && !req.getParameter("platform_length").equals("")) {
+            platform_length = Double.parseDouble(req.getParameter("platform_length"));
+        }
+        double supplier = 300;
+        if (req.getParameter("supplier") != null && !req.getParameter("supplier").equals("")) {
+            supplier = Double.parseDouble(req.getParameter("supplier"));
+        }
+        double goods_num = 100;
+        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
+            goods_num = Double.parseDouble(req.getParameter("goods_num"));
+        }
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
+        double platform_a = 10;
+        if (req.getParameter("platform_a") != null && !req.getParameter("platform_a").equals("")) {
+            platform_a = Double.parseDouble(req.getParameter("platform_a"));
+        }
+        List<Result> list = new ArrayList<>();
+        for (double i = 1; i < platform_a+1; i ++) {
+            Result result = Action.runPlatform(carLength, transportNum, unloading_time, everyDay_unloading_time, platform_width, platform_length, supplier, goods_num, utilization, i,unloading_time * 60 * 60 / Integer.parseInt(CarType.valueOf(carLength).getCode()));
+            result.setCost(i);
+            list.add(result);
+        }
+
         return getDataTable(list);
     }
 
@@ -292,7 +408,7 @@ public class WarehousingController extends BaseController {
             shelf_height = Double.parseDouble(req.getParameter("shelf_height"));
         }
         List<Result> list = new ArrayList<>();
-        Result result= Action.getTakeDown(take_downNum,storageNum,height,forklift_channel,utilization,putaway_speed,shelf_space,shelf_height);
+        Result result = Action.getTakeDown(take_downNum, storageNum, height, forklift_channel, utilization, putaway_speed, shelf_space, shelf_height);
 
         list.add(result);
         return getDataTable(list);
@@ -326,17 +442,79 @@ public class WarehousingController extends BaseController {
         if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
             utilization = Double.parseDouble(req.getParameter("utilization"));
         }
-        int orderLine= 7;
+        int orderLine = 7;
         if (req.getParameter("orderLine") != null && !req.getParameter("orderLine").equals("")) {
             orderLine = Integer.parseInt(req.getParameter("orderLine"));
         }
-
+        double goods_num = 1000;
+        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
+            goods_num = Double.parseDouble(req.getParameter("goods_num"));
+        }
+        double sortingTime = 80;
+        if (req.getParameter("sortingTime") != null && !req.getParameter("sortingTime").equals("")) {
+            sortingTime = Double.parseDouble(req.getParameter("sortingTime"));
+        }
         List<Result> list = new ArrayList<>();
-        Result result= Action.getSorting(transportNum,batch,orderLine,sortingSpeed,tally_channel,tray_clearance,utilization,sort_type);
+        Result result = Action.getSorting(transportNum, batch, orderLine, sortingSpeed, tally_channel, tray_clearance, utilization, sort_type, goods_num, sortingTime);
 
         list.add(result);
         return getDataTable(list);
     }
+
+    @PostMapping("/getSortingLine")
+    @ResponseBody
+    public TableDataInfo getSortingLine(HttpServletRequest req) {
+        String sort_type = req.getParameter("sort_type");
+        double transportNum = 2370;
+        if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
+            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+        }
+        double batch = 3;
+        if (req.getParameter("batch") != null && !req.getParameter("batch").equals("")) {
+            batch = Double.parseDouble(req.getParameter("batch"));
+        }
+        double sortingSpeed = 1.1;
+        if (req.getParameter("sortingSpeed") != null && !req.getParameter("sortingSpeed").equals("")) {
+            sortingSpeed = Double.parseDouble(req.getParameter("sortingSpeed"));
+        }
+        double tally_channel = 3;
+        if (req.getParameter("tally_channel") != null && !req.getParameter("tally_channel").equals("")) {
+            tally_channel = Double.parseDouble(req.getParameter("tally_channel"));
+        }
+        double tray_clearance = 0.2;
+        if (req.getParameter("tray_clearance") != null && !req.getParameter("tray_clearance").equals("")) {
+            tray_clearance = Double.parseDouble(req.getParameter("tray_clearance"));
+        }
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
+        int orderLine = 7;
+        if (req.getParameter("orderLine") != null && !req.getParameter("orderLine").equals("")) {
+            orderLine = Integer.parseInt(req.getParameter("orderLine"));
+        }
+        double goods_num = 1000;
+        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
+            goods_num = Double.parseDouble(req.getParameter("goods_num"));
+        }
+        double sortingTime = 80;
+        if (req.getParameter("sortingTime") != null && !req.getParameter("sortingTime").equals("")) {
+            sortingTime = Double.parseDouble(req.getParameter("sortingTime"));
+        }
+        double batchNum = 6;
+        if (req.getParameter("batchNum") != null && !req.getParameter("batchNum").equals("")) {
+            batchNum = Double.parseDouble(req.getParameter("batchNum"));
+        }
+        List<Result> list = new ArrayList<>();
+        for (int i = 1; i <= batchNum; i++) {
+            Result result = Action.getSorting(transportNum, i, orderLine, sortingSpeed, tally_channel, tray_clearance, utilization, sort_type, goods_num, sortingTime);
+
+            result.setCost(i);
+            list.add(result);
+        }
+        return getDataTable(list);
+    }
+
     @PostMapping("/getDelivery")
     @ResponseBody
     public TableDataInfo getDelivery(HttpServletRequest req) {
@@ -365,11 +543,59 @@ public class WarehousingController extends BaseController {
         if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
             utilization = Double.parseDouble(req.getParameter("utilization"));
         }
-
+        double delivery_Time = 150;
+        if (req.getParameter("delivery_Time") != null && !req.getParameter("delivery_Time").equals("")) {
+            delivery_Time = Double.parseDouble(req.getParameter("delivery_Time"));
+        }
         List<Result> list = new ArrayList<>();
-        Result result= Action.getDelivery(deliveryNum,batch,delivery_speed,tally_channel,tray_clearance,utilization);
+        Result result = Action.getDelivery(deliveryNum, batch, delivery_speed, tally_channel, tray_clearance, utilization, delivery_Time);
 
         list.add(result);
+        return getDataTable(list);
+    }
+
+    @PostMapping("/getDeliveryList")
+    @ResponseBody
+    public TableDataInfo getDeliveryList(HttpServletRequest req) {
+
+        double deliveryNum = 2370;
+        if (req.getParameter("deliveryNum") != null && !req.getParameter("deliveryNum").equals("")) {
+            deliveryNum = Double.parseDouble(req.getParameter("deliveryNum"));
+        }
+        double batch = 3;
+        if (req.getParameter("batch") != null && !req.getParameter("batch").equals("")) {
+            batch = Double.parseDouble(req.getParameter("batch"));
+        }
+        double delivery_speed = 1.1;
+        if (req.getParameter("delivery_speed") != null && !req.getParameter("delivery_speed").equals("")) {
+            delivery_speed = Double.parseDouble(req.getParameter("delivery_speed"));
+        }
+        double tally_channel = 3;
+        if (req.getParameter("tally_channel") != null && !req.getParameter("tally_channel").equals("")) {
+            tally_channel = Double.parseDouble(req.getParameter("tally_channel"));
+        }
+        double tray_clearance = 0.2;
+        if (req.getParameter("tray_clearance") != null && !req.getParameter("tray_clearance").equals("")) {
+            tray_clearance = Double.parseDouble(req.getParameter("tray_clearance"));
+        }
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
+        double delivery_Time = 120;
+        if (req.getParameter("delivery_Time") != null && !req.getParameter("delivery_Time").equals("")) {
+            delivery_Time = Double.parseDouble(req.getParameter("delivery_Time"));
+        }
+        double batchNum = 6;
+        if (req.getParameter("batchNum") != null && !req.getParameter("batchNum").equals("")) {
+            batchNum = Double.parseDouble(req.getParameter("batchNum"));
+        }
+        List<Result> list = new ArrayList<>();
+        for (int i = 1; i <= batchNum; i++) {
+            Result result = Action.getDelivery(deliveryNum, i, delivery_speed, tally_channel, tray_clearance, utilization, delivery_Time);
+            result.setCost(i);
+            list.add(result);
+        }
         return getDataTable(list);
     }
 
@@ -410,10 +636,63 @@ public class WarehousingController extends BaseController {
             utilization = Double.parseDouble(req.getParameter("utilization"));
         }
         List<Result> list = new ArrayList<>();
-        Result result = Action.runLoading(carLength,transportNum,unloading_time,everyDay_unloading_time,platform_width,platform_length,customer,goods_num,utilization);
+        Result result = Action.runLoading(carLength, transportNum, unloading_time, everyDay_unloading_time, platform_width, platform_length, customer, goods_num, utilization, unloading_time * 60 * 60 / Integer.parseInt(CarType.valueOf(carLength).getCode()));
 
 
         list.add(result);
+        return getDataTable(list);
+    }
+
+    @PostMapping("/getLoadingList")
+    @ResponseBody
+    public TableDataInfo getLoadingList(HttpServletRequest req) {
+        String carLength = req.getParameter("carlength");
+        double transportNum = 2370;
+        if (req.getParameter("transportNum") != null && !req.getParameter("transportNum").equals("")) {
+            transportNum = Double.parseDouble(req.getParameter("transportNum"));
+        }
+        double unloading_time = 0.5;
+        if (req.getParameter("unloading_time") != null && !req.getParameter("unloading_time").equals("")) {
+            unloading_time = Double.parseDouble(req.getParameter("unloading_time"));
+        }
+        double everyDay_unloading_time = 8;
+        if (req.getParameter("everyDay_unloading_time") != null && !req.getParameter("everyDay_unloading_time").equals("")) {
+            everyDay_unloading_time = Double.parseDouble(req.getParameter("everyDay_unloading_time"));
+        }
+        double platform_width = 3;
+        if (req.getParameter("platform_width") != null && !req.getParameter("platform_width").equals("")) {
+            platform_width = Double.parseDouble(req.getParameter("platform_width"));
+        }
+        double platform_length = 3;
+        if (req.getParameter("platform_length") != null && !req.getParameter("platform_length").equals("")) {
+            platform_length = Double.parseDouble(req.getParameter("platform_length"));
+        }
+        double customer = 200;
+        if (req.getParameter("supplier") != null && !req.getParameter("supplier").equals("")) {
+            customer = Double.parseDouble(req.getParameter("supplier"));
+        }
+        double goods_num = 100;
+        if (req.getParameter("goods_num") != null && !req.getParameter("goods_num").equals("")) {
+            goods_num = Double.parseDouble(req.getParameter("goods_num"));
+        }
+        double utilization = 80;
+        if (req.getParameter("utilization") != null && !req.getParameter("utilization").equals("")) {
+            utilization = Double.parseDouble(req.getParameter("utilization"));
+        }
+        double platform_a = 6;
+        if (req.getParameter("platform_a") != null && !req.getParameter("platform_a").equals("")) {
+            platform_a = Double.parseDouble(req.getParameter("platform_a"));
+        }
+        List<Result> list = new ArrayList<>();
+        for (double i = 1; i < platform_a; i += 10) {
+            unloading_time = i / 60;
+
+            Result result = Action.runLoading(carLength, transportNum,unloading_time, everyDay_unloading_time, platform_width, platform_length, customer, goods_num, utilization, i * 60 * 60 / Integer.parseInt(CarType.valueOf(carLength).getCode()));
+
+            result.setCost(i);
+            list.add(result);
+        }
+
         return getDataTable(list);
     }
 }

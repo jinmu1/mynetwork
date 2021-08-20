@@ -17,22 +17,29 @@ import java.util.*;
 public class Tallying {
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-    public static List<EmpLog> work(Tally tally, List<Tray> trays,double tallyEmpCapacity, List<Emp> emps, double batch) {
+    private static  int k = 0;
+    public static List<EmpLog> work(Tally tally, List<Tray> trays,double tallyEmpCapacity, List<Emp> emps, double batch,double tallyTime) {
         Date runTime = DateUtils.convertString2Date("HH:mm:ss", "08:00:00");//当前时间
         Date endTime = DateUtils.convertString2Date("HH:mm:ss", "18:00:00");//当前时间
         List<EmpLog> list = new ArrayList<>();
-        List<String> dates = DateUtils.getIntervalTimeList(sdf.format(runTime),sdf.format(endTime),(int)(10*60/batch));
+        List<String> dates = DateUtils.getIntervalTimeList(sdf.format(runTime),sdf.format(endTime),(int)((endTime.getTime()-runTime.getTime())/1000/60/batch));
         List<List<Tray>> lists = WarehousingUtil.averageAssign(trays,(int)batch);
         int i = 0;
-        while (runTime.getTime() < endTime.getTime()) {
+        k=0;
+        while (runTime.getTime() < (endTime.getTime()+36000)) {
              if (TimeBatch(runTime,dates)){
-                 List<Tray> trays1 = lists.get(i);
-                 tally.putInTrays(trays1);
+                 if (i<batch) {
+                     List<Tray> trays1 = lists.get(i);
+                     tally.putInTrays(trays1);
+
+                 }
                  i++;
              }
+
              if (isEmpNull(emps)&&TallyIsNotNull(tally)) {
                  EmpToTally(emps,tally);
              }
+
 
             for (Emp emp:emps){
                 EmpLog empLog = new EmpLog();
@@ -44,20 +51,36 @@ public class Tallying {
                         break;
                     case 1:
                         empLog.setEmpStatus(1);
-                        if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar()) < 1){
+                        double distance = 0.0;
+                        if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar()) ==0){
                             emp.addStatus();
-                            emp.setT2(90);
+                            emp.setT2(tallyTime);
                         }else {
-                            empLog.setDistance(tallyEmpCapacity);
-                            emp.setCurr(WarehousingUtil.getPath(emp, tallyEmpCapacity));
+
+                            if (tallyEmpCapacity>1) {
+                                for (int speed = 0;speed < tallyEmpCapacity-1;speed++){
+                                    emp.setCurr(WarehousingUtil.getPath(emp, 1));
+                                    if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar())>0){
+                                        distance++;
+                                    }
+
+                                }
+                                emp.setCurr(WarehousingUtil.getPath(emp, tallyEmpCapacity-Math.floor(tallyEmpCapacity)));
+                            }else {
+                                emp.setCurr(WarehousingUtil.getPath(emp, tallyEmpCapacity));
+                                distance+=tallyEmpCapacity;
+                            }
+
                         }
+                        empLog.setDistance(distance);
                         break;
                     case 2:
                         empLog.setEmpStatus(1);
                         if (emp.getT2() > 0) {
+
                             emp.dispose();
                         } else {
-                            emp.addStatus();
+                            k++;
                             emp.setStatus(0);
                         }
                         break;
@@ -70,8 +93,7 @@ public class Tallying {
             runTime = calendar.getTime();
 
         }
-
-
+          System.out.println(k);
                 return list;
         }
 
@@ -90,6 +112,7 @@ public class Tallying {
                         tray = tray1;
                     }
                 }
+
                 emp.setStatus(1);
                 emp.setTary(tray);
                 emp.setTar(tray.getPoint());
@@ -125,6 +148,21 @@ public class Tallying {
          }
 
          return isnull;
+    }
+    /**
+     * 是否有人员空闲
+     * @param emps
+     * @return
+     */
+    private static boolean isEmpNotNull(List<Emp> emps) {
+        boolean isnull =false;
+        for (Emp emp:emps){
+            if (emp.getStatus()==1){
+                isnull = true;
+            }
+        }
+
+        return isnull;
     }
 
     /**

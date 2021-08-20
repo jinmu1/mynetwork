@@ -26,31 +26,36 @@ import static java.util.stream.Collectors.groupingBy;
 public class Upload{
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     /**
      * 卸货流程仿真
      * @param emps
      * @param platforms
      */
-    public static List<EmpLog> work(List<Car> cars, List<Platform> platforms,  List<Emp> emps,Park park) {
+    public static List<EmpLog> work(List<Car> cars, List<Platform> platforms,  List<Emp> emps,Park park,double platform_a) {
         Date runTime = DateUtils.convertString2Date("yyyy-MM-dd HH:mm:ss", "2021-01-01 08:00:00");//当前时间
         Date endTime = DateUtils.convertString2Date("yyyy-MM-dd HH:mm:ss", "2021-01-01 20:00:00");//当前时间
        //获取当前时间节点的倒库车辆
         List<EmpLog> list = new ArrayList<>();
-        while (runTime.getTime() < endTime.getTime()) {
+        while (cars.size()>0||!isEmpIsNull(emps)) {
             while (isPlatformNotNull(platforms)&&parkIsNotNull(park)){
                     PlatforAddParkCar(park,platforms);
                 }
-            List<Car> carList = new ArrayList<>();
-            for (Car car:cars){
 
+            Iterator<Car> iterator = cars.listIterator();
+            List<Car> carList = new ArrayList<>();
+            while (iterator.hasNext()){
+                Car car = iterator.next();
                 if (sdf.format(car.getArrinveTime()).equals(sdf.format(runTime))){
                     carList.add(car);
+
+                    iterator.remove();
                 }
             }
             if (carList!=null&&carList.size()>0){
                 AriveCar(carList,park,platforms);
             }
-            isEmpToPlatformIsNull(emps,platforms);
+            isEmpToPlatformIsNull(emps,platforms,platform_a);
 
             for (Emp emp:emps){
                 EmpLog empLog = new EmpLog();
@@ -62,38 +67,14 @@ public class Upload{
                         break;
                     case 1:
                         empLog.setEmpStatus(1);
-                        if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar()) < 1){
-                            emp.addStatus();
-                            emp.setT2(80);
-                        }else {
-                            empLog.setDistance(WorkTime.v0);
-                            emp.setCurr(WarehousingUtil.getPath(emp, WorkTime.v0));
-                        }
-                        break;
-                    case 2:
-                        empLog.setEmpStatus(1);
                         if (emp.getT2() > 0) {
                             emp.dispose();
                         } else {
-                            emp.addStatus();
+
+                            emp.setStatus(0);
                             emp.setTar(new Point(platforms.size()*platforms.get(0).platform_width*2, platforms.get(0).platform_length*platforms.size()/2,0));
                         }
                         break;
-                    case 3:
-                        empLog.setEmpStatus(1);
-                        if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar()) < 1){
-                            emp.addStatus();
-                            emp.setT2(80);
-                        }else {
-                            empLog.setDistance(WorkTime.v1);
-                            emp.setCurr(WarehousingUtil.getPath(emp, WorkTime.v1));
-                        }
-                        break;
-                    case 4:
-                        empLog.setEmpStatus(0);
-                        emp.setStatus(0);
-                        break;
-
                 }
                 list.add(empLog);
             }
@@ -103,7 +84,6 @@ public class Upload{
             runTime = calendar.getTime();
 
         }
-
         return list;
 
     }
@@ -114,28 +94,30 @@ public class Upload{
      * @param platforms
      * @return
      */
-    private static void isEmpToPlatformIsNull(List<Emp> emps, List<Platform> platforms) {
+    private static void isEmpToPlatformIsNull(List<Emp> emps, List<Platform> platforms,double platform_a) {
 
-        if (!isEmpIsNull(emps)&&isPlatformEmpNotNull(platforms)){
+        if (isEmpIsNull(emps)&&isPlatformEmpNotNull(platforms)){
             for (Platform platform:platforms){
+                if (platform.getCarLine()==null||platform.getCarLine().getTrays().size()==0){
+                    platform.setStatus(0);
+                    platform.setEmps(null);
+                    platform.setCarLine(null);
+                    return;
+                }
                 if (platform.getCarLine()!=null&&platform.getStatus()==1) {
-                    if (platform.getCarLine()==null||platform.getCarLine().getTrays()==null||platform.getCarLine().getTrays().size()==0){
-                        platform.setStatus(0);
-                        platform.setEmps(null);
-                        platform.setCarLine(null);
-                        return;
-                    }
                     for (Emp emp : emps) {
                         if (platform.getEmps() == null && emp.getStatus() == 0) {
                             emp.setStatus(1);
                             platform.addEmp(emp);
+                            emp.setT2(platform_a);
                             emp.setTar(platform.getPosition());
                             emp.setTary(platform.getCarLine().getTrays().get(0));
                             platform.getCarLine().removeCar();
-                        }
-                        if (platform.getStatus()==1&&platform.getEmps()!=null&&emp.getStatus()==0&&platform.getEmps().get(0).getName().equals(emp.getName())){
+                        }else if (platform.getStatus()==1&&platform.getEmps()!=null&&emp.getStatus()==0&&platform.getEmps().get(0).getName().equals(emp.getName())){
                             emp.setStatus(1);
                             platform.addEmp(emp);
+
+                            emp.setT2(platform_a);
                             emp.setTar(platform.getPosition());
                             emp.setTary(platform.getCarLine().getTrays().get(0));
                             platform.getCarLine().removeCar();
@@ -152,10 +134,10 @@ public class Upload{
      * @return
      */
     private static boolean isPlatformEmpNotNull(List<Platform> platforms) {
-        boolean isNull = false;
+        boolean isNull = true;
          for (Platform platform:platforms){
-             if (platform.getEmps()==null||platform.getEmps().size()==0){
-                  isNull = true;
+             if (platform.getCarLine()==null){
+                  isNull = false;
              }
          }
          return isNull;
@@ -167,10 +149,10 @@ public class Upload{
      * @return
      */
     private static boolean isEmpIsNull(List<Emp> emps) {
-        boolean isNull = true;
+        boolean isNull = false;
         for (Emp emp: emps){
             if (emp.getStatus()==0) {
-                isNull = false;
+                isNull = true;
             }
         }
         return isNull;
@@ -184,9 +166,9 @@ public class Upload{
     private static void PlatforAddParkCar(Park park, List<Platform> platforms) {
         while (isPlatformNotNull(platforms)&&parkIsNotNull(park)) {
             for (Platform platform : platforms) {
-                if (platform.getStatus() == 0) {
+                if ((platform.getCarLine()==null||platform.getCarLine().getTrays()==null||platform.getCarLine().getTrays().size()==0)&&parkIsNotNull(park)) {
                     platform.setCarLine(park.getCar()); //获取停车区域月台
-                    park.remove(park.getCar());
+                    park.getCars().remove(0);
                     platform.setStatus(1);
                 }
             }
@@ -214,11 +196,10 @@ public class Upload{
         if (!isPlatformNotNull(platforms)){
            for (Car car: carsMap){
                park.add(car);
+
            }
         }else {
-            if (ArriveCarIsNotNull(carsMap)){
                 PlatformAddCarFormArrive(carsMap,platforms);
-            }
         }
 
     }
@@ -226,7 +207,7 @@ public class Upload{
     private static void PlatformAddCarFormArrive(List<Car> carsMap, List<Platform> platforms) {
         if (isPlatformNotNull(platforms)){
             for (Platform platform:platforms){
-                if (platform.getStatus()==0){
+                if (platform.getCarLine()==null){
                     platform.addCarLine(carsMap.get(0)); //获取停车区域月台
                     carsMap.remove(carsMap.get(0));
                     platform.setStatus(1);
@@ -258,7 +239,7 @@ public class Upload{
     private static boolean isPlatformNotNull(List<Platform> platforms) {
         boolean isnull = false;
         for (Platform platform:platforms){
-             if (platform.getStatus()==0){
+             if (platform.getCarLine()==null){
                  isnull = true;
              }
         }

@@ -11,7 +11,10 @@ import com.ruoyi.warehousing.utils.AreaUtils;
 import org.apache.poi.ss.formula.functions.T;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Tally {
     private List<Point> points;
@@ -218,7 +221,7 @@ public class Tally {
         Tray tray = new Tray();
 
         int tally_longitudinal= (int)Math.ceil(pallet_num/tally_transverse);//横向数量
-        double tally_area = tally_longitudinal*(tray.getLength()+tray_clearance)*(tray.getWidth()+tally_channel+3)*tally_transverse/0.7;//理货区面积
+        double tally_area = tally_longitudinal*(tray.getLength()+tray_clearance)*(tray.getWidth()+tally_channel)*tally_transverse/0.7;//理货区面积
         Tally tally = new Tally();
         tally.setPallet(pallet_num);
         tally.setArea(tally_area);
@@ -228,11 +231,21 @@ public class Tally {
     }
 
     public void putInTrays(List<Tray> trays) {
-
-        for (int i=0;i<trays.size();i++){
-             trays.get(i).setPoint(points.get(i));
-             points.get(i).setStatus(1);
+        List<Goods> goodsList = new ArrayList<>();
+        List<Tray> trayList = new ArrayList<>();
+        for (Tray tray:trays){
+            goodsList.addAll(tray.getGoodsList());
         }
-        this.trays.addAll(trays) ;
+        Map<String,List<Goods>> map = goodsList.stream().collect(Collectors.groupingBy(Goods::getGoodsCode));//出库单
+
+        for (int i = 0;i<map.keySet().size();i++){
+            Tray tray = new Tray();
+            tray.setPoint(points.get(points.size()-1-i));
+            points.get(i).setStatus(1);
+            trayList.add(tray);
+        }
+
+        this.trays.addAll(trayList) ;
     }
+
 }

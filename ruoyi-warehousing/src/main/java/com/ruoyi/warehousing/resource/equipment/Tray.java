@@ -1,5 +1,6 @@
 package com.ruoyi.warehousing.resource.equipment;
 
+import com.ruoyi.warehousing.action.WarehousingUtil;
 import com.ruoyi.warehousing.form.Goods;
 import com.ruoyi.warehousing.queue.Point;
 
@@ -34,14 +35,26 @@ public class Tray {
         this.status = status;
     }
 
-    public static List<Tray> initTrays(List<Goods> list) {
+    public static List<Tray> initTrays(List<Goods> list,double transportNum) {
         List<Tray> list1 =new ArrayList<>();
-        for (Goods goods:list){
+        for (int i = 0;i<transportNum;i++){
             Tray tray = new Tray();
-            tray.getGoodsList().add(goods);
+            tray.getGoodsList().add(list.get(i%list.size()));
             tray.setPoint(new Point(0,0,0));
             list1.add(tray);
         }
+        return list1;
+    }
+
+    public static List<Tray> initOrder(List<Goods> list, double transportNum, int orderLine) {
+        List<Tray> list1 =new ArrayList<>();
+        for (int i=0;i<transportNum*orderLine/2;i++){
+            Tray tray = new Tray();
+            tray.getGoodsList().add(list.get((int)WarehousingUtil.random(0,list.size()-1)));
+            tray.setPoint(new Point(0,0,0));
+            list1.add(tray);
+        }
+
         return list1;
     }
 

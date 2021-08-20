@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.groupingBy;
  */
 public class Sorting {
     private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-    public static List<EmpLog> work(Tally tally, List<Tray> trays, double sortingSpeed, List<Emp> emps, double batch, String sort_type,int orderLine) {
+    public static List<EmpLog> work(Tally tally, List<Tray> trays, double sortingSpeed, List<Emp> emps, double batch, String sort_type,int orderLine,double sortingTime) {
         Date runTime = DateUtils.convertString2Date("HH:mm:ss", "08:00:00");//当前时间
         Date endTime = DateUtils.convertString2Date("HH:mm:ss", "18:00:00");//当前时间
         List<EmpLog> list = new ArrayList<>();
@@ -35,10 +35,12 @@ public class Sorting {
         if (sort_type.equals("按单分拣")){
             sorting_time = sorting_time/orderLine;
         }
-        while (runTime.getTime() < endTime.getTime()) {
+        while (i<batch||TallyIsNotNull(tally)||runTime.getTime() < (endTime.getTime()+36000)) {
             if (TimeBatch(runTime,dates)){
-                List<Tray> trays1 = lists.get(i);
-                tally.putInTrays(trays1);
+                if (i<batch) {
+                    List<Tray> trays1 = lists.get(i);
+                    tally.putInTrays(trays1);
+                }
                 i++;
             }
             if (isEmpNull(emps)&&TallyIsNotNull(tally)) {
@@ -55,20 +57,34 @@ public class Sorting {
                         break;
                     case 1:
                         empLog.setEmpStatus(1);
-                        if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar()) < 1){
+                        double distance = 0.0;
+                        if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar()) ==0){
                             emp.addStatus();
                             emp.setT2(sorting_time);
                         }else {
-                            empLog.setDistance(sortingSpeed);
-                            emp.setCurr(WarehousingUtil.getPath(emp, sortingSpeed));
+
+                            if (sortingSpeed>1) {
+                                for (int speed = 0;speed < sortingSpeed-1;speed++){
+                                    emp.setCurr(WarehousingUtil.getPath(emp, 1));
+                                    if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar())>0){
+                                        distance++;
+                                    }
+
+                                }
+                                emp.setCurr(WarehousingUtil.getPath(emp, sortingSpeed-Math.floor(sortingSpeed)));
+                            }else {
+                                emp.setCurr(WarehousingUtil.getPath(emp, sortingSpeed));
+                                distance+=sortingSpeed;
+                            }
+
                         }
+                        empLog.setDistance(distance);
                         break;
                     case 2:
                         empLog.setEmpStatus(1);
                         if (emp.getT2() > 0) {
                             emp.dispose();
                         } else {
-                            emp.addStatus();
                             emp.setStatus(0);
                         }
                         break;

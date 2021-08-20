@@ -46,7 +46,7 @@ public class WarehousingUtil {
     public static List<Platform> initPlat(double num,double platform_width) {
         List<Platform> platforms = new ArrayList<>();
         for (int i = 0; i < num; i++) {
-            platforms.add(new Platform("月台" + 1 + "号", 0,  new Point(0 + i * platform_width, 0, 0)));
+            platforms.add(new Platform("月台" + i + "号", 0,  new Point(0 + i * platform_width, 0, 0)));
         }
         return platforms;
     }
@@ -127,7 +127,10 @@ public class WarehousingUtil {
         Point curr = emp.getCurr();
         Point dest = emp.getTar();
         Point curLocation = new Point(curr.getX(), curr.getY(), curr.getZ());
-        if (Math.abs(curLocation.getX() - dest.getX()) >= 1) {
+        if (getDistance(curr,dest)<=3){
+            return dest;
+        }
+        if (Math.abs(curLocation.getX() - dest.getX()) >= num) {
             double x1Diff = Math.abs(dest.getX() - curLocation.east(num).getX());  //go east, x + 1
             double x2Diff = Math.abs(dest.getX() - curLocation.west(num).getX());  //go west, x - 1
             if (x1Diff <= x2Diff) {
@@ -137,7 +140,7 @@ public class WarehousingUtil {
                 Point newPt = new Point(curLocation.west(num).getX(), curLocation.getY(), curLocation.getZ());
                 curLocation = newPt;
             }
-        } else if (Math.abs(curLocation.getY() - dest.getY()) >= 1) {
+        }else if (Math.abs(curLocation.getY() - dest.getY()) >= num) {
             double y1Diff = Math.abs(dest.getY() - curLocation.north(num).getY()); //go north, y + 1
             double y2Diff = Math.abs(dest.getY() - curLocation.south(num).getY()); //go south, y - 1
             if (y1Diff <= y2Diff) {
@@ -147,19 +150,6 @@ public class WarehousingUtil {
                 Point newPt = new Point(curLocation.getX(), curLocation.south(num).getY(), curLocation.getZ());
                 curLocation = newPt;
             }
-        } else if (curLocation.getZ() != dest.getZ()) {
-            double z1Diff = Math.abs(dest.getZ() - curLocation.up(num).getZ()); //go north, y + 1
-            double z2Diff = Math.abs(dest.getZ() - curLocation.down(num).getZ()); //go south, y - 1
-            if (z1Diff <= z2Diff) {
-                Point newPt = new Point(curLocation.getX(), curLocation.getY(), curLocation.up().getZ());
-                curLocation = newPt;
-            } else {
-                Point newPt = new Point(curLocation.getX(), curLocation.getY(), curLocation.down().getZ());
-                curLocation = newPt;
-
-            }
-        } else {
-            curLocation = dest;
         }
         return curLocation;
     }
@@ -429,7 +419,7 @@ public class WarehousingUtil {
     public static List<Emp> initEmp(int s) {
         List<Emp> emps = new ArrayList<>();
         for (int i = 0; i < s; i++) {
-            emps.add(new Emp("上架" + i + "号", 0, new Point((int) Math.random() * 8, (int) Math.random() * 8, 10)));
+            emps.add(new Emp("上架" + i + "号", 0, new Point(0, 0, 0)));
         }
         return emps;
 
