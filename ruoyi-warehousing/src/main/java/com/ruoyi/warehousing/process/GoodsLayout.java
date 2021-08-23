@@ -7,11 +7,18 @@ import com.ruoyi.warehousing.resource.facilities.storage.Storage;
 import com.ruoyi.warehousing.utils.AreaUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class GoodsLayout {
-
-    public static List<Cargo> initGoodsLayout(Storage storage, List<Cargo> cargos1){
+    /**
+     * 生成存储区坐标系
+     * @param storage
+     * @param goods
+     * @return
+     */
+    public static List<Cargo> initGoodsLayout(Storage storage, List<Goods> goods){
+        List<Cargo> cargos1 = initCargos(goods,storage);
         List<Cargo> cargos = new ArrayList<>();
         for (int i = 1; i <=storage.getLayer(); i++) {
             for (int j = 1; j <= storage.getLine(); j++) {
@@ -23,6 +30,61 @@ public class GoodsLayout {
         }
         return cargos;
     }
+
+    /**
+     * 按照物料频次进行优先
+     * @param list
+     * @param storage
+     * @return
+     */
+    public static List<Cargo> initCargos(List<Goods> list, Storage storage){
+        LinkedList<Goods> materials = new LinkedList<>(list);
+        materials.sort((x, y) -> Double.compare(y.getFrequency(), x.getFrequency()));
+        List<Cargo> cargos = new ArrayList<>();
+        for (int i = 1; i <= storage.getLayer(); i++) {
+            for (int j = 1; j <= storage.getLine(); j++) {
+                for (int k = 1; k <= storage.getRow(); k++) {
+                    Goods goods1 = materials.poll();
+                    Point point = new Point(i, j, k);
+                    cargos.add(new Cargo(point, goods1));
+                }
+            }
+        }
+        return cargos;
+    }
+    /**
+     * 按照物料量进行优先
+     * @param list
+     * @param storage
+     * @return
+     */
+    public static List<Cargo> initCargosByNum(List<Goods> list, Storage storage){
+        LinkedList<Goods> materials = new LinkedList<>(list);
+        materials.sort((x, y) -> Double.compare(y.getPlutNum(), x.getPlutNum()));
+        List<Cargo> cargos = new ArrayList<>();
+        for (int i = 1; i <= storage.getLayer(); i++) {
+            for (int j = 1; j <= storage.getLine(); j++) {
+                for (int k = 1; k <= storage.getRow(); k++) {
+                    Goods goods1 = materials.poll();
+                    Point point = new Point(i, j, k);
+                    cargos.add(new Cargo(point, goods1));
+                }
+            }
+        }
+        return cargos;
+    }
+
+
+
+
+    /**
+     * 获取物料坐标
+     * @param i
+     * @param j
+     * @param k
+     * @param cargos
+     * @return
+     */
     public static Goods getGoods(int i, int j, int k, List<Cargo> cargos){
         Goods goods= new Goods();
         for (Cargo cargo :cargos){

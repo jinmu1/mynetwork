@@ -15,6 +15,7 @@ public class Goods {
     private double volume;//体积
     private Supplier supplier;
     private Customer customer;//客户
+    private int frequency;//出库频次
     public int getStatus() {
         return status;
     }
@@ -130,4 +131,13 @@ public class Goods {
     public void setVolume(double volume) {
         this.volume = volume;
     }
+
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
 }
+

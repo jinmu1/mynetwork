@@ -114,24 +114,12 @@ public class Action {
         return result;
     }
 
-    /**
-     *
-     * @param putawayNum
-     * @param storageNum
-     * @param height
-     * @param forklift_channel
-     * @param utilization
-     * @param putaway_speed
-     * @param shelf_space
-     * @param shelf_height
-     * @return
-     */
     public static Result getPutaway(double putawayNum, double storageNum, double height, double forklift_channel, double utilization, double putaway_speed, double shelf_space, double shelf_height) {
         Storage storage = new Storage();
         storage = storage.getHightStorage(storageNum,height,forklift_channel,shelf_space,shelf_height);
         List<Goods> list = WarehousingUtil.createGoods(putawayNum);
         List<Cargo> cargos = WarehousingUtil.initCargos(list,storageNum,storage);
-        storage.initStorage(storage,cargos);
+        storage.initStorage(storage,list);
         List<Emp> emps = WarehousingUtil.initEmp((int)(putawayNum/50));
         List<Tray> trays = Tray.initTrays(list,putawayNum);
         double distance = 0.0;
@@ -168,7 +156,7 @@ public class Action {
         storage = storage.getHightStorage(storageNum,height,forklift_channel,shelf_space,shelf_height);
         List<Goods> list = WarehousingUtil.createGoods(take_downNum);
         List<Cargo> cargos = WarehousingUtil.initCargos(list,storageNum,storage);
-        storage.initStorage(storage,cargos);
+        storage.initStorage(storage,list);
         List<Emp> emps = WarehousingUtil.initEmp((int)(take_downNum/50));
         List<Tray> trays = Tray.initTrays(list,take_downNum);
         double distance = 0.0;

@@ -35,8 +35,8 @@ public class Storage {
         }
         return point;
     }
-     public void initStorage(Storage storage, List<Cargo> cargos1){
-        storage.setCargos(GoodsLayout.initGoodsLayout(storage,cargos1));
+     public void initStorage(Storage storage, List<Goods> goods){
+        storage.setCargos(GoodsLayout.initGoodsLayout(storage,goods));
 
      }
 

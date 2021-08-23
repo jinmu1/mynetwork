@@ -89,7 +89,7 @@ public class WarehouseTest {
         storage = storage.getHightStorage(1000,12,3,0.1,1.5);
         List<Goods> list = WarehousingUtil.createGoods(1000);
         List<Cargo> cargos = WarehousingUtil.initCargos(list,40000,storage);
-        storage.initStorage(storage,cargos);
+
         List<Emp> emps = WarehousingUtil.initEmp((int)(1000/50));
         List<Tray> trays = Tray.initTrays(list,1000);
         double distance = 0.0;
