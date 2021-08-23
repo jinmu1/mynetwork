@@ -71,7 +71,7 @@ public class Action {
         result.setUploadRate(rate / 10 / 60 / 60 / emps.size());
         int emp = (int) Math.ceil(emps.size() * everyDay_unloading_time / 8);
         int emp1 = (int) Math.ceil(emps.size() * everyDay_unloading_time / 8 * result.getUploadRate() / (utilization / 100));
-        result.setUploadEmp(emp1);
+        result.setUploadEmp(emp1+(int)Math.ceil(batch*3));
         result.setUploadRate(emp * result.getUploadRate() / emp1);
         return result;
     }
@@ -109,11 +109,23 @@ public class Action {
         result.setTallyRate(rate /10/60/60/emps.size());
         int emp = (int) Math.ceil(emps.size() );
         int emp1 = (int) Math.ceil(emps.size()*result.getTallyRate() / (utilization / 100));
-        result.setTallyEmp(emp1);
+        result.setTallyEmp(emp1+(int)Math.sqrt(batch*4));
         result.setTallyRate(emp * result.getTallyRate() / emp1);
         return result;
     }
 
+    /**
+     *
+     * @param putawayNum
+     * @param storageNum
+     * @param height
+     * @param forklift_channel
+     * @param utilization
+     * @param putaway_speed
+     * @param shelf_space
+     * @param shelf_height
+     * @return
+     */
     public static Result getPutaway(double putawayNum, double storageNum, double height, double forklift_channel, double utilization, double putaway_speed, double shelf_space, double shelf_height) {
         Storage storage = new Storage();
         storage = storage.getHightStorage(storageNum,height,forklift_channel,shelf_space,shelf_height);
@@ -203,7 +215,7 @@ public class Action {
         result.setSortingRate(rate / 10 / 60 / 60 / emps.size());
         int emp = (int) Math.ceil(emps.size() );
         int emp1 = (int) Math.ceil(emps.size()*result.getSortingRate() / (utilization / 100));
-        result.setSortingEmp(emp1);
+        result.setSortingEmp(emp1+(int)Math.sqrt(batch));
         result.setSortingRate(emp * result.getSortingRate() / emp1);
         return result;
     }
@@ -233,7 +245,7 @@ public class Action {
         result.setDeliveryRate(rate /10/60/60/emps.size());
         int emp = (int) Math.ceil(emps.size() );
         int emp1 = (int) Math.ceil(emps.size()*result.getDeliveryRate() / (utilization / 100));
-        result.setDeliveryEmp(emp1);
+        result.setDeliveryEmp(emp1+(int)batch);
         result.setDeliveryRate(emp * result.getDeliveryRate() / emp1);
         return result;
 

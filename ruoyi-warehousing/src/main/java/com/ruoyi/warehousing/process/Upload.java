@@ -35,6 +35,7 @@ public class Upload{
     public static List<EmpLog> work(List<Car> cars, List<Platform> platforms,  List<Emp> emps,Park park,double platform_a) {
         Date runTime = DateUtils.convertString2Date("yyyy-MM-dd HH:mm:ss", "2021-01-01 08:00:00");//当前时间
         Date endTime = DateUtils.convertString2Date("yyyy-MM-dd HH:mm:ss", "2021-01-01 20:00:00");//当前时间
+
        //获取当前时间节点的倒库车辆
         List<EmpLog> list = new ArrayList<>();
         while (cars.size()>0||!isEmpIsNull(emps)) {

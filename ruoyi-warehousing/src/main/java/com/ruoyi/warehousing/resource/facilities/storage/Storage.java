@@ -3,6 +3,7 @@ package com.ruoyi.warehousing.resource.facilities.storage;
 
 import com.ruoyi.warehousing.form.Cargo;
 import com.ruoyi.warehousing.form.Goods;
+import com.ruoyi.warehousing.process.GoodsLayout;
 import com.ruoyi.warehousing.queue.Point;
 import com.ruoyi.warehousing.resource.equipment.LightStorage;
 import com.ruoyi.warehousing.resource.personnel.Emp;
@@ -35,14 +36,7 @@ public class Storage {
         return point;
     }
      public void initStorage(Storage storage, List<Cargo> cargos1){
-         for (int i = 1; i <=storage.getLayer(); i++) {
-             for (int j = 1; j <= storage.getLine(); j++) {
-                 for (int k = 1; k <= storage.getRow(); k++) {
-                     Point point = new Point(i*(AreaUtils.platform_width+AreaUtils.shelf_space)+AreaUtils.platform_width/2, j*(AreaUtils.platform_width+AreaUtils.shelf_space), k);
-                     cargos.add(new Cargo(point, getGoods(i,j,k,cargos1)));
-                 }
-             }
-         }
+        storage.setCargos(GoodsLayout.initGoodsLayout(storage,cargos1));
 
      }
 
