@@ -320,6 +320,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/system/netWork/network4", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getWarehouse", "anon,captchaValidate");
         filterChainDefinitionMap.put("/warehousePlan", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/entrepot", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getUpload", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getUploadLine", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getTally", "anon,captchaValidate");

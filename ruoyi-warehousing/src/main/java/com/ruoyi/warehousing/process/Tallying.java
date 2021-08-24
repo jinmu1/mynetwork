@@ -63,7 +63,6 @@ public class Tallying {
                                     if (WarehousingUtil.getDistance(emp.getCurr(), emp.getTar())>0){
                                         distance++;
                                     }
-
                                 }
                                 emp.setCurr(WarehousingUtil.getPath(emp, tallyEmpCapacity-Math.floor(tallyEmpCapacity)));
                             }else {

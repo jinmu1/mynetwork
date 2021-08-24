@@ -65,6 +65,10 @@ public class WarehousingController extends BaseController {
         return prefix + "/index2";
     }
 
+    @GetMapping("/entrepot")
+    public String main() {
+        return prefix + "/main";
+    }
 
     @PostMapping("/getTally")
     @ResponseBody
