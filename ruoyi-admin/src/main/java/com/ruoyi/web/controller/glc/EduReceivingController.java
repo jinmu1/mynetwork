@@ -66,6 +66,7 @@ public class EduReceivingController extends BaseController
         }
         eduReceiving.setBatchId(userId);
         List<EduReceiving> list = eduReceivingService.selectEduReceivingList(eduReceiving);
+
         return getDataTable(list);
     }
     @Log(title = "入库导入", businessType = BusinessType.IMPORT)

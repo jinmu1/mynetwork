@@ -483,7 +483,25 @@ public class NetworkUtils {
         return suppliers;
     }
 
+    /**
+     * 生成供应商
+     * @return
+     */
+    public static List<Supplier> initSupplier(int goodsnum) {
 
+        List<Supplier> suppliers = new ArrayList<>();
+        Random random = new Random();
+        Double gdp = 0.0;
+
+        for (int i=0;i<=goodsnum;i++){
+                Supplier supplier = new Supplier();
+                supplier.setSupplierCode(RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
+                supplier.setLeadTime(random(3,6));
+                suppliers.add(supplier);
+            }
+
+        return suppliers;
+    }
 
 
 

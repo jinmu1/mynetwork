@@ -36,8 +36,8 @@ public class Putaway {
 
             for (Emp emp:emps){
                 EmpLog empLog = new EmpLog();
-                empLog.setEmpNo(emp.getCode());
                 empLog.setTime(sdf.format(runTime));
+                empLog.setEmpNo(emp.getName());
                 switch (emp.getStatus()){
                     case 0:
                         empLog.setEmpStatus(0);

@@ -1,0 +1,807 @@
+﻿<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes"/>
+    <meta charset="UTF-8"/>
+    <title>物流网络实时规划 . 省域</title>
+</head>
+
+<th:block th:include="include :: point-public1-css"/>
+<th:block th:include="include :: point-index4-css"/>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+<script th:src="@{/js/jquery.min.js}"></script>
+
+<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+<style>
+    .layui-layer-content {
+        color: #000000;
+    }
+
+    body, html {
+        overflow-x: hidden;
+    }
+
+    .echarts {
+        height: 350px;
+    }
+
+    .th-inner {
+        color: rgb(171, 225, 245);
+
+    }
+
+    .thead .tr {
+        color: rgb(243, 243, 243);
+    }
+
+    .table-hover > tbody > tr {
+        text-align: right;
+    }
+
+    .table-hover > tbody > tr:hover > td,
+    .table-hover > tbody > tr:hover > th {
+        color: rgb(14, 108, 132);
+        cursor: pointer;
+    }
+
+    /*[class*="col-"]{*/
+    /*    padding: 2px;*/
+    /*    margin:2px*/
+    /*}*/
+    /*.row {*/
+    /*    margin-right: -15px;*/
+    /*    margin-left: -15px;*/
+    /*}*/
+    /*.table1{width:25xp;height: 25%}*/
+</style>
+<script>
+
+    var docEl = document.documentElement,
+        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+    var clientWidth = docEl.clientWidth;
+    docEl.style.fontSize = 10 * (clientWidth / 320) + 'px';
+    window.addEventListener(resizeEvt, function () {
+        clientWidth = docEl.clientWidth;
+        docEl.style.fontSize = 10 * (clientWidth / 320) + 'px';
+    }, false);
+</script>
+<script>
+
+    $(document).ready(function () {
+        var whei = $(window).width()
+        $("html").css({fontSize: whei / 22});
+        $(window).resize(function () {
+            var whei = $(window).width();
+            $("html").css({fontSize: whei / 22})
+        });
+    });
+</script>
+<body style="background: #jjj;height: 100%;width: 100%;">
+
+<div class="main">
+
+    <div class="header">
+        <div class="header-left fl">
+            <img class="imgs" th:src="@{/img/img.png}"
+                 style="width: 60%;margin-left: -5%;margin-top: -46%;z-index: 9999">
+        </div>
+        <div class="header-center fl">
+            <div class="header-title">
+                仓库各功能区面积测算
+            </div>
+            <div class="header-img"></div>
+        </div>
+        <div class="header-right fl">
+        </div>
+        <div class="header-bottom fl">
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12 border">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+
+                        <div class="ibox-tools">
+                            <a class="collapse-link"> <i class="fa fa-chevron-up"></i> </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">选项1</a></li>
+                                <li><a href="#">选项2</a></li>
+                            </ul>
+                            <a class="close-link"> <i class="fa fa-times"></i> </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h4 style="text-align: center">卸货 <small></small></h4>
+                                <form class="form-horizontal m-t" id="signupFormd" onsubmit="post_data1()"
+                                      target="nm_iframe">
+                                    <div class="row">
+
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">输入</div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2"
+                                                            style="text-align:center;vertical-align:middle;">公共参数
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                    <tr>
+                                                        <th>卸货托数</th>
+                                                        <td><input name="transportNum" value="1000" id="transportNum"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeCar()" required=""/>托
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th>供应商数量</th>
+                                                        <td>
+                                                            <input type="value" id="supplier" value="150"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>个
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>物料种类数</th>
+                                                        <td>
+                                                            <input type="value" id="goods_nums" value="2000"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>个
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>IQ均值</th>
+                                                        <td>
+                                                            <input type="value" id="iq" value="15"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>波动性</th>
+                                                        <td>
+                                                            <input type="value" id="volatility" value="140"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>%
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">入库单</div>
+
+                                            <div class="table-responsive table1">
+                                                <div class="btn-group-sm" id="toolbar" role="group">
+                                                    <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                                                        <i class="fa fa-download"></i> 导出
+                                                    </a>
+                                                </div>
+                                                <div class="col-sm-12 select-table table-striped">
+                                                    <table id="bootstrap-table"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="row">
+                                                <div class="col-sm-8">
+                                                    <div class="ibox float-e-margins" style="height: 60px">
+                                                        <button class="btn btn-primary" type="submit"
+                                                                style="margin-top: -2%;margin-left: 45%;z-index: 9999">
+                                                            确认并提交
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="col-lg-12">
+                                <h4 style="text-align: center">存储 <small></small></h4>
+                                <form class="form-horizontal m-t" id="signupForm下" onsubmit="post_data4()"
+                                      target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">输入</div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2"
+                                                            style="text-align:center;vertical-align:middle;">面积参数
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>存储托数</th>
+                                                        <td><input name="storageNum" value="20000" id="storageNum"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>存储物料数</th>
+                                                        <td>
+                                                            <input type="value" id="goodsNum" value="1000"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>存储区高度</th>
+                                                        <td>
+                                                            <input type="value" id="height" value="9"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>存储区单层的高度</th>
+                                                        <td>
+                                                            <input type="value" id="shelf_height" value="1.5"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>m
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="table-responsive table1">
+                                                <div class="btn-group-sm" id="toolbar1" role="group">
+                                                    <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                                                        <i class="fa fa-download"></i> 导出
+                                                    </a>
+                                                </div>
+                                                <div class="col-sm-12 select-table table-striped">
+                                                    <table id="bootstrap-table1"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="row">
+                                                <div class="col-sm-8">
+                                                    <div class="ibox float-e-margins" style="height: 60px">
+                                                        <button class="btn btn-primary" type="submit"
+                                                                style="margin-top: -2%;margin-left: 45%;z-index: 9999">
+                                                            确认并提交
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="col-lg-12">
+                                <h4 style="text-align: center">分拣 <small></small></h4>
+                                <form class="form-horizontal m-t" id="signupForm4" onsubmit="post_data6()"
+                                      target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">输入</div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2"
+                                                            style="text-align:center;vertical-align:middle;">公共参数
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>每日分拣订单数量</th>
+                                                        <td><input name="sortingNum" value="1000" id="sortingNum"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>单
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>物料种类数</th>
+                                                        <td><input name="sortingNum" value="1000" id="goods_num"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>种
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>IQ均值</th>
+                                                        <td>
+                                                            <input type="value" id="iq1" value="15"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>平均订单行数</th>
+                                                        <td>
+                                                            <input type="value" id="orderLine" value="7"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>行/单
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>波动性</th>
+                                                        <td>
+                                                            <input type="value" id="volatility1" value="140"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>%
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="table-responsive table1">
+                                                <div class="btn-group-sm" id="toolbar2" role="group">
+                                                    <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                                                        <i class="fa fa-download"></i> 导出
+                                                    </a>
+                                                </div>
+                                                <div class="col-sm-12 select-table table-striped">
+                                                    <table id="bootstrap-table2"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+
+                                            <div class="row">
+                                                <div class="col-sm-8">
+                                                    <div class="ibox float-e-margins" style="height: 60px">
+                                                        <button class="btn btn-primary" type="submit"
+                                                                style="margin-top: -2%;margin-left: 45%;z-index: 9999">
+                                                            确认并提交
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div id="bar3" class="echarts" style="height: 400px"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-lg-12">
+                                <h4 style="text-align: center">出库 <small></small></h4>
+                                <form class="form-horizontal m-t" id="signupForm6" onsubmit="post_data7()"
+                                      target="nm_iframe">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="titled-pane">输入</div>
+                                            <div class="table-responsive table1">
+                                                <table class="table table-bordered  width1">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2"
+                                                            style="text-align:center;vertical-align:middle;">公共参数
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>每日出库托数</th>
+                                                        <td><input name="deliveryNum" value="1000" id="deliveryNum"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   onchange="changeplant()" required=""/>托
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>每日出库物料种类数</th>
+                                                        <td><input name="deliveryNum" value="1000" id="goodsNum2"
+                                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                                   data-placement="right" title="请输入" th:type="text"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>托
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>IQ均值</th>
+                                                        <td>
+                                                            <input type="value" id="iq2" value="15"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>平均订单行数</th>
+                                                        <td>
+                                                            <input type="value" id="orderLine1" value="7"
+                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                                   required=""/>行/单
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="table-responsive table1">
+                                                <div class="btn-group-sm" id="toolbar3" role="group">
+                                                    <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                                                        <i class="fa fa-download"></i> 导出
+                                                    </a>
+                                                </div>
+                                                <div class="col-sm-12 select-table table-striped">
+                                                    <table id="bootstrap-table3"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="row">
+                                                <div class="col-sm-8">
+                                                    <div class="ibox float-e-margins" style="height: 60px">
+                                                        <button class="btn btn-primary" type="submit"
+                                                                style="margin-top: -2%;margin-left: 45%;z-index: 9999">
+                                                            确认并提交
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+<iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+<div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true"
+     style="position:absolute;text-align: center;margin-left: -25%">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:1200px;height: 750px">
+            <div class="modal-body " style="width:1200px;height: 750px">
+                <div id="lines" class="echarts" style="width:1200px;height: 750px"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="loadingModal">
+    <div style="width: 200px;height:20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
+        <div class="progress progress-striped active" style="margin-bottom: 0;">
+            <div class="progress-bar" style="width: 100%;"></div>
+        </div>
+        <h5>正在加载...</h5>
+    </div>
+</div>
+<div class="footer" style="margin-left: 45.5%; bottom:0;height: 10%;">
+
+    <!--    <a onclick="turn1()" style="font-family: 华文行楷;color: white;font-size: 18px;position:absolute;margin-top: 60px">@环球物流咨询·官网     </a>-->
+    <!--    <div style="margin-left:800px" ><img th:src="@{/img/weixin.png}" style="width: 100px;height:100px;" /></div>-->
+</div>
+<!--</div>-->
+<th:block th:include="include :: echarts-js"/>
+<th:block th:include="include :: point-finereport-js"/>
+<th:block th:include="include :: footer"/>
+
+<script th:inline="javascript">
+    var isClick = true;
+
+    showLoading = function () {
+        $('#loadingModal').modal({backdrop: 'static', keyboard: false});
+    }
+    //隐藏掉loading框
+    hideLoading = function () {
+        $('#loadingModal').modal('hide');
+    }
+
+    function post_data1() {
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            setTimeout(function () {
+                onPlatform();
+            }, 1000);//一秒内不能重复点击
+
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+
+    var prefix = "/";
+
+    function onPlatform() {
+        var supplier = $("#supplier").val();
+        var transportNum = parseInt($("#transportNum").val()) + parseInt(supplier);
+        var goods_num = $("#goods_nums").val();
+        var volatility = $("#volatility").val();
+        var iq =  $("#iq").val();
+
+        var options = {
+            url: "/getUploadList?supplier=" + supplier + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility +"&iq="+iq,
+            modalName: "入库",
+            id:"bootstrap-table",
+            pagination: true,
+            pageNumber: 1,
+            pageSize: 10,
+            showExport: true,
+            exportUrl: "/getUploadList1?supplier=" + supplier + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility+"&iq="+iq,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'dateTime',
+                    title: '日期'
+                },
+                {
+                    field: 'time',
+                    title: '时间'
+                },
+                {
+                    field: 'sullier',
+                    title: '供应商'
+                },
+                {
+                    field: 'order_code',
+                    title: '入库单号'
+                },
+                {
+                    field: 'goods_code',
+                    title: '物料编码'
+                },
+                {
+                    field: 'goods_num',
+                    title: '数量'
+                }]
+        };
+        hideLoading();
+        $.table.init(options);
+    }
+
+
+
+
+
+    function post_data4() {
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            setTimeout(function () {
+                storage();
+            }, 1000);//一秒内不能重复点击
+
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+
+    function storage() {
+        var storageNum = $("#storageNum").val();
+        var goodsNum = $("#goodsNum").val();
+        var height = $("#height").val();
+        var shelf_height = $("#shelf_height").val();
+        var options = {
+            url: "/getStorageList?storageNum=" + storageNum + "&height=" + height + "&goods_num=" + goodsNum+"&shelf_height="+shelf_height,
+            modalName: "库存",
+            pagination: true,
+            id:"bootstrap-table1",
+            pageNumber: 1,
+            pageSize: 10,
+            showExport: true,
+            exportUrl: "/getStorageList1?storageNum=" + storageNum + "&height=" + height + "&goods_num=" + goodsNum+"&shelf_height="+shelf_height ,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'cargo',
+                    title: '货位编码'
+                },
+                {
+                    field: 'row',
+                    title: '排'
+                },
+                {
+                    field: 'line',
+                    title: '列'
+                },
+                {
+                    field: 'layer',
+                    title: '层'
+                },
+                {
+                    field: 'goods_code',
+                    title: '物料编码'
+                },
+                {
+                    field: 'goods_num',
+                    title: '库存量'
+                }]
+        };
+        hideLoading();
+        $.table.init(options);
+
+
+
+    }
+
+
+    function post_data6() {
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            setTimeout(function () {
+                onSorting();
+            }, 1000);//一秒内不能重复点击
+
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+
+    function onSorting() {
+        var orderLine = $("#orderLine").val();
+        var transportNum = $("#sortingNum").val();
+        var iq =  $("#iq1").val();
+        var volatility1 = $("#volatility1").val();
+        var goods_num = $("#goods_num").val();
+        var options = {
+            url: "/getSortingList?orderLine=" + orderLine + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility1 +"&iq="+iq,
+            modalName: "入库",
+            id:"bootstrap-table2",
+            pagination: true,
+            pageNumber: 1,
+            pageSize: 10,
+            showExport: true,
+            exportUrl:"/getSortingList1?orderLine=" + orderLine + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility1 +"&iq="+iq,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'dateTime',
+                    title: '日期'
+                },
+                {
+                    field: 'time',
+                    title: '时间'
+                },
+                {
+                    field: 'order_code',
+                    title: '分拣单号'
+                },
+                {
+                    field: 'goods_code',
+                    title: '物料编码'
+                },
+                {
+                    field: 'goods_num',
+                    title: '分拣数量'
+                }]
+        };
+            hideLoading();
+        $.table.init(options);
+
+    }
+
+
+
+    function post_data7() {
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            setTimeout(function () {
+                ondelivery();
+            }, 1000);//一秒内不能重复点击
+
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+
+    function ondelivery() {
+        var deliveryNum = $("#deliveryNum").val();
+        var batch = $("#batch2").val();
+        var iq =  $("#iq2").val();
+        var delivery_speed = $("#delivery_speed").val();
+        var delivery_Time = $("#delivery_Time").val();
+        var tally_channel = $("#tally_channel2").val();
+        var orderLine = $("#orderLine1").val();
+        var goods_num = $("#goodsNum2").val();
+        var options = {
+            url: "/getDeliveryLine?transportNum=" + deliveryNum + "&goods_num=" + goods_num+"&orderLine="+orderLine+"&iq="+iq,
+            modalName: "出库",
+            id:"bootstrap-table3",
+            pagination: true,
+            pageNumber: 1,
+            pageSize: 10,
+            showExport: true,
+            exportUrl: "/getDeliveryLine1?transportNum=" + deliveryNum + "&goods_num=" + goods_num+"&orderLine="+orderLine+"&iq="+iq,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'dateTime',
+                    title: '日期'
+                },
+                {
+                    field: 'time',
+                    title: '时间'
+                },
+                {
+                    field: 'order_code',
+                    title: '出库单号'
+                },
+                {
+                    field: 'goods_code',
+                    title: '物料编码'
+                },
+                {
+                    field: 'goods_num',
+                    title: '数量'
+                }]
+        };
+            hideLoading();
+        $.table.init(options);
+
+    }
+
+
+
+
+
+
+
+
+    var formatUtil = echarts.format;
+</script>
+</div>
+</body>
+</html>

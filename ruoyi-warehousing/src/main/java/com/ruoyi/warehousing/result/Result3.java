@@ -1,10 +1,9 @@
 package com.ruoyi.warehousing.result;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
-public class Result extends BaseEntity {
+public class Result3 extends BaseEntity {
     private int batch;//批次
     private double cost;//成本
     private double distance;//行走距离
@@ -43,7 +42,7 @@ public class Result extends BaseEntity {
 
     private int tally_transverse;// 纵向数量
     private int tally_longitudinal;//横向数量
-    @Excel(name = "订单编码")
+    @Excel(name = "出库单号")
     private String order_code;//订单编码
     @Excel(name = "物料编码")
     private String goods_code;//物料编码
@@ -53,7 +52,6 @@ public class Result extends BaseEntity {
     private String time;//订单到达时间
     @Excel(name = "日期")
     private String DateTime;//日期
-    @Excel(name = "供应商")
     private String sullier;
 
     private int cargo;//货位数量
@@ -172,12 +170,7 @@ public class Result extends BaseEntity {
     public void setCargo(int cargo) {
         this.cargo = cargo;
     }
-    public Result() {
-        super();
-    }
-    public Result(int batch) {
-        this.batch = batch;
-    }
+
 
     public int getCarNum() {
         return carNum;
@@ -202,8 +195,10 @@ public class Result extends BaseEntity {
     public void setTakeDownEmpRate(double takeDownEmpRate) {
         this.takeDownEmpRate = takeDownEmpRate;
     }
-
-    public Result(int batch, double cost, double distance, int uploadEmp, int putawayEmp, int sortingEmp, int deliveryEmp, double uploadRate, double putawayRate, double sortingRate, double deliveryRate, double platformNum, double platformArea, double platformRate, double tallyArea, double tallyRate, double storageArea, double tally1Area, double tally1Rate, double platform1Num, double platform1Area, double platform1Rate) {
+    public Result3(){
+        super();
+    }
+    public Result3(int batch, double cost, double distance, int uploadEmp, int putawayEmp, int sortingEmp, int deliveryEmp, double uploadRate, double putawayRate, double sortingRate, double deliveryRate, double platformNum, double platformArea, double platformRate, double tallyArea, double tallyRate, double storageArea, double tally1Area, double tally1Rate, double platform1Num, double platform1Area, double platform1Rate) {
         this.batch = batch;
         this.cost = cost;
         this.distance = distance;

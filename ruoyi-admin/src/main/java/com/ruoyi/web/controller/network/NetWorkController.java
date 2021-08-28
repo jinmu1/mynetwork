@@ -280,7 +280,7 @@ public class NetWorkController extends BaseController
     @ResponseBody
     public TableDataInfo  network2(HttpServletRequest req) {
         int num1 = Integer.parseInt(req.getParameter("num"));
-        String provinces = req.getParameter("provinces");
+
         String carLength = req.getParameter("carLength");
 
         double transportNum = 80000;
@@ -336,19 +336,13 @@ public class NetWorkController extends BaseController
             s_goods_size = Double.parseDouble(req.getParameter("s_goods_size"));
         }
         int emp_quantity = 50;//一天处理50托
-
-        List<GlcPoint> cityList = glcPointService.selectGlcPointList(new GlcPoint(provinces));  //获取省份内城市
         List<City> points = new ArrayList<>();
-        for (GlcPoint glcPoint : cityList) {//需求点
-            points.add(new City(glcPoint.getCity(), glcPoint.getLat(), glcPoint.getLng(), glcPoint.getGdp()));//备选点
-        }
         List<Material> list = NetworkUtils.createGoods(goods_num);
         list = NetworkUtils.initMaterialPrice(list, h_price, m_price, l_price);
         list = NetworkUtils.initMaterialVolume(list, b_goods_size, m_goods_size, s_goods_size);
         List<Order> orderList = NetworkUtils.initOrders(list, transportNum);
-        List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
-        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size(),cityList);
-        orderList = NetworkUtils.initOrdersCustomerList(orderList, customerList);
+//        List<Customer> customerList = NetworkUtils.initCustomer(cityList, 200);
+        List<Supplier> suppliers = NetworkUtils.initSupplier(list.size());
         List<Order> list1 = NetWorkPlanUtils.getTransportCost1(points.get(0),points,orderList);
 
         return getDataTable(list1);
@@ -361,7 +355,6 @@ public class NetWorkController extends BaseController
         int num1 = Integer.parseInt(req.getParameter("num"));
         String provinces = req.getParameter("provinces");
         String carLength = req.getParameter("carLength");
-
         double transportNum = 80000;
         if (req.getParameter("transportNum")!=null&&!req.getParameter("transportNum").equals("")){
             transportNum = Double.parseDouble(req.getParameter("transportNum"));

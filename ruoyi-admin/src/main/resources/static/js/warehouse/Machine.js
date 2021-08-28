@@ -1,9 +1,9 @@
 //Desenhar maquina - widget
-var contTapetesPreenchidos = 0;
+var contTapetesPreenchidos =1;
 var contMaquinas = 0;
 var contMaquinasTotal = 0;
 
-var TAMANHO_MAQUINA = 3;
+var TAMANHO_MAQUINA = 2;
 var SIDEWALLK = 5;
 var MACHINE_SPACE = 5.25;
 

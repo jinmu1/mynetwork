@@ -1156,13 +1156,13 @@ THREE.OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype )
 THREE.OrbitControls.prototype.constructor = THREE.OrbitControls;
 
 
-// This set of controls performs orbiting, dollying (zooming), and panning.
-// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
-// This is very similar to OrbitControls, another set of touch behavior
+//这组控件执行轨道、旋转(缩放)和平移。
+//不像TrackballControls，它维护“up”方向对象。up(默认为+Y)。
+//这非常类似于OrbitControls，另一组触摸行为
 //
-//    Orbit - right mouse, or left mouse + ctrl/meta/shiftKey / touch: two-finger rotate
-//    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
-//    Pan - left mouse, or arrow keys / touch: one-finger move
+// Orbit -右鼠标，或左鼠标+ ctrl/meta/shift键/ touch:两指旋转
+//缩放-中鼠标，或鼠标滚轮/触摸:两指伸展或压扁
+//移动鼠标左键或方向键/触摸:一指移动
 
 THREE.MapControls = function ( object, domElement ) {
 

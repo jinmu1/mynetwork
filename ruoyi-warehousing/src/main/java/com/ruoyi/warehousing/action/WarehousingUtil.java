@@ -500,6 +500,7 @@ public class WarehousingUtil {
         for (int i = 0; i < rangeNum; i++) {
             Goods material = new Goods();
             material.setGoodsCode(RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
+            material.setPlutNum(random(1,40));
             materialList.add(material);
         }
         return materialList;

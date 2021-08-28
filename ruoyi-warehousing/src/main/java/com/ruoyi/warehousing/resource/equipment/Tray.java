@@ -58,6 +58,17 @@ public class Tray {
         return list1;
     }
 
+    public static List<Tray> initTrays1(List<Goods> list, double transportNum, int orderLine) {
+        List<Tray> list1 =new ArrayList<>();
+        for (int i = 0;i<transportNum*orderLine;i++){
+            Tray tray = new Tray();
+            tray.getGoodsList().add(list.get(i%list.size()));
+            tray.setPoint(new Point(0,0,0));
+            list1.add(tray);
+        }
+        return list1;
+    }
+
     private void init(){
 
     }

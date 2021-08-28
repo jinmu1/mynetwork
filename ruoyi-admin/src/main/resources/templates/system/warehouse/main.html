@@ -4,7 +4,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes"/>
     <meta charset="UTF-8"/>
-    <title>物流网络实时规划 . 省域</title>
+    <title>立库和平库（存储）决策</title>
 </head>
 
 <th:block th:include="include :: point-public1-css"/>
@@ -13,6 +13,11 @@
 <script th:src="@{/js/jquery.min.js}"></script>
 
 <script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+<th:block th:include="include :: echarts-js"/>
+
+<th:block th:include="include :: point-finereport-js"/>
+<th:block th:include="include :: footer"/>
+
 <style>
     .layui-layer-content {
         color: #000000;
@@ -25,11 +30,7 @@
     .echarts {
         height: 350px;
     }
-    canvas {
-        width: 100%;
-        height: 50%;
-        margin-top: 50%;
-    }
+
     .th-inner {
         color: rgb(171, 225, 245);
 
@@ -101,25 +102,349 @@
         <div class="header-bottom fl">
         </div>
     </div>
+    <th:block th:include="include :: three-js"/>
+    <th:block th:include="include :: OrbitControls-js"/>
+    <th:block th:include="include :: GLTFLoader-js"/>
+
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
-            <div class="col-sm-12 border">
-                <button type="button" onclick="onButtonClickLP(event)" style="left: 0px; top: 0px;" class="ui">创建生产线</button>
-                <button type="button" onclick="onButtonClickM(event)" style="left:200px; top: 0px;" class="ui">Criar
-                    Máquina</button>
-                <button type="button" onclick="onButtonClickIMP(event)" style="left:335px; top: 0px;" class="ui">Importar</button>
-                <button type="button" onclick="onButtonClickApagarLP(event)" style="left:450px; top: 0px;" class="ui">Eliminar Linha
-                    Produção</button>
-                <button type="button" onclick="onButtonClickApagarM(event)" style="left:650px; top: 0px;" class="ui">Eliminar
-                    Máquina</button>
-                <button type="button" onclick="onButtonClickLuminosidade(event)" style="left:815px; top: 0px;"
-                        class="ui">Luminosidade</button>
+            <div class="col-lg-12">
+                <h4 style="text-align: center">参数输入 <small></small></h4>
+                <form class="form-horizontal m-t" id="signupForms" onsubmit="post_data()"
+                      target="nm_iframe">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="titled-pane">输入</div>
+                            <div class="table-responsive table1">
+                                <table class="table table-bordered  width1">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="2"
+                                            style="text-align:center;vertical-align:middle;">公共参数
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th>每日入库托数</th>
+                                        <td><input name="transportNum" value="1000" id="transportNum1"
+                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   data-placement="right" title="请输入" th:type="text"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   onchange="changeplant()" required=""/>托
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>每日入库物料种类数</th>
+                                        <td><input name="transportNum" value="1000" id="goods_num1"
+                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   data-placement="right" title="请输入" th:type="text"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   onchange="changeplant()" required=""/>托
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th> 每天理货批次数</th>
+                                        <td><input name="batch" value="6" id="batch"
+                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   data-placement="right" title="请输入" th:type="text"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   onchange="changeplant()" required=""/></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="2"
+                                            style="text-align:center;vertical-align:middle;">面积参数
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th>理货区通道宽度</th>
+                                        <td>
+                                            <input type="value" id="tally_channel" value="3"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>托盘之间间隙</th>
+                                        <td>
+                                            <input type="value" id="tray_clearance" value="0.1"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2"
+                                            style="text-align:center;vertical-align:middle;">资源参数
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>行走速度</th>
+                                        <td>
+                                            <input type="value" id="tallyEmpCapacity" value="1.1"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m/s
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>理货速度</th>
+                                        <td>
+                                            <input type="value" id="tallyTime" value="120"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>托/s
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>资源利用率(MAX)</th>
+                                        <td>
+                                            <input type="value" id="utilization1" value="80"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""
+                                                   oninput="if(value>100)value=100;if(value<0)value=0"/>%
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="titled-pane">输入</div>
+                            <div class="table-responsive table1">
+                                <table class="table table-bordered  width1">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="2"
+                                            style="text-align:center;vertical-align:middle;">资源参数
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th>每日上架托数</th>
+                                        <td><input name="putawayNum" value="1000" id="putawayNum"
+                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   data-placement="right" title="请输入" th:type="text"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>上架作业时间</th>
+                                        <td>
+                                            <input type="value" id="everyDay_putaway_time" value="8"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>h
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>行走速度</th>
+                                        <td>
+                                            <input type="value" id="putaway_speed" value="1.1"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m/s
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>资源利用率(MAX)</th>
+                                        <td>
+                                            <input type="value" id="utilization2" value="80"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""
+                                                   oninput="if(value>100)value=100;if(value<0)value=0"/>%
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>存储托数</th>
+                                        <td><input name="storageNum" value="20000" id="storageNum"
+                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   data-placement="right" title="请输入" th:type="text"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   onchange="changeplant()" required=""/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>存储区高度</th>
+                                        <td>
+                                            <input type="value" id="height" value="9"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>存储区单层的高度</th>
+                                        <td>
+                                            <input type="value" id="shelf_height" value="1.5"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>存储区通道宽度</th>
+                                        <td>
+                                            <input type="value" id="forklift_channel" value="3"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>货架之间间隙</th>
+                                        <td>
+                                            <input type="value" id="shelf_space" value="0.01"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="titled-pane">输入</div>
+                            <div class="table-responsive table1">
+                                <table class="table table-bordered  width1">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="2"
+                                            style="text-align:center;vertical-align:middle;">公共参数
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th>每日分拣订单数量</th>
+                                        <td><input name="sortingNum" value="1000" id="sortingNum"
+                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   data-placement="right" title="请输入" th:type="text"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   onchange="changeplant()" required=""/>单
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>物料种类数</th>
+                                        <td><input name="sortingNum" value="1000" id="goods_num"
+                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   data-placement="right" title="请输入" th:type="text"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   onchange="changeplant()" required=""/>种
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>每天分拣批次数</th>
+                                        <td><input name="batch" value="6" id="batch1"
+                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                                                   data-placement="right" title="请输入" th:type="text"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   onchange="changeplant()" required=""/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>分拣方式</th>
+                                        <td><select name="sort_type" id="sort_type"
+                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;">
+                                            <option selected>按单拣选</option>
+                                            <option>批量拣选</option>
+                                        </select></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>平均订单行数</th>
+                                        <td>
+                                            <input type="value" id="orderLine" value="7"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>行/单
+                                        </td>
+                                    </tr>
 
 
+                                    <tr>
+                                        <th colspan="2"
+                                            style="text-align:center;vertical-align:middle;">面积参数
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>分拣区通道宽度</th>
+                                        <td>
+                                            <input type="value" id="tally_channel1" value="3"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>托盘之间间隙</th>
+                                        <td>
+                                            <input type="value" id="tray_clearance1" value="0.1"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2"
+                                            style="text-align:center;vertical-align:middle;">资源参数
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>行走速度</th>
+                                        <td>
+                                            <input type="value" id="sortingSpeed" value="1.1"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""/>m/s
+                                        </td>
+                                    </tr>
+                                    <!--                                                    <tr>-->
+                                    <!--                                                        <th>拣货速度</th>-->
+                                    <!--                                                        <td>-->
+                                    <!--                                                            <input type="value" id="sortingTime" value="120"-->
+                                    <!--                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"-->
+                                    <!--                                                                   required=""/>单/s-->
+                                    <!--                                                        </td>-->
+                                    <!--                                                    </tr>-->
+                                    <tr>
+                                        <th>资源利用率(MAX)</th>
+                                        <td>
+                                            <input type="value" id="utilization4" value="80"
+                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                                                   required=""
+                                                   oninput="if(value>100)value=100;if(value<0)value=0"/>%
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="ibox float-e-margins" style="height: 60px">
+                                        <button class="btn btn-primary" type="submit"
+                                                style="margin-top: -2%;margin-left: 45%;z-index: 9999">
+                                            确认并提交
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-
+                </form>
             </div>
-
+            <div class="col-sm-4 border">
+                <table id="bootstrap-table1"></table>
+            </div>
+            <div class="col-sm-4 border">
+                <table id="bootstrap-table2"></table>
+            </div>
+            <div class="col-sm-4 border">
+                <table id="bootstrap-table3"></table>
+            </div>
         </div>
     </div>
 
@@ -136,18 +461,582 @@
 </div>
 <div class="footer" style="margin-left: 45.5%; bottom:0;height: 10%;">
 </div>
-<!--</div>-->
-<th:block th:include="include :: echarts-js"/>
-<th:block th:include="include :: point-finereport-js"/>
-<th:block th:include="include :: footer"/>
+<script>
+    var isClick = true;
+    showLoading = function () {
+        $('#loadingModal').modal({backdrop: 'static', keyboard: false});
+    }
+    //隐藏掉loading框
+    hideLoading = function () {
+        $('#loadingModal').modal('hide');
+    }
 
-<script th:inline="javascript">
+    function post_data() {
+        if (isClick) {
+            showLoading();
+            isClick = false;
+            setTimeout(function () {
+                onload();
+            }, 1000);//一秒内不能重复点击
+
+            setTimeout(function () {
+                isClick = true;
+            }, 1000);//一秒内不能重复点击
+        } else {
+            return;
+        }
+        return false;
+    }
+
+    var linhaTemp = [];
+    var maquinasTemp = [];
+
+
+    var renderer = new THREE.WebGLRenderer();
+
+    //botao luminosidade
+    function onButtonClickLuminosidade(event) {
+        if (luzAcesa.value % 2 != 0) acenderLuz(); else apagarLuz();
+    }
+
+    var scene;
+
+    scene = new THREE.Scene();
+    var target = new THREE.Object3D();
+    target.position = new THREE.Vector3(5, 0, 0);
+    var camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
+
+
+    var set_camera_init = function () {
+        camera.position.z = 300;
+        camera.position.y = 400;
+        camera.position.x = 10;
+    }
+
+    var animate = function () {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+        renderer.setSize( 840, 510 );
+
+    };
+
+    var COMPRIMENTO_FABRICA = 80;
+    var LARGURA_FABRICA = 40;
+    var geometry = new THREE.Geometry();
+    //创建立方体的顶点
+    var vertices = [
+        new THREE.Vector3(1, 1, 1), //v0
+        new THREE.Vector3(-1, 1, 1), //v1
+        new THREE.Vector3(-1, -1, 1), //v2
+        new THREE.Vector3(1, -1, 1), //v3
+        new THREE.Vector3(1, -1, -1), //v4
+        new THREE.Vector3(1, 1, -1), //v5
+        new THREE.Vector3(-1, 1, -1), //v6
+        new THREE.Vector3(-1, -1, -1) //v7
+    ];
+
+    geometry.vertices = vertices;
+    var faces = [
+        new THREE.Face3(0, 1, 2),
+        new THREE.Face3(0, 2, 3),
+        new THREE.Face3(0, 3, 4),
+        new THREE.Face3(0, 4, 5),
+        new THREE.Face3(1, 6, 7),
+        new THREE.Face3(1, 7, 2),
+        new THREE.Face3(6, 5, 4),
+        new THREE.Face3(6, 4, 7),
+        new THREE.Face3(5, 6, 1),
+        new THREE.Face3(5, 1, 0),
+        new THREE.Face3(3, 2, 7),
+        new THREE.Face3(3, 7, 4)
+    ];
+    var tally_l = 19;
+    var tally_w = 10;
+    var rows = 10;
+    var lines = 10;
+    var layer = 5;
+    var zu = 3;
+    var sort_l = 10;
+    var sort_w = 10;
+
+    function onload() {
+        var storageNum = $("#storageNum").val();
+        var height = $("#height").val();
+        var forklift_channel = $("#forklift_channel").val();
+        var shelf_space = $("#shelf_space").val();
+        var shelf_height = $("#shelf_height").val();
+        $.post("/getStorage", {
+            "storageNum": storageNum,
+            "height": height,
+            "forklift_channel": forklift_channel,
+            "shelf_space": shelf_space,
+            "shelf_height": shelf_height,
+        }, function (result) {
+            var d = result.rows[0];
+            rows = parseInt(d.row / 3);
+            lines = parseInt(d.line);
+            layer = parseInt(d.layer);
+            scene = new THREE.Scene();
+
+
+        });
+        var transportNum = $("#transportNum1").val();
+        var carlength = $("#carLength option:selected").val();
+        var batch = $("#batch").val();
+        var tally_channel = $("#tally_channel").val();
+        var tray_clearance = $("#tray_clearance").val();
+        var utilization = $("#utilization1").val();
+        var tallyEmpCapacity = $("#tallyEmpCapacity").val();
+        var tallyTime = $("#tallyTime").val();
+        var goods_num = $("#goods_num1").val();
+        $.post("/getTally", {
+            "transportNum": transportNum,
+            "carlength": carlength,
+            "batch": batch,
+            "tray_clearance": tray_clearance,
+            "tally_channel": tally_channel,
+            "utilization": utilization,
+            "tallyTime": tallyTime,
+            "tallyEmpCapacity": tallyEmpCapacity,
+            "goods_num": goods_num
+        }, function (result) {
+            var d = result.rows[0];
+            tally_l = parseInt(d.tally_transverse);
+            tally_w = parseInt(d.tally_longitudinal)
+
+        });
+        var batch = $("#batch1").val();
+        var orderLine = $("#orderLine").val();
+        var transportNum = $("#sortingNum").val();
+
+        // var sortingTime = $("#sortingTime").val();
+        var tally_channel = $("#tally_channel1").val();
+        var tray_clearance = $("#tray_clearance1").val();
+        var sort_type = $("#sort_type option:selected").val();
+        var utilization = $("#utilization4").val();
+        var goods_num = $("#goods_num").val() / 1.5;
+        $.post("/getSorting", {
+            "transportNum": transportNum,
+            "batch": batch,
+            "orderLine": orderLine,
+            "sort_type": sort_type,
+            "tray_clearance": tray_clearance,
+            "tally_channel": tally_channel,
+            "utilization": utilization,
+            "goods_num": goods_num
+        }, function (result) {
+            var d = result.rows[0];
+            sort_l = parseInt(d.tally_transverse);
+            sort_w = parseInt(d.tally_longitudinal)
+            main();
+            hideLoading();
+        });
+        $('#bootstrap-table1').bootstrapTable({
+            url:"/putawayOrder?transportNum="+transportNum,
+            method: 'post',
+            showFooter: true,
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            pagination: true,
+            sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber:1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                       //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            footerStyle: footerStyle,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'time',
+                    title: '时间'
+                },
+                {
+                    field: 'order_code',
+                    title: '订单编码'
+                },
+
+                {
+                    field: 'goods_code',
+                    title: '物料编码'
+                },
+                {
+                    field: 'goods_num',
+                    title: '物料量'
+                }]
+        });
+        $('#bootstrap-table2').bootstrapTable({
+            url:"/putawayList?transportNum="+transportNum,
+            method: 'post',
+            showFooter: true,
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            pagination: true,
+            sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber:1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                       //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            footerStyle: footerStyle,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'time',
+                    title: '时间'
+                },
+                {
+                    field: 'empNo',
+                    title: '员工编号'
+                },
+                {
+                    field: 'empStatus',
+                    title: '工作状态'
+                }]
+        });
+        $('#bootstrap-table3').bootstrapTable({
+            url:"/putawayEmp?transportNum="+transportNum,
+            method: 'post',
+            showFooter: true,
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            pagination: true,
+            sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber:1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                       //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            footerStyle: footerStyle,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'time',
+                    title: '时间'
+                },
+                {
+                    field: 'empStatus',
+                    title: '工作人员数量'
+                }]
+        });
+    }
+    function footerStyle(column) {
+        return {
+//         	    userBalance: {
+//         	        classes: 'class'
+//         	    },
+            userBalance: {
+                css: { color: 'red', 'font-weight': 'normal' }
+            }
+        }[column.field]
+    };
+    var draw = function () {
+        var direction = new THREE.DirectionalLight(0xffffff);
+        scene.add(direction);
+
+        geometry.faces = faces;
+
+        for (var i = 0; i < tally_l; i++) {
+            for (var k = 0; k < tally_w; k++) {
+                var b = "#210dcd";
+                var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                sphere.position.set(-5 * rows * zu - i * 2.5, 0, -48 + k * 9);
+                sphere.geometry.verticesNeedUpdate = true;
+                sphere.geometry.normalsNeedUpdate = true;
+                scene.add(sphere);
+            }
+        }
+
+        for (var i = 0; i < sort_l; i++) {
+            for (var k = 0; k < sort_w; k++) {
+                var b = "#210dcd";
+                var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                sphere.position.set(zu * rows * 10 + 200 + i * 2.5, 0, -48 + k * 9);
+                sphere.geometry.verticesNeedUpdate = true;
+                sphere.geometry.normalsNeedUpdate = true;
+                scene.add(sphere);
+            }
+        }
+
+        for (var z = 0; z < zu; z++) {
+            for (var i = 0; i < rows; i++) {
+                for (var j = 0; j < layer; j++) {
+                    for (var k = 0; k < lines; k++) {
+                        var b = "#210dcd";
+                        if (j > 50) {
+                            b = "#c5cdc5"
+                        }
+                        var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                        sphere.position.set(-58 + i * 15 + z * rows * 20, j * 5 - 3, -48 + k * 5);
+                        sphere.geometry.verticesNeedUpdate = true;
+                        sphere.geometry.normalsNeedUpdate = true;
+                        scene.add(sphere);
+                        var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                        sphere.position.set(-58 + i * 15 + z * rows * 20 + 5, j * 5 - 3, -48 + k * 5);
+                        sphere.geometry.verticesNeedUpdate = true;
+                        sphere.geometry.normalsNeedUpdate = true;
+                        scene.add(sphere);
+                    }
+                }
+            }
+            for (var m = 0; m < rows; m++) {
+                for (var i = 0; i < lines + 1; i++) {
+                    for (var j = 0; j < layer; j++) {
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-50 + m * 15 + z * rows * 20, -5 + j * 5, -50 + i * 5));
+                        geometry1.vertices.push(new THREE.Vector3(-50 + m * 15 + z * rows * 20, -5 + j * 5, -50 + i * 5));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 15 + z * rows * 20, -5 + j * 5, -50 + i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        scene.add(line);
+                    }
+                }
+
+            }
+            for (var m = 0; m < rows; m++) {
+                for (var j = 0; j < layer; j++) {
+                    var geometry1 = new THREE.Geometry();
+                    geometry1.vertices.push(new THREE.Vector3(-60 + m * 15 + z * rows * 20, -5 + j * 5, -50));
+                    geometry1.vertices.push(new THREE.Vector3(-60 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
+                    geometry1.vertices.push(new THREE.Vector3(-60 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
+                    //使用Line方法将线初始化
+                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                    //将线添加到场景
+                    scene.add(line);
+                    var geometry1 = new THREE.Geometry();
+                    geometry1.vertices.push(new THREE.Vector3(-55 + m * 15 + z * rows * 20, -5 + j * 5, -50));
+                    geometry1.vertices.push(new THREE.Vector3(-55 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
+                    geometry1.vertices.push(new THREE.Vector3(-55 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
+                    //使用Line方法将线初始化
+                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                    //将线添加到场景
+                    scene.add(line);
+                    var geometry1 = new THREE.Geometry();
+                    geometry1.vertices.push(new THREE.Vector3(-50 + m * 15 + z * rows * 20, -5 + j * 5, -50));
+                    geometry1.vertices.push(new THREE.Vector3(-50 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
+                    geometry1.vertices.push(new THREE.Vector3(-50 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
+                    //使用Line方法将线初始化
+                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                    //将线添加到场景
+                    scene.add(line);
+                }
+            }
+        }
+    }
+
+    var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
 
 
 
+    var sphere1 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
 
 
+    var sphere2 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
 
+
+    var sphere3 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
+
+
+    var sphere4 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
+
+
+    var sphere5 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
+
+
+    var sphere6 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
+
+
+    var sphere7 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
+
+
+    var sphere8 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
+
+    //绘制函数
+    function  onset(){
+        sphere.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
+        sphere.geometry.verticesNeedUpdate = true;
+        sphere.geometry.normalsNeedUpdate = true;
+        scene.add(sphere);
+        sphere1.position.set(-58 +randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
+        sphere1.geometry.verticesNeedUpdate = true;
+        sphere1.geometry.normalsNeedUpdate = true;
+        scene.add(sphere1);
+        sphere2.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
+        sphere2.geometry.verticesNeedUpdate = true;
+        sphere2.geometry.normalsNeedUpdate = true;
+        scene.add(sphere2);
+        sphere3.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
+        sphere3.geometry.verticesNeedUpdate = true;
+        sphere3.geometry.normalsNeedUpdate = true;
+        scene.add(sphere3);
+        sphere4.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
+        sphere4.geometry.verticesNeedUpdate = true;
+        sphere4.geometry.normalsNeedUpdate = true;
+        scene.add(sphere4);
+        sphere5.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
+        sphere5.geometry.verticesNeedUpdate = true;
+        sphere5.geometry.normalsNeedUpdate = true;
+        scene.add(sphere5);
+        sphere6.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
+        sphere6.geometry.verticesNeedUpdate = true;
+        sphere6.geometry.normalsNeedUpdate = true;
+        scene.add(sphere6);
+        sphere7.position.set(-5 * rows * zu - randomNum(0, tally_l) * 2.5, 0, -46 + randomNum(0, tally_w) * 9);
+        sphere7.geometry.verticesNeedUpdate = true;
+        sphere7.geometry.normalsNeedUpdate = true;
+        scene.add(sphere7);
+        sphere8.position.set(-5 * rows * zu - randomNum(0, tally_l) * 2.5, 0, -46 + randomNum(0, tally_w) * 9);
+        sphere8.geometry.verticesNeedUpdate = true;
+        sphere8.geometry.normalsNeedUpdate = true;
+        scene.add(sphere8);
+    }
+
+    //设计一个阳台
+
+    var ALTURA_BALCAO = 6;
+    var LARGURA_BALCAO = 2;
+
+    var desenharBalcoes = function () {
+        desenhaBalcao(COMPRIMENTO_FABRICA, ALTURA_BALCAO, LARGURA_BALCAO, 19, -17, LARGURA_FABRICA / 2, Math.PI / 2); //balcao da direita
+        desenhaBalcao(COMPRIMENTO_FABRICA, ALTURA_BALCAO, LARGURA_BALCAO, -19, -17, LARGURA_FABRICA / 2, Math.PI / 2)
+    }
+
+    var desenhaBalcao = function (comprimento, largura, altura, x, y, z, rotX) {
+        var geometry_balcao = new THREE.BoxGeometry(comprimento, largura, altura);
+        var material = new THREE.MeshLambertMaterial({color: 0x993300});
+        geometry_balcao.rotateY(Math.PI / 2);
+        geometry_balcao.translate(x, y, z);
+        var linha = new THREE.Mesh(geometry_balcao, material);
+        scene.add(linha);
+    }
+
+    /* 主墙端部*/
+
+    var main = function () {
+        scene.background = new THREE.Color('#cdd1d0');
+
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 800);
+        camera.position.set(-120, 120, 130);
+
+        cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
+        cameraControls.addEventListener('change', renderer);
+        window.addEventListener('resize', function () {
+            let width = window.innerWidth;
+            let height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+
+        var controls = new THREE.OrbitControls(camera, renderer.domElement);
+        const loader = new THREE.TextureLoader();
+        loader.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        draw();
+        set_camera_init();
+        animate();
+        // onset();
+        // animation();
+        // animation1();
+        // animation2();
+        // animation3();
+        // animation4();
+        // animation5();
+        // animation6();
+        // animation7();
+        // animation8();
+
+    }
+
+    function animation() {
+        setTimeout(function () {
+            onset();
+        }, 5000);//一秒内不能重复点击
+        if (sphere.position.z > -48) {
+            sphere.position.z += 1;
+        } else {
+            sphere.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+        }
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation);
+    }
+
+    function animation1() {
+        if (sphere1.position.z < 0) {
+            sphere1.position.z += 1;
+        } else {
+            sphere1.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+        }// mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation1);
+    }
+
+    function animation2() {
+        sphere2.position.x += 0.2;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation2);
+    }
+
+    function animation3() {
+        sphere3.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation3);
+    }
+
+    function animation4() {
+        sphere4.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation4);
+    }
+
+    function animation5() {
+        sphere5.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation5);
+    }
+
+    function animation6() {
+        sphere6.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation6);
+    }
+
+    function animation7() {
+        sphere7.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation7);
+    }
+
+    function animation8() {
+        sphere8.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation8);
+    }
+
+
+    main();
+
+    function randomNum(minNum, maxNum) {
+        switch (arguments.length) {
+            case 1:
+                return parseInt(Math.random() * minNum + 1, 10);
+                break;
+            case 2:
+                return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+                break;
+            default:
+                return 0;
+                break;
+        }
+    }
+</script>
+<script>
 
 
 </script>
