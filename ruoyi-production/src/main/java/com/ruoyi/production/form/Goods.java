@@ -1,6 +1,6 @@
-package com.ruoyi.warehousing.form;
+package com.ruoyi.production.form;
 
-import com.ruoyi.warehousing.queue.Point;
+import com.ruoyi.production.queue.Point;
 
 import java.util.Objects;
 

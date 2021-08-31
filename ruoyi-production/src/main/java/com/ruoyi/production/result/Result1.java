@@ -1,10 +1,9 @@
-package com.ruoyi.warehousing.result;
+package com.ruoyi.production.result;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
-public class Result extends BaseEntity {
+public class Result1 extends BaseEntity {
     private int batch;//批次
     private double cost;//成本
     private double distance;//行走距离
@@ -43,26 +42,25 @@ public class Result extends BaseEntity {
 
     private int tally_transverse;// 纵向数量
     private int tally_longitudinal;//横向数量
-    @Excel(name = "订单编码")
+
     private String order_code;//订单编码
     @Excel(name = "物料编码")
     private String goods_code;//物料编码
     @Excel(name = "物料数量")
     private double goods_num;//物料量
-    @Excel(name = "物料数量（件）")
-    private double goods_num1;//物料量
-    @Excel(name = "物料数量（托）")
-    private double goods_num2;//物料量
-    @Excel(name = "时间")
+
     private String time;//订单到达时间
-    @Excel(name = "日期")
+
     private String DateTime;//日期
-    @Excel(name = "供应商")
+
     private String sullier;
 
     private int cargo;//货位数量
+    @Excel(name = "层")
     private int layer;
+    @Excel(name = "列")
     private int line;
+    @Excel(name = "排")
     private int row;
 
     public String getDateTime() {
@@ -176,10 +174,10 @@ public class Result extends BaseEntity {
     public void setCargo(int cargo) {
         this.cargo = cargo;
     }
-    public Result() {
+    public Result1() {
         super();
     }
-    public Result(int batch) {
+    public Result1(int batch) {
         this.batch = batch;
     }
 
@@ -207,7 +205,7 @@ public class Result extends BaseEntity {
         this.takeDownEmpRate = takeDownEmpRate;
     }
 
-    public Result(int batch, double cost, double distance, int uploadEmp, int putawayEmp, int sortingEmp, int deliveryEmp, double uploadRate, double putawayRate, double sortingRate, double deliveryRate, double platformNum, double platformArea, double platformRate, double tallyArea, double tallyRate, double storageArea, double tally1Area, double tally1Rate, double platform1Num, double platform1Area, double platform1Rate) {
+    public Result1(int batch, double cost, double distance, int uploadEmp, int putawayEmp, int sortingEmp, int deliveryEmp, double uploadRate, double putawayRate, double sortingRate, double deliveryRate, double platformNum, double platformArea, double platformRate, double tallyArea, double tallyRate, double storageArea, double tally1Area, double tally1Rate, double platform1Num, double platform1Area, double platform1Rate) {
         this.batch = batch;
         this.cost = cost;
         this.distance = distance;
@@ -230,22 +228,6 @@ public class Result extends BaseEntity {
         this.platform1Num = platform1Num;
         this.platform1Area = platform1Area;
         this.platform1Rate = platform1Rate;
-    }
-
-    public double getGoods_num1() {
-        return goods_num1;
-    }
-
-    public void setGoods_num1(double goods_num1) {
-        this.goods_num1 = goods_num1;
-    }
-
-    public double getGoods_num2() {
-        return goods_num2;
-    }
-
-    public void setGoods_num2(double goods_num2) {
-        this.goods_num2 = goods_num2;
     }
 
     public double getSortdistance() {

@@ -1,24 +1,25 @@
-package com.ruoyi.warehousing.action;
+package com.ruoyi.production.action;
 
-import com.ruoyi.warehousing.enumType.CarType;
-import com.ruoyi.warehousing.form.*;
-import com.ruoyi.warehousing.process.Putaway;
-import com.ruoyi.warehousing.process.Sorting;
-import com.ruoyi.warehousing.queue.Order;
-import com.ruoyi.warehousing.queue.Point;
-import com.ruoyi.warehousing.resource.equipment.Elevator;
-import com.ruoyi.warehousing.resource.equipment.LightStorage;
-import com.ruoyi.warehousing.resource.equipment.Tray;
-import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
-import com.ruoyi.warehousing.resource.facilities.platform.Platform;
-import com.ruoyi.warehousing.resource.facilities.storage.Storage;
-import com.ruoyi.warehousing.resource.personnel.Emp;
-import com.ruoyi.warehousing.result.EmpLog;
-import com.ruoyi.warehousing.result.Result;
-import com.ruoyi.warehousing.utils.AreaUtils;
+import com.ruoyi.production.enumType.CarType;
+import com.ruoyi.production.form.Goods;
+import com.ruoyi.production.queue.Order;
+import com.ruoyi.production.queue.Point;
+import com.ruoyi.production.resource.equipment.Elevator;
+import com.ruoyi.production.resource.equipment.Tray;
+import com.ruoyi.production.resource.personnel.Emp;
+import com.ruoyi.production.utils.AreaUtils;
+import com.ruoyi.production.utils.MathUtils;
+import com.ruoyi.production.utils.RandomUtil;
+import com.ruoyi.production.form.*;
+import com.ruoyi.production.process.Putaway;
+import com.ruoyi.production.process.Sorting;
+import com.ruoyi.production.resource.equipment.LightStorage;
+import com.ruoyi.production.resource.facilities.buffer.Tally;
+import com.ruoyi.production.resource.facilities.platform.Platform;
+import com.ruoyi.production.resource.facilities.storage.Storage;
+import com.ruoyi.production.result.EmpLog;
+import com.ruoyi.production.result.Result;
 import com.ruoyi.warehousing.utils.DateUtils;
-import com.ruoyi.warehousing.utils.MathUtils;
-import com.ruoyi.warehousing.utils.RandomUtil;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.poi.ss.formula.functions.T;
 
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.ruoyi.warehousing.utils.DateUtils.randomDate;
+import static com.ruoyi.production.utils.DateUtils.randomDate;
 import static java.util.stream.Collectors.*;
 
 public class WarehousingUtil {
@@ -38,9 +39,9 @@ public class WarehousingUtil {
 
 
     public static void initTime(Date runTime, Date startTime, Date endTime) {
-        startTime = randomDate("2019-12-24 08:00:00", "2019-12-24 08:01:00");
-        runTime = randomDate("2019-12-24 08:00:00", "2019-12-24 08:01:00");
-        endTime = randomDate("2019-12-24 24:00:00", "2019-12-24 24:01:00");
+        startTime = com.ruoyi.production.utils.DateUtils.randomDate("2019-12-24 08:00:00", "2019-12-24 08:01:00");
+        runTime = com.ruoyi.production.utils.DateUtils.randomDate("2019-12-24 08:00:00", "2019-12-24 08:01:00");
+        endTime = com.ruoyi.production.utils.DateUtils.randomDate("2019-12-24 24:00:00", "2019-12-24 24:01:00");
     }
 
     public static List<Platform> initPlat(double num,double platform_width) {
@@ -54,22 +55,22 @@ public class WarehousingUtil {
     /**
      * 初始化门洞
      */
-    public static List<Point> initDoor() {
-        List<Point> door = new ArrayList<>();
-        door.add(new Point(8, 3, 0));
-        door.add(new Point(34, 3, 0));
-        door.add(new Point(40, 3, 0));
+    public static List<com.ruoyi.production.queue.Point> initDoor() {
+        List<com.ruoyi.production.queue.Point> door = new ArrayList<>();
+        door.add(new com.ruoyi.production.queue.Point(8, 3, 0));
+        door.add(new com.ruoyi.production.queue.Point(34, 3, 0));
+        door.add(new com.ruoyi.production.queue.Point(40, 3, 0));
         return door;
     }
 
     /**
      * 初始化电梯
      */
-    public static List<Elevator> initElevator(int num, int floor) {
-        List<Elevator> elevators = new ArrayList<>();
+    public static List<com.ruoyi.production.resource.equipment.Elevator> initElevator(int num, int floor) {
+        List<com.ruoyi.production.resource.equipment.Elevator> elevators = new ArrayList<>();
         for (int i = 0; i < num; i++) {
             int f = (int) (Math.random() * floor);
-            elevators.add(new Elevator("电梯" + 0 + "号", 3, f, WorkTime.e_v0, WorkTime.e_v1, 0, new Point(23, 0, f)));
+            elevators.add(new com.ruoyi.production.resource.equipment.Elevator("电梯" + 0 + "号", 3, f, com.ruoyi.production.form.WorkTime.e_v0, com.ruoyi.production.form.WorkTime.e_v1, 0, new com.ruoyi.production.queue.Point(23, 0, f)));
         }
         return elevators;
     }
@@ -79,11 +80,11 @@ public class WarehousingUtil {
      *
      * @return
      */
-    public static List<Point> initElevatorPark() {
-        List<Point> points = new ArrayList<>();
+    public static List<com.ruoyi.production.queue.Point> initElevatorPark() {
+        List<com.ruoyi.production.queue.Point> points = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
             if (i != 2) {
-                points.add(new Point(23, 1, (i - 1) * 5));
+                points.add(new com.ruoyi.production.queue.Point(23, 1, (i - 1) * 5));
             }
         }
         return points;
@@ -95,8 +96,8 @@ public class WarehousingUtil {
      * @param emp
      * @return
      */
-    public static Point getPlatform(Emp emp, List<Platform> platforms) {
-        Point point = new Point();
+    public static com.ruoyi.production.queue.Point getPlatform(com.ruoyi.production.resource.personnel.Emp emp, List<Platform> platforms) {
+        com.ruoyi.production.queue.Point point = new com.ruoyi.production.queue.Point();
         for (Platform platform : platforms) {
             if (emp.getCode().equals(platform.getCode())) {
                 point = platform.getPosition();
@@ -123,10 +124,10 @@ public class WarehousingUtil {
         return point;
     }
 
-    public static Point getPath(Emp emp, double num) {
-        Point curr = emp.getCurr();
-        Point dest = emp.getTar();
-        Point curLocation = new Point(curr.getX(), curr.getY(), curr.getZ());
+    public static com.ruoyi.production.queue.Point getPath(com.ruoyi.production.resource.personnel.Emp emp, double num) {
+        com.ruoyi.production.queue.Point curr = emp.getCurr();
+        com.ruoyi.production.queue.Point dest = emp.getTar();
+        com.ruoyi.production.queue.Point curLocation = new com.ruoyi.production.queue.Point(curr.getX(), curr.getY(), curr.getZ());
         if (getDistance(curr,dest)<=3){
             return dest;
         }
@@ -134,20 +135,20 @@ public class WarehousingUtil {
             double x1Diff = Math.abs(dest.getX() - curLocation.east(num).getX());  //go east, x + 1
             double x2Diff = Math.abs(dest.getX() - curLocation.west(num).getX());  //go west, x - 1
             if (x1Diff <= x2Diff) {
-                Point newPt = new Point(curLocation.east(num).getX(), curLocation.getY(), curLocation.getZ());
+                com.ruoyi.production.queue.Point newPt = new com.ruoyi.production.queue.Point(curLocation.east(num).getX(), curLocation.getY(), curLocation.getZ());
                 curLocation = newPt;
             } else {
-                Point newPt = new Point(curLocation.west(num).getX(), curLocation.getY(), curLocation.getZ());
+                com.ruoyi.production.queue.Point newPt = new com.ruoyi.production.queue.Point(curLocation.west(num).getX(), curLocation.getY(), curLocation.getZ());
                 curLocation = newPt;
             }
         }else if (Math.abs(curLocation.getY() - dest.getY()) >= num) {
             double y1Diff = Math.abs(dest.getY() - curLocation.north(num).getY()); //go north, y + 1
             double y2Diff = Math.abs(dest.getY() - curLocation.south(num).getY()); //go south, y - 1
             if (y1Diff <= y2Diff) {
-                Point newPt = new Point(curLocation.getX(), curLocation.north(num).getY(), curLocation.getZ());
+                com.ruoyi.production.queue.Point newPt = new com.ruoyi.production.queue.Point(curLocation.getX(), curLocation.north(num).getY(), curLocation.getZ());
                 curLocation = newPt;
             } else {
-                Point newPt = new Point(curLocation.getX(), curLocation.south(num).getY(), curLocation.getZ());
+                com.ruoyi.production.queue.Point newPt = new com.ruoyi.production.queue.Point(curLocation.getX(), curLocation.south(num).getY(), curLocation.getZ());
                 curLocation = newPt;
             }
         }
@@ -161,7 +162,7 @@ public class WarehousingUtil {
      * @param tar
      * @return
      */
-    public static double getDistance(Point point, Point tar) {
+    public static double getDistance(com.ruoyi.production.queue.Point point, com.ruoyi.production.queue.Point tar) {
         return Math.abs(point.getX() - tar.getX()) + Math.abs(point.getY() - tar.getY());
     }
 
@@ -172,10 +173,10 @@ public class WarehousingUtil {
      * @param tar
      * @param i
      */
-    public static void emptys(Tally tally, Point tar, int i) {
-        Iterator<Point> iterator = tally.getPoints().iterator();
+    public static void emptys(Tally tally, com.ruoyi.production.queue.Point tar, int i) {
+        Iterator<com.ruoyi.production.queue.Point> iterator = tally.getPoints().iterator();
         while (iterator.hasNext()) {
-            Point point = iterator.next();
+            com.ruoyi.production.queue.Point point = iterator.next();
             if (getDistance(point, tar) == 0) {
                 point.setStatus(i);
             }
@@ -188,17 +189,17 @@ public class WarehousingUtil {
      *
      * @return
      */
-    public static List<Goods> getGoodsPullt(Tally tally) {
-        List<Goods> goods = new ArrayList<>();
-        List<Goods> goodsList = tally.getGoodsList();
+    public static List<com.ruoyi.production.form.Goods> getGoodsPullt(Tally tally) {
+        List<com.ruoyi.production.form.Goods> goods = new ArrayList<>();
+        List<com.ruoyi.production.form.Goods> goodsList = tally.getGoodsList();
         for (int i = 0; i < goodsList.size() / tally.getTorr(); i++) {
             goods.add(goodsList.get(i));
         }
-        Iterator<Goods> iterator = tally.getGoodsList().iterator();
+        Iterator<com.ruoyi.production.form.Goods> iterator = tally.getGoodsList().iterator();
         while (iterator.hasNext()) {
-            Goods goods1 = iterator.next();
+            com.ruoyi.production.form.Goods goods1 = iterator.next();
             int m = 0;
-            for (Goods goods2 : goods) {
+            for (com.ruoyi.production.form.Goods goods2 : goods) {
                 if (goods1.getGoodsCode().equals(goods2.getGoodsCode()) && goods1.getPlutNum() == goods2.getPlutNum() && m == 0) {
                     iterator.remove();
                     m++;
@@ -214,9 +215,9 @@ public class WarehousingUtil {
      * @param emp
      * @return
      */
-    public static Point getPark(Emp emp, List<Point> elevatorPark) {
-        Point p = new Point();
-        for (Point point : elevatorPark) {
+    public static com.ruoyi.production.queue.Point getPark(com.ruoyi.production.resource.personnel.Emp emp, List<com.ruoyi.production.queue.Point> elevatorPark) {
+        com.ruoyi.production.queue.Point p = new com.ruoyi.production.queue.Point();
+        for (com.ruoyi.production.queue.Point point : elevatorPark) {
             if (point.getZ() == emp.getCurr().getZ()) {
                 p = point;
             }
@@ -231,10 +232,10 @@ public class WarehousingUtil {
      * @param elevators
      * @return
      */
-    public static Elevator waitEle(double num, List<Elevator> elevators) {
+    public static com.ruoyi.production.resource.equipment.Elevator waitEle(double num, List<com.ruoyi.production.resource.equipment.Elevator> elevators) {
         int i = 1000;
-        Elevator elevator = new Elevator();
-        for (Elevator elevator1 : elevators) {
+        com.ruoyi.production.resource.equipment.Elevator elevator = new com.ruoyi.production.resource.equipment.Elevator();
+        for (com.ruoyi.production.resource.equipment.Elevator elevator1 : elevators) {
             if (elevator1.getStatus() == 0 && Math.abs(elevator1.getFloor() - num) < i) {
                 elevator = elevator1;
                 i = elevator1.getFloor();
@@ -250,7 +251,7 @@ public class WarehousingUtil {
      * @param status
      * @param elevators
      */
-    public static void freeEle(Elevator elevator, int status, List<Elevator> elevators) {
+    public static void freeEle(com.ruoyi.production.resource.equipment.Elevator elevator, int status, List<com.ruoyi.production.resource.equipment.Elevator> elevators) {
         for (Elevator elevator1 : elevators) {
             if (elevator != null && elevator.getCode() != null && elevator.getCode().equals(elevator1.getCode())) {
                 elevator1.setStatus(status);
@@ -266,36 +267,36 @@ public class WarehousingUtil {
      * @param num
      * @return
      */
-    public static Point getPath1(Point curr, Point dest, double num) {
-        Point curLocation = new Point(curr.getX(), curr.getY(), curr.getZ());
+    public static com.ruoyi.production.queue.Point getPath1(com.ruoyi.production.queue.Point curr, com.ruoyi.production.queue.Point dest, double num) {
+        com.ruoyi.production.queue.Point curLocation = new com.ruoyi.production.queue.Point(curr.getX(), curr.getY(), curr.getZ());
         if (Math.abs(curLocation.getX() - dest.getX()) >= 1) {
             double x1Diff = Math.abs(dest.getX() - curLocation.east(num).getX());  //go east, x + 1
             double x2Diff = Math.abs(dest.getX() - curLocation.west(num).getX());  //go west, x - 1
             if (x1Diff <= x2Diff) {
-                Point newPt = new Point(curLocation.east(num).getX(), curLocation.getY(), curLocation.getZ());
+                com.ruoyi.production.queue.Point newPt = new com.ruoyi.production.queue.Point(curLocation.east(num).getX(), curLocation.getY(), curLocation.getZ());
                 curLocation = newPt;
             } else {
-                Point newPt = new Point(curLocation.west(num).getX(), curLocation.getY(), curLocation.getZ());
+                com.ruoyi.production.queue.Point newPt = new com.ruoyi.production.queue.Point(curLocation.west(num).getX(), curLocation.getY(), curLocation.getZ());
                 curLocation = newPt;
             }
         } else if (Math.abs(curLocation.getY() - dest.getY()) >= 1) {
             double y1Diff = Math.abs(dest.getY() - curLocation.north(num).getY()); //go north, y + 1
             double y2Diff = Math.abs(dest.getY() - curLocation.south(num).getY()); //go south, y - 1
             if (y1Diff <= y2Diff) {
-                Point newPt = new Point(curLocation.getX(), curLocation.north(num).getY(), curLocation.getZ());
+                com.ruoyi.production.queue.Point newPt = new com.ruoyi.production.queue.Point(curLocation.getX(), curLocation.north(num).getY(), curLocation.getZ());
                 curLocation = newPt;
             } else {
-                Point newPt = new Point(curLocation.getX(), curLocation.south(num).getY(), curLocation.getZ());
+                com.ruoyi.production.queue.Point newPt = new com.ruoyi.production.queue.Point(curLocation.getX(), curLocation.south(num).getY(), curLocation.getZ());
                 curLocation = newPt;
             }
         } else if (curLocation.getZ() != dest.getZ()) {
             double z1Diff = Math.abs(dest.getZ() - curLocation.up(num).getZ()); //go north, y + 1
             double z2Diff = Math.abs(dest.getZ() - curLocation.down(num).getZ()); //go south, y - 1
             if (z1Diff <= z2Diff) {
-                Point newPt = new Point(curLocation.getX(), curLocation.getY(), curLocation.up().getZ());
+                com.ruoyi.production.queue.Point newPt = new com.ruoyi.production.queue.Point(curLocation.getX(), curLocation.getY(), curLocation.up().getZ());
                 curLocation = newPt;
             } else {
-                Point newPt = new Point(curLocation.getX(), curLocation.getY(), curLocation.down().getZ());
+                com.ruoyi.production.queue.Point newPt = new com.ruoyi.production.queue.Point(curLocation.getX(), curLocation.getY(), curLocation.down().getZ());
                 curLocation = newPt;
 
             }
@@ -311,10 +312,10 @@ public class WarehousingUtil {
      * @param tar
      * @param i
      */
-    public static void emptys1(Point tar, int i, Tally tally) {
-        Iterator<Point> iterator = tally.getPoints().iterator();
+    public static void emptys1(com.ruoyi.production.queue.Point tar, int i, Tally tally) {
+        Iterator<com.ruoyi.production.queue.Point> iterator = tally.getPoints().iterator();
         while (iterator.hasNext()) {
-            Point point = iterator.next();
+            com.ruoyi.production.queue.Point point = iterator.next();
             if (getDistance(point, tar) == 0) {
                 point.setStatus(i);
             }
@@ -327,9 +328,9 @@ public class WarehousingUtil {
      * @param tally
      * @return
      */
-    public static Point getTally1(Tally tally) {
-        Point point = new Point();
-        for (Point point1 : tally.getPoints()) {
+    public static com.ruoyi.production.queue.Point getTally1(Tally tally) {
+        com.ruoyi.production.queue.Point point = new com.ruoyi.production.queue.Point();
+        for (com.ruoyi.production.queue.Point point1 : tally.getPoints()) {
             if (point1.getStatus() == 0) {
                 point = point1;
                 break;
@@ -344,12 +345,12 @@ public class WarehousingUtil {
      * @param cargos
      * @return
      */
-    public static Point getGoodsPosition(Emp emp, List<Cargo> cargos) {
-        Point point = new Point(35, 15, 15);
-        List<Goods> list = emp.getGoods();
+    public static com.ruoyi.production.queue.Point getGoodsPosition(com.ruoyi.production.resource.personnel.Emp emp, List<com.ruoyi.production.form.Cargo> cargos) {
+        com.ruoyi.production.queue.Point point = new com.ruoyi.production.queue.Point(35, 15, 15);
+        List<com.ruoyi.production.form.Goods> list = emp.getGoods();
         if (list.size() > 0) {
-            Goods goods = list.get(0);
-            for (Cargo cargo : cargos) {
+            com.ruoyi.production.form.Goods goods = list.get(0);
+            for (com.ruoyi.production.form.Cargo cargo : cargos) {
                 if (cargo.getGoods() != null && cargo.getPoint() != null && cargo.getGoods().getGoodsCode() != null && goods != null && cargo.getGoods().getGoodsCode().equals(goods.getGoodsCode())) {
                     point = cargo.getPoint();
                 }
@@ -374,7 +375,7 @@ public class WarehousingUtil {
 
                 if (platform.getCarLine().getTora() <= 0) {
                     platform.setStatus(-1);
-                    platform.setSign(WorkTime.T);
+                    platform.setSign(com.ruoyi.production.form.WorkTime.T);
                 }
             }
         }
@@ -386,10 +387,10 @@ public class WarehousingUtil {
      * @param curr
      * @return
      */
-    public static Point getDoor(Point curr, List<Point> door) {
+    public static com.ruoyi.production.queue.Point getDoor(com.ruoyi.production.queue.Point curr, List<com.ruoyi.production.queue.Point> door) {
         double num = 1000000;
-        Point point = new Point();
-        for (Point point1 : door) {
+        com.ruoyi.production.queue.Point point = new com.ruoyi.production.queue.Point();
+        for (com.ruoyi.production.queue.Point point1 : door) {
             if (num > (Math.abs(point1.getX() - curr.getX()) + Math.abs(point1.getY() - curr.getY()))) {
                 num = Math.abs(point1.getX() - curr.getX()) + Math.abs(point1.getY() - curr.getY());
                 point = point1;
@@ -404,9 +405,9 @@ public class WarehousingUtil {
      * @param tally
      * @return
      */
-    public static Point getTally(Tally tally) {
-        Point point = new Point();
-        for (Point point1 : tally.getPoints()) {
+    public static com.ruoyi.production.queue.Point getTally(Tally tally) {
+        com.ruoyi.production.queue.Point point = new com.ruoyi.production.queue.Point();
+        for (com.ruoyi.production.queue.Point point1 : tally.getPoints()) {
             if (point1.getStatus() == 0) {
                 point = point1;
                 break;
@@ -416,10 +417,10 @@ public class WarehousingUtil {
     }
 
 
-    public static List<Emp> initEmp(int s) {
-        List<Emp> emps = new ArrayList<>();
+    public static List<com.ruoyi.production.resource.personnel.Emp> initEmp(int s) {
+        List<com.ruoyi.production.resource.personnel.Emp> emps = new ArrayList<>();
         for (int i = 0; i < s; i++) {
-            emps.add(new Emp("上架" + i + "号", 0, new Point(0, 0, 0)));
+            emps.add(new com.ruoyi.production.resource.personnel.Emp("上架" + i + "号", 0, new com.ruoyi.production.queue.Point(0, 0, 0)));
         }
         return emps;
 
@@ -427,10 +428,10 @@ public class WarehousingUtil {
 
     public static Tally initTally() {
         Tally tally = new Tally();
-        List<Point> points = new ArrayList<>();
+        List<com.ruoyi.production.queue.Point> points = new ArrayList<>();
         for (int i = 10; i < 20; i++) {
             for (int j = 4; j < 12; j++) {
-                points.add(new Point(i, j, 0, 0));
+                points.add(new com.ruoyi.production.queue.Point(i, j, 0, 0));
             }
         }
         tally.setPoints(points);
@@ -443,11 +444,11 @@ public class WarehousingUtil {
 
     public static Tally initTally1() {
         Tally tally1 = new Tally();
-        List<Point> points1 = new ArrayList<>();
+        List<com.ruoyi.production.queue.Point> points1 = new ArrayList<>();
         for (int i = 20; i < 32; i++) {
             for (int j = 4; j < 12; j++) {
                 if (i < 24 || i > 28) {
-                    points1.add(new Point(i, j, 10, 0));
+                    points1.add(new com.ruoyi.production.queue.Point(i, j, 10, 0));
                 }
             }
         }
@@ -461,12 +462,12 @@ public class WarehousingUtil {
      * @param rangeNum
      * @return
      */
-    public static List<Goods> createGoodsMessage(double rangeNum,List<Supplier> suppliers) {
-        List<Goods> materialList = new ArrayList<>();
+    public static List<com.ruoyi.production.form.Goods> createGoodsMessage(double rangeNum, List<com.ruoyi.production.form.Supplier> suppliers) {
+        List<com.ruoyi.production.form.Goods> materialList = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < rangeNum; i++) {
-            Goods material = new Goods();
-            material.setGoodsCode(RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
+            com.ruoyi.production.form.Goods material = new com.ruoyi.production.form.Goods();
+            material.setGoodsCode(com.ruoyi.production.utils.RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
             material.setVolume(initNormalDistribution1(100,0.05)[(int)random(0,99)]);
             material.setSupplier(suppliers.get((int)random(0,suppliers.size())));
             material.setCases((int)random(8,50));
@@ -476,12 +477,12 @@ public class WarehousingUtil {
         return materialList;
 
     }
-    public static List<Goods> createGoodsDeliveryMessage(double rangeNum,List<Customer> customerList) {
-        List<Goods> materialList = new ArrayList<>();
+    public static List<com.ruoyi.production.form.Goods> createGoodsDeliveryMessage(double rangeNum, List<com.ruoyi.production.form.Customer> customerList) {
+        List<com.ruoyi.production.form.Goods> materialList = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < rangeNum; i++) {
-            Goods material = new Goods();
-            material.setGoodsCode(RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
+            com.ruoyi.production.form.Goods material = new com.ruoyi.production.form.Goods();
+            material.setGoodsCode(com.ruoyi.production.utils.RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
             material.setVolume(initNormalDistribution1(100,0.05)[(int)random(0,99)]);
             material.setCustomer(customerList.get((int)random(0,customerList.size())));
             materialList.add(material);
@@ -496,12 +497,12 @@ public class WarehousingUtil {
      * @param rangeNum
      * @return
      */
-    public static List<Goods> createGoods(double rangeNum) {
-        List<Goods> materialList = new ArrayList<>();
+    public static List<com.ruoyi.production.form.Goods> createGoods(double rangeNum) {
+        List<com.ruoyi.production.form.Goods> materialList = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < rangeNum; i++) {
-            Goods material = new Goods();
-            material.setGoodsCode(RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
+            com.ruoyi.production.form.Goods material = new com.ruoyi.production.form.Goods();
+            material.setGoodsCode(com.ruoyi.production.utils.RandomUtil.toFixdLengthString(random.nextInt(1000000), 8));
             material.setPlutNum(random(1,40));
             material.setCases((int)random(8,50));
             material.setNum((int)random(1,10));
@@ -523,15 +524,15 @@ public class WarehousingUtil {
      * @param
      * @return
      */
-    public static List<Order> initOrders(List<Goods> list, double transportNum) {
-        List<Order> orderList = new ArrayList<>();
+    public static List<com.ruoyi.production.queue.Order> initOrders(List<com.ruoyi.production.form.Goods> list, double transportNum) {
+        List<com.ruoyi.production.queue.Order> orderList = new ArrayList<>();
         for (int i =0;i< list.size()*transportNum/100;i++){
-            orderList.add(new Order());
+            orderList.add(new com.ruoyi.production.queue.Order());
         }
         Random random = new Random();
-        for (Order order : orderList) {
-            String OrderCode = "D" + RandomUtil.toFixdLengthString(random.nextInt(10000), 4);
-            String orderDate = sdf.format(randomDate("2021-01-01 08:00:00", "2021-12-31 18:00:00"));
+        for (com.ruoyi.production.queue.Order order : orderList) {
+            String OrderCode = "D" + com.ruoyi.production.utils.RandomUtil.toFixdLengthString(random.nextInt(10000), 4);
+            String orderDate = sdf.format(com.ruoyi.production.utils.DateUtils.randomDate("2021-01-01 08:00:00", "2021-12-31 18:00:00"));
             order.setOrderCode(OrderCode);
             order.setGoodsCode(list.get((int)random(0,list.size())).getGoodsCode());
             order.setGoodsNum(random(0,5));
@@ -550,22 +551,34 @@ public class WarehousingUtil {
      * @param
      * @return
      */
-    public static List<Emp> initEmpSortingOrder(List<Emp> emps1, List<Order> orderList, String sort_type) {
+    public static List<com.ruoyi.production.resource.personnel.Emp> initEmpSortingOrder(List<com.ruoyi.production.resource.personnel.Emp> emps1, List<com.ruoyi.production.queue.Order> orderList, String sort_type) {
 
         if (sort_type.equals("批量拣选")) {
-            List<Order> orders = new ArrayList<>();
-            Map<String, List<Order>> outOrdersList = orderList.stream().collect(Collectors.groupingBy(Order::getGoodsCode));//出库单
+            List<com.ruoyi.production.queue.Order> orders = new ArrayList<>();
+            Map<String, List<com.ruoyi.production.queue.Order>> outOrdersList = orderList.stream().collect(Collectors.groupingBy(com.ruoyi.production.queue.Order::getGoodsCode));//出库单
             Random random = new Random();
             for (String goods : outOrdersList.keySet()) {
                 double num = 0.0;
-                for (Order orders1 : outOrdersList.get(goods)) {
+                for (com.ruoyi.production.queue.Order orders1 : outOrdersList.get(goods)) {
                     num += orders1.getGoodsNum();
                 }
-                String orderCode = "D" + RandomUtil.toFixdLengthString(random.nextInt(10000), 4);
-                orders.add(new Order(orderCode,goods,num));
+                String orderCode = "D" + com.ruoyi.production.utils.RandomUtil.toFixdLengthString(random.nextInt(10000), 4);
+                orders.add(new com.ruoyi.production.queue.Order(orderCode,goods,num));
             }
         }
-        List<List<Order>> list = ListUtils.partition(orderList, emps1.size());
+        List<List<com.ruoyi.production.queue.Order>> list = ListUtils.partition(orderList, emps1.size());
+        int i = 0;
+        for (com.ruoyi.production.resource.personnel.Emp emp : emps1) {
+            emp.setOrders(list.get(i));
+            emp.setT0(list.get(i).size());
+            i++;
+        }
+        return emps1;
+    }
+
+
+    public static List<com.ruoyi.production.resource.personnel.Emp> initEmpOrder(List<com.ruoyi.production.resource.personnel.Emp> emps1, List<com.ruoyi.production.queue.Order> orderList) {
+        List<List<com.ruoyi.production.queue.Order>> list = ListUtils.partition(orderList, emps1.size());
         int i = 0;
         for (Emp emp : emps1) {
             emp.setOrders(list.get(i));
@@ -575,64 +588,52 @@ public class WarehousingUtil {
         return emps1;
     }
 
-
-    public static List<Emp> initEmpOrder(List<Emp> emps1, List<Order> orderList) {
-        List<List<Order>> list = ListUtils.partition(orderList, emps1.size());
-        int i = 0;
-        for (Emp emp : emps1) {
-            emp.setOrders(list.get(i));
-            emp.setT0(list.get(i).size());
-            i++;
-        }
-        return emps1;
-    }
-
-    public static List<Cargo> initCargo(List<Order> list, double total) {
-        LinkedList<Goods> materials = new LinkedList<>();
+    public static List<com.ruoyi.production.form.Cargo> initCargo(List<com.ruoyi.production.queue.Order> list, double total) {
+        LinkedList<com.ruoyi.production.form.Goods> materials = new LinkedList<>();
         total = 0.0;//总托
-        List<Cargo> cargos = new ArrayList<>();
-        for (int i = 1; i <= AreaUtils.getHightStorage(total, total).getLayer(); i++) {
-            for (int j = 1; j <= AreaUtils.getHightStorage(total, total).getLine(); j++) {
+        List<com.ruoyi.production.form.Cargo> cargos = new ArrayList<>();
+        for (int i = 1; i <= com.ruoyi.production.utils.AreaUtils.getHightStorage(total, total).getLayer(); i++) {
+            for (int j = 1; j <= com.ruoyi.production.utils.AreaUtils.getHightStorage(total, total).getLine(); j++) {
                 for (int k = 1; k <= AreaUtils.getHightStorage(total, total).getRow(); k++) {
-                    Goods goods1 = materials.poll();
-                    Point point = new Point(i, j, k);
-                    cargos.add(new Cargo(point, goods1));
+                    com.ruoyi.production.form.Goods goods1 = materials.poll();
+                    com.ruoyi.production.queue.Point point = new com.ruoyi.production.queue.Point(i, j, k);
+                    cargos.add(new com.ruoyi.production.form.Cargo(point, goods1));
                 }
             }
         }
         return cargos;
     }
-    public static List<Cargo> initCargos(List<Goods> list, double total, Storage storage) {
-        LinkedList<Goods> materials = new LinkedList<>(list);
-        List<Cargo> cargos = new ArrayList<>();
+    public static List<com.ruoyi.production.form.Cargo> initCargos(List<com.ruoyi.production.form.Goods> list, double total, Storage storage) {
+        LinkedList<com.ruoyi.production.form.Goods> materials = new LinkedList<>(list);
+        List<com.ruoyi.production.form.Cargo> cargos = new ArrayList<>();
         for (int i = 1; i <= storage.getLayer(); i++) {
             for (int j = 1; j <= storage.getLine(); j++) {
                 for (int k = 1; k <= storage.getRow(); k++) {
-                    Goods goods1 = materials.poll();
-                    Point point = new Point(i, j, k);
-                    cargos.add(new Cargo(point, goods1));
+                    com.ruoyi.production.form.Goods goods1 = materials.poll();
+                    com.ruoyi.production.queue.Point point = new com.ruoyi.production.queue.Point(i, j, k);
+                    cargos.add(new com.ruoyi.production.form.Cargo(point, goods1));
                 }
             }
         }
         return cargos;
     }
-    public static List<Supplier> initSupplier(double num) {
-        List<Supplier> suppliers = new ArrayList<>();
+    public static List<com.ruoyi.production.form.Supplier> initSupplier(double num) {
+        List<com.ruoyi.production.form.Supplier> suppliers = new ArrayList<>();
         Random random = new Random();
         for (int i=0;i<=num;i++){
-                Supplier supplier = new Supplier();
-                supplier.setSupplierCode(RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
+                com.ruoyi.production.form.Supplier supplier = new com.ruoyi.production.form.Supplier();
+                supplier.setSupplierCode(com.ruoyi.production.utils.RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
                 supplier.setLeadTime(random(3,6));
                 suppliers.add(supplier);
         }
         return suppliers;
     }
-    public static List<Customer> initCustomer(double num) {
-        List<Customer> customerList = new ArrayList<>();
+    public static List<com.ruoyi.production.form.Customer> initCustomer(double num) {
+        List<com.ruoyi.production.form.Customer> customerList = new ArrayList<>();
         Random random = new Random();
         for (int i=0;i<=num;i++){
-            Customer customer = new Customer();
-            customer.setCustomerCode(RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
+            com.ruoyi.production.form.Customer customer = new com.ruoyi.production.form.Customer();
+            customer.setCustomerCode(com.ruoyi.production.utils.RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
             customerList.add(customer);
         }
         return customerList;
@@ -689,12 +690,12 @@ public class WarehousingUtil {
         }
         return nums;
     }
-    public static List<Goods> initMaterialVolume(List<Goods> list, double b, double m, double s) {
+    public static List<com.ruoyi.production.form.Goods> initMaterialVolume(List<com.ruoyi.production.form.Goods> list, double b, double m, double s) {
         double all = b + m + s;
         Random random = new Random();
         double num3 = 0.0;
         int i = 0;
-        for (Goods material : list){
+        for (com.ruoyi.production.form.Goods material : list){
             if (i<=s/all*list.size()){
                 material.setVolume(initNormalDistribution1(100,0.05)[(int)random(0,99)]);
                 num3 += material.getVolume();
@@ -733,23 +734,23 @@ public class WarehousingUtil {
         return Math.sqrt(v)*random.nextGaussian()+u;
     }
 
-    public static List<Goods> initMaterialSupplier(List<Supplier> suppliers, List<Goods> list) {
+    public static List<com.ruoyi.production.form.Goods> initMaterialSupplier(List<com.ruoyi.production.form.Supplier> suppliers, List<com.ruoyi.production.form.Goods> list) {
         Random random = new Random();
-        for (Goods material:list){
+        for (com.ruoyi.production.form.Goods material:list){
             int i = (int)random(1,suppliers.size());
             material.setSupplier(suppliers.get(i));
         }
         return list;
     }
 
-    public static List<Customer> initCustomer(int customerNum) {
+    public static List<com.ruoyi.production.form.Customer> initCustomer(int customerNum) {
         Random random = new Random();
-        List<Customer> customerList = new ArrayList<>();
+        List<com.ruoyi.production.form.Customer> customerList = new ArrayList<>();
 
 
             for (int i=0;i<=customerNum;i++){
-                Customer customer = new Customer();
-                customer.setCustomerCode(RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
+                com.ruoyi.production.form.Customer customer = new com.ruoyi.production.form.Customer();
+                customer.setCustomerCode(com.ruoyi.production.utils.RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
                 customerList.add(customer);
             }
 
@@ -758,36 +759,36 @@ public class WarehousingUtil {
         return customerList;
     }
 
-    public static List<Order> initOrdersCustomerList(List<Order> orderList, List<Customer> customerList) {
+    public static List<com.ruoyi.production.queue.Order> initOrdersCustomerList(List<com.ruoyi.production.queue.Order> orderList, List<com.ruoyi.production.form.Customer> customerList) {
         Random random = new Random();
-        for (Order order:orderList){
+        for (com.ruoyi.production.queue.Order order:orderList){
             int i = random.nextInt(customerList.size());
             order.setCustomerCode(customerList.get(i).getCustomerCode());
         }
         return  orderList;
     }
 
-    public static List<Order> getReplenishment(List<Order> orders, List<Goods> list) {
+    public static List<com.ruoyi.production.queue.Order> getReplenishment(List<com.ruoyi.production.queue.Order> orders, List<com.ruoyi.production.form.Goods> list) {
 
-        Map<Date, List<Order>> outOrdersList = orders.stream().collect(Collectors.groupingBy(Order::getCreateDate));//出库单
-        List<Order> orderList = new ArrayList<>();
-        List<Order> runOrder = new ArrayList<>();
+        Map<Date, List<com.ruoyi.production.queue.Order>> outOrdersList = orders.stream().collect(Collectors.groupingBy(com.ruoyi.production.queue.Order::getCreateDate));//出库单
+        List<com.ruoyi.production.queue.Order> orderList = new ArrayList<>();
+        List<com.ruoyi.production.queue.Order> runOrder = new ArrayList<>();
         double replenishmentDate = 0.0;
         int i = 0;
         Random random = new Random();
         double[] in = new double[outOrdersList.keySet().size()];
         double[] out = new double[outOrdersList.keySet().size()];
         for (Date date : outOrdersList.keySet()) {
-            List<Order> list1 = outOrdersList.get(date);
+            List<com.ruoyi.production.queue.Order> list1 = outOrdersList.get(date);
             if (runOrder.size() > 0) {
                 list1.addAll(runOrder);
                 runOrder = new ArrayList<>();
             }
-            Map<String, List<Order>> listMap = list1.stream().collect(Collectors.groupingBy(Order::getGoodsCode));//出库单
+            Map<String, List<com.ruoyi.production.queue.Order>> listMap = list1.stream().collect(Collectors.groupingBy(com.ruoyi.production.queue.Order::getGoodsCode));//出库单
             double ins = 0.0;
             double out1 = 0.0;
-            for (Goods material : list) {
-                List<Order> list2 = listMap.get(material.getGoodsCode());
+            for (com.ruoyi.production.form.Goods material : list) {
+                List<com.ruoyi.production.queue.Order> list2 = listMap.get(material.getGoodsCode());
                 if (list2 != null && list2.size() != 0) {
                     for (Order order : list2) {
                         material.setPlutNum(material.getPlutNum() - order.getGoodsNum());
@@ -811,26 +812,26 @@ public class WarehousingUtil {
         return orderList;
     }
 
-    public static List<Car> initCar(List<Goods> list, double transportNum,String carLength) {
-        List<Car> carList = new ArrayList<>();
-        int carSize = Integer.parseInt(CarType.valueOf(carLength).getCode());
+    public static List<com.ruoyi.production.form.Car> initCar(List<com.ruoyi.production.form.Goods> list, double transportNum, String carLength) {
+        List<com.ruoyi.production.form.Car> carList = new ArrayList<>();
+        int carSize = Integer.parseInt(com.ruoyi.production.enumType.CarType.valueOf(carLength).getCode());
         int carNum = (int)(Math.ceil(transportNum/carSize)*1.5);
-        Map<Supplier, List<Goods>> outOrdersList = list.stream().collect(Collectors.groupingBy(Goods::getSupplier));//出库单
-        List<List<Goods>> goodsList = new ArrayList<>();
-        for(Supplier supplier:outOrdersList.keySet()){
+        Map<com.ruoyi.production.form.Supplier, List<com.ruoyi.production.form.Goods>> outOrdersList = list.stream().collect(Collectors.groupingBy(com.ruoyi.production.form.Goods::getSupplier));//出库单
+        List<List<com.ruoyi.production.form.Goods>> goodsList = new ArrayList<>();
+        for(com.ruoyi.production.form.Supplier supplier:outOrdersList.keySet()){
             goodsList.add(outOrdersList.get(supplier));
         }
         Random random = new Random();
         for(int i= 0;i<carNum;i++){
-            Car car=new Car();
-            car.setCarNo("川A"+RandomUtil.toFixdLengthString(random.nextInt(1000),5));
-            car.setArrinveTime(randomDate("2021-01-01 08:00:00", "2021-01-01 18:00:00"));
-            car.setPoint(new Point(0,0,0,1));
+            com.ruoyi.production.form.Car car=new com.ruoyi.production.form.Car();
+            car.setCarNo("川A"+ com.ruoyi.production.utils.RandomUtil.toFixdLengthString(random.nextInt(1000),5));
+            car.setArrinveTime(com.ruoyi.production.utils.DateUtils.randomDate("2021-01-01 08:00:00", "2021-01-01 18:00:00"));
+            car.setPoint(new com.ruoyi.production.queue.Point(0,0,0,1));
             car.setGoodsList(goodsList.get(i%goodsList.size()));
-            List<Tray> trays = new ArrayList<>();
-            List<List<Goods>> goods =averageAssign(car.getGoodsList(),carSize);
+            List<com.ruoyi.production.resource.equipment.Tray> trays = new ArrayList<>();
+            List<List<com.ruoyi.production.form.Goods>> goods =averageAssign(car.getGoodsList(),carSize);
             for (int m=0;m<carSize;m++){
-                Tray tray  =new Tray(goods.get(m));
+                com.ruoyi.production.resource.equipment.Tray tray  =new com.ruoyi.production.resource.equipment.Tray(goods.get(m));
                 trays.add(tray);
             }
             car.setTrays(trays);
@@ -903,31 +904,31 @@ public class WarehousingUtil {
     }
 
     public static Tally initTally2(Tally tally) {
-        Tray tray =new Tray();
+        com.ruoyi.production.resource.equipment.Tray tray =new com.ruoyi.production.resource.equipment.Tray();
         tally.initTally((int)tally.getTally_transverse(),(int)tally.getTally_longitudinal(),tally.forklift_channel,tally.tally_channel,tray.getWidth(),tray.getLength());
         return tally;
     }
 
-    public static List<Car> initCar1(List<Goods> list, double transportNum, String carLength) {
-        List<Car> carList = new ArrayList<>();
+    public static List<com.ruoyi.production.form.Car> initCar1(List<com.ruoyi.production.form.Goods> list, double transportNum, String carLength) {
+        List<com.ruoyi.production.form.Car> carList = new ArrayList<>();
         int carSize = Integer.parseInt(CarType.valueOf(carLength).getCode());
         int carNum = (int)(Math.ceil(transportNum/carSize)*1.5);
-        Map<Customer, List<Goods>> outOrdersList = list.stream().collect(Collectors.groupingBy(Goods::getCustomer));//出库单
-        List<List<Goods>> goodsList = new ArrayList<>();
-        for(Customer customer:outOrdersList.keySet()){
+        Map<com.ruoyi.production.form.Customer, List<com.ruoyi.production.form.Goods>> outOrdersList = list.stream().collect(Collectors.groupingBy(com.ruoyi.production.form.Goods::getCustomer));//出库单
+        List<List<com.ruoyi.production.form.Goods>> goodsList = new ArrayList<>();
+        for(com.ruoyi.production.form.Customer customer:outOrdersList.keySet()){
             goodsList.add(outOrdersList.get(customer));
         }
         Random random = new Random();
         for(int i= 0;i<carNum;i++){
-            Car car=new Car();
-            car.setCarNo("川A"+RandomUtil.toFixdLengthString(random.nextInt(1000),5));
-            car.setArrinveTime(randomDate("2021-01-01 08:00:00", "2021-01-01 18:00:00"));
+            com.ruoyi.production.form.Car car=new com.ruoyi.production.form.Car();
+            car.setCarNo("川A"+ RandomUtil.toFixdLengthString(random.nextInt(1000),5));
+            car.setArrinveTime(com.ruoyi.production.utils.DateUtils.randomDate("2021-01-01 08:00:00", "2021-01-01 18:00:00"));
             car.setPoint(new Point(0,0,0,1));
             car.setGoodsList(goodsList.get(i%goodsList.size()));
-            List<Tray> trays = new ArrayList<>();
+            List<com.ruoyi.production.resource.equipment.Tray> trays = new ArrayList<>();
             List<List<Goods>> goods =averageAssign(car.getGoodsList(),carSize);
             for (int m=0;m<carSize;m++){
-                Tray tray  =new Tray(goods.get(m));
+                com.ruoyi.production.resource.equipment.Tray tray  =new Tray(goods.get(m));
                 trays.add(tray);
             }
             car.setTrays(trays);

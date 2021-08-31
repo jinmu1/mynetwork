@@ -321,6 +321,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/getWarehouse", "anon,captchaValidate");
         filterChainDefinitionMap.put("/warehousePlan", "anon,captchaValidate");
         filterChainDefinitionMap.put("/entrepot", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/entrepot1", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getUpload", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getUploadLine", "anon,captchaValidate");
         filterChainDefinitionMap.put("/common/download/resource", "anon,captchaValidate");

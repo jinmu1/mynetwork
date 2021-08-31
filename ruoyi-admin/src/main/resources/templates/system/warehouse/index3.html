@@ -163,14 +163,6 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <th>IQ均值</th>
-                                                        <td>
-                                                            <input type="value" id="iq" value="15"
-                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                                   required=""/>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
                                                         <th>波动性</th>
                                                         <td>
                                                             <input type="value" id="volatility" value="140"
@@ -333,14 +325,7 @@
                                                                    onchange="changeplant()" required=""/>种
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <th>IQ均值</th>
-                                                        <td>
-                                                            <input type="value" id="iq1" value="15"
-                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                                   required=""/>
-                                                        </td>
-                                                    </tr>
+
                                                     <tr>
                                                         <th>平均订单行数</th>
                                                         <td>
@@ -431,14 +416,7 @@
                                                                    required=""/>托
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <th>IQ均值</th>
-                                                        <td>
-                                                            <input type="value" id="iq2" value="15"
-                                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                                   required=""/>
-                                                        </td>
-                                                    </tr>
+
                                                     <tr>
                                                         <th>平均订单行数</th>
                                                         <td>
@@ -552,17 +530,16 @@
         var transportNum = parseInt($("#transportNum").val()) + parseInt(supplier);
         var goods_num = $("#goods_nums").val();
         var volatility = $("#volatility").val();
-        var iq =  $("#iq").val();
 
         var options = {
-            url: "/getUploadList?supplier=" + supplier + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility +"&iq="+iq,
+            url: "/getUploadList?supplier=" + supplier + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility,
             modalName: "入库",
             id:"bootstrap-table",
             pagination: true,
             pageNumber: 1,
             pageSize: 10,
             showExport: true,
-            exportUrl: "/getUploadList1?supplier=" + supplier + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility+"&iq="+iq,
+            exportUrl: "/getUploadList1?supplier=" + supplier + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility,
             columns: [{
                 checkbox: true
             },
@@ -588,7 +565,15 @@
                 },
                 {
                     field: 'goods_num',
-                    title: '数量'
+                    title: '入库数量'
+                },
+                {
+                    field: 'goods_num1',
+                    title: '入库数量(件)'
+                },
+                {
+                    field: 'goods_num2',
+                    title: '入库托数'
                 }]
         };
         hideLoading();
@@ -656,6 +641,13 @@
                 {
                     field: 'goods_num',
                     title: '库存量'
+                } , {
+                    field: 'goods_num1',
+                    title: '入库数量(件)'
+                },
+                {
+                    field: 'goods_num2',
+                    title: '入库托数'
                 }]
         };
         hideLoading();
@@ -686,18 +678,17 @@
     function onSorting() {
         var orderLine = $("#orderLine").val();
         var transportNum = $("#sortingNum").val();
-        var iq =  $("#iq1").val();
         var volatility1 = $("#volatility1").val();
         var goods_num = $("#goods_num").val();
         var options = {
-            url: "/getSortingList?orderLine=" + orderLine + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility1 +"&iq="+iq,
-            modalName: "入库",
+            url: "/getSortingList?orderLine=" + orderLine + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility1,
+            modalName: "分拣表",
             id:"bootstrap-table2",
             pagination: true,
             pageNumber: 1,
             pageSize: 10,
             showExport: true,
-            exportUrl:"/getSortingList1?orderLine=" + orderLine + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility1 +"&iq="+iq,
+            exportUrl:"/getSortingList1?orderLine=" + orderLine + "&transportNum=" + transportNum + "&goods_num=" + goods_num + "&volatility=" + volatility1 ,
             columns: [{
                 checkbox: true
             },
@@ -720,6 +711,13 @@
                 {
                     field: 'goods_num',
                     title: '分拣数量'
+                }, {
+                    field: 'goods_num1',
+                    title: '分拣数量(件)'
+                },
+                {
+                    field: 'goods_num2',
+                    title: '分拣托数'
                 }]
         };
             hideLoading();
@@ -748,22 +746,17 @@
 
     function ondelivery() {
         var deliveryNum = $("#deliveryNum").val();
-        var batch = $("#batch2").val();
-        var iq =  $("#iq2").val();
-        var delivery_speed = $("#delivery_speed").val();
-        var delivery_Time = $("#delivery_Time").val();
-        var tally_channel = $("#tally_channel2").val();
         var orderLine = $("#orderLine1").val();
         var goods_num = $("#goodsNum2").val();
         var options = {
-            url: "/getDeliveryLine?transportNum=" + deliveryNum + "&goods_num=" + goods_num+"&orderLine="+orderLine+"&iq="+iq,
+            url: "/getDeliveryLine?transportNum=" + deliveryNum + "&goods_num=" + goods_num+"&orderLine="+orderLine,
             modalName: "出库",
             id:"bootstrap-table3",
             pagination: true,
             pageNumber: 1,
             pageSize: 10,
             showExport: true,
-            exportUrl: "/getDeliveryLine1?transportNum=" + deliveryNum + "&goods_num=" + goods_num+"&orderLine="+orderLine+"&iq="+iq,
+            exportUrl: "/getDeliveryLine1?transportNum=" + deliveryNum + "&goods_num=" + goods_num+"&orderLine="+orderLine,
             columns: [{
                 checkbox: true
             },
@@ -786,18 +779,19 @@
                 {
                     field: 'goods_num',
                     title: '数量'
+                }, {
+                    field: 'goods_num1',
+                    title: '出库数量(件)'
+                },
+                {
+                    field: 'goods_num2',
+                    title: '出库托数'
                 }]
         };
             hideLoading();
         $.table.init(options);
 
     }
-
-
-
-
-
-
 
 
     var formatUtil = echarts.format;

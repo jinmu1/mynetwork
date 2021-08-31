@@ -76,6 +76,10 @@ public class WarehousingController extends BaseController {
     public String main() {
         return prefix + "/main";
     }
+    @GetMapping("/entrepot1")
+    public String main1() {
+        return prefix + "/main1";
+    }
 
     @PostMapping("/getTally")
     @ResponseBody
@@ -520,6 +524,7 @@ public class WarehousingController extends BaseController {
         }
         return getDataTable(list1);
     }
+
     @PostMapping("/getUploadList1")
     @ResponseBody
     public AjaxResult getUploadList1(Result result,HttpServletRequest req) {
@@ -546,7 +551,7 @@ public class WarehousingController extends BaseController {
         List<Result> list = new ArrayList<>();
         list = Action.runRuOrder( transportNum,  supplier, goods_num,volatility,iq);
         ExcelUtil<Result> util = new ExcelUtil<Result>(Result.class);
-        return util.exportExcel(list,"result");
+        return util.exportExcel(list,"卸货");
     }
 
     @PostMapping("/getUploadLine")
@@ -785,7 +790,7 @@ public class WarehousingController extends BaseController {
         List<Result2> list = new ArrayList<>();
         list = Action.getSortingOrder(transportNum, orderLine,  goods_num,iq);
         ExcelUtil<Result2> util = new ExcelUtil<Result2>(Result2.class);
-        return util.exportExcel(list,"Result2");
+        return util.exportExcel(list,"分拣");
     }
 
     @PostMapping("/getSortingLine")
@@ -1019,7 +1024,7 @@ public class WarehousingController extends BaseController {
         List<Result3> list = new ArrayList<>();
         list = Action.getDeliveryOrder(transportNum, orderLine,  goods_num,iq);
         ExcelUtil<Result3> util = new ExcelUtil<Result3>(Result3.class);
-        return util.exportExcel(list,"Result2");
+        return util.exportExcel(list,"出库");
     }
     @PostMapping("/getLoading")
     @ResponseBody

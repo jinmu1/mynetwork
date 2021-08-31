@@ -1,8 +1,8 @@
-package com.ruoyi.warehousing.resource.equipment;
+package com.ruoyi.production.resource.equipment;
 
-import com.ruoyi.warehousing.action.WarehousingUtil;
-import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.queue.Point;
+import com.ruoyi.production.form.Goods;
+import com.ruoyi.production.action.WarehousingUtil;
+import com.ruoyi.production.queue.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +15,11 @@ public class Tray {
     private static double length=1.2;//托盘的长
     private static double thickness=0.6;//托盘的厚度
     private static double height=1.6;//托盘的高度---限高
-    private List<Goods> goodsList = new ArrayList<>();//存储的物料数量
+    private List<com.ruoyi.production.form.Goods> goodsList = new ArrayList<>();//存储的物料数量
     private Point point;
     private int status;//托盘的状态 0-空 1-有物料 2-满载了
 
-    public Tray(List<Goods> goodsList) {
+    public Tray(List<com.ruoyi.production.form.Goods> goodsList) {
         this.goodsList = goodsList;
     }
     public Tray() {
@@ -35,7 +35,7 @@ public class Tray {
         this.status = status;
     }
 
-    public static List<Tray> initTrays(List<Goods> list,double transportNum) {
+    public static List<Tray> initTrays(List<com.ruoyi.production.form.Goods> list, double transportNum) {
         List<Tray> list1 =new ArrayList<>();
         for (int i = 0;i<transportNum*90;i++){
             Tray tray = new Tray();
@@ -46,7 +46,7 @@ public class Tray {
         return list1;
     }
 
-    public static List<Tray> initOrder(List<Goods> list, double transportNum, int orderLine) {
+    public static List<Tray> initOrder(List<com.ruoyi.production.form.Goods> list, double transportNum, int orderLine) {
         List<Tray> list1 =new ArrayList<>();
         for (int i=0;i<transportNum*orderLine/2;i++){
             Tray tray = new Tray();
@@ -58,7 +58,7 @@ public class Tray {
         return list1;
     }
 
-    public static List<Tray> initTrays1(List<Goods> list, double transportNum, int orderLine) {
+    public static List<Tray> initTrays1(List<com.ruoyi.production.form.Goods> list, double transportNum, int orderLine) {
         List<Tray> list1 =new ArrayList<>();
         for (int i = 0;i<transportNum*orderLine*90;i++){
             Tray tray = new Tray();
@@ -113,7 +113,7 @@ public class Tray {
         this.height = height;
     }
 
-    public List<Goods> getGoodsList() {
+    public List<com.ruoyi.production.form.Goods> getGoodsList() {
         return goodsList;
     }
 

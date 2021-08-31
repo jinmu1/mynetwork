@@ -52,12 +52,32 @@ public class Result3 extends BaseEntity {
     private String time;//订单到达时间
     @Excel(name = "日期")
     private String DateTime;//日期
+    @Excel(name = "物料数量（件）")
+    private double goods_num1;//物料量
+    @Excel(name = "物料数量（托）")
+    private double goods_num2;//物料量
     private String sullier;
 
     private int cargo;//货位数量
     private int layer;
     private int line;
     private int row;
+
+    public double getGoods_num1() {
+        return goods_num1;
+    }
+
+    public void setGoods_num1(double goods_num1) {
+        this.goods_num1 = goods_num1;
+    }
+
+    public double getGoods_num2() {
+        return goods_num2;
+    }
+
+    public void setGoods_num2(double goods_num2) {
+        this.goods_num2 = goods_num2;
+    }
 
     public String getDateTime() {
         return DateTime;

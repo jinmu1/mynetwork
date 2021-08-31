@@ -264,6 +264,7 @@
         <module>ruoyi-common</module>
         <module>ruoyi-network</module>
         <module>ruoyi-warehousing</module>
+        <module>ruoyi-production</module>
     </modules>
     <packaging>pom</packaging>
 

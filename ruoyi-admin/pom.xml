@@ -97,6 +97,10 @@
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-warehousing</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-warehousing</artifactId>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.github.wxpay</groupId>-->
 <!--            <artifactId>wxpay-sdk</artifactId>-->
@@ -122,6 +126,11 @@
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-warehousing</artifactId>
+            <version>4.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-production</artifactId>
             <version>4.6.0</version>
         </dependency>
     </dependencies>

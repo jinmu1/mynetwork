@@ -1,4 +1,4 @@
-package com.ruoyi.warehousing.result;
+package com.ruoyi.production.result;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
