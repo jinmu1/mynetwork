@@ -1,9 +1,11 @@
 package com.ruoyi.production.utils;
 
 
-import com.ruoyi.warehousing.utils.Mutil;
+import com.ruoyi.production.utils.Mutil;
 
 import java.util.*;
+
+import static com.ruoyi.production.utils.Mutil.subtract;
 
 public final class MathUtils {
     public static double Variance(double[] x) {
@@ -70,7 +72,7 @@ public final class MathUtils {
         double mean = mean(in);
         double median = median(in);
         double SD = standardDeviation2(in);
-        return 3 * com.ruoyi.warehousing.utils.Mutil.divide(com.ruoyi.warehousing.utils.Mutil.subtract(mean, median), SD, 2);
+        return 3 * Mutil.divide(subtract(mean, median), SD, 2);
     }
 
     /**
@@ -98,11 +100,11 @@ public final class MathUtils {
         }
         double sum = 0;
         for (int i = 0; i < in.length; i++) {
-            sum = com.ruoyi.warehousing.utils.Mutil.add(sum, in[i]);
+            sum = Mutil.add(sum, in[i]);
             // sum += in[i];
         }
         // return sum/in.length;
-        return com.ruoyi.warehousing.utils.Mutil.divide(sum, in.length, 2);
+        return Mutil.divide(sum, in.length, 2);
     }
     /**
      *
@@ -214,7 +216,7 @@ public final class MathUtils {
             min = Math.min(min, in[i]);
         }
         // return max - min;
-        return com.ruoyi.warehousing.utils.Mutil.subtract(max, min);
+        return subtract(max, min);
     }
 
     /**
@@ -244,7 +246,7 @@ public final class MathUtils {
             min = Math.min(min, in[i]);
         }
         // return max - min + 1;
-        return com.ruoyi.warehousing.utils.Mutil.subtract(max, min) + 1;
+        return subtract(max, min) + 1;
 
     }
     /**
@@ -267,9 +269,9 @@ public final class MathUtils {
         double t_mean = mean(in);
         double t_sumPerPow = 0;
         for (int i = 0; i < in.length; i++) {
-            t_sumPerPow = com.ruoyi.warehousing.utils.Mutil.add(t_sumPerPow, Math.pow(com.ruoyi.warehousing.utils.Mutil.subtract(in[i], t_mean), 2));
+            t_sumPerPow = Mutil.add(t_sumPerPow, Math.pow(Mutil.subtract(in[i], t_mean), 2));
         }
-        return com.ruoyi.warehousing.utils.Mutil.divide(t_sumPerPow, (in.length - 1), 2);
+        return Mutil.divide(t_sumPerPow, (in.length - 1), 2);
     }
 
     /**
@@ -330,9 +332,9 @@ public final class MathUtils {
         double t_mean = mean(in);
         double t_sumPerPow = 0;
         for (int i = 0; i < in.length; i++) {
-            t_sumPerPow = com.ruoyi.warehousing.utils.Mutil.add(t_sumPerPow, Math.pow(com.ruoyi.warehousing.utils.Mutil.subtract(in[i], t_mean), 2));
+            t_sumPerPow =Mutil.add(t_sumPerPow, Math.pow(subtract(in[i], t_mean), 2));
         }
-        return Math.sqrt(com.ruoyi.warehousing.utils.Mutil.divide(t_sumPerPow, (in.length), 2));
+        return Math.sqrt(Mutil.divide(t_sumPerPow, (in.length), 2));
 
 
     }
@@ -358,9 +360,9 @@ public final class MathUtils {
         int n = in.length;
         double sum = 0;
         for (int i = 0; i < in.length; i++) {
-            sum = com.ruoyi.warehousing.utils.Mutil.add(sum, Math.pow(com.ruoyi.warehousing.utils.Mutil.divide(com.ruoyi.warehousing.utils.Mutil.subtract(in[i], mean), SD, 2), 4));
+            sum = Mutil.add(sum, Math.pow(Mutil.divide(subtract(in[i], mean), SD, 2), 4));
         }
-        return com.ruoyi.warehousing.utils.Mutil.round(com.ruoyi.warehousing.utils.Mutil.divide(sum, n, 2) - 3, 2);
+        return Mutil.round(Mutil.divide(sum, n, 2) - 3, 2);
     }
     /**
      *
@@ -391,15 +393,15 @@ public final class MathUtils {
         int len = x.length;
         for (int i = 0; i < y.length; i++) {
 
-            xSum = com.ruoyi.warehousing.utils.Mutil.add(xSum, x[i]);
-            ySum = com.ruoyi.warehousing.utils.Mutil.add(ySum, y[i]);
-            xP2Sum = com.ruoyi.warehousing.utils.Mutil.add(xP2Sum, Math.pow(x[i], 2));
-            yP2Sum = com.ruoyi.warehousing.utils.Mutil.add(yP2Sum, Math.pow(y[i], 2));
-            xySum = com.ruoyi.warehousing.utils.Mutil.add(xySum, com.ruoyi.warehousing.utils.Mutil.multiply(x[i], y[i]));
+            xSum = Mutil.add(xSum, x[i]);
+            ySum = Mutil.add(ySum, y[i]);
+            xP2Sum = Mutil.add(xP2Sum, Math.pow(x[i], 2));
+            yP2Sum = Mutil.add(yP2Sum, Math.pow(y[i], 2));
+            xySum =Mutil.add(xySum, Mutil.multiply(x[i], y[i]));
 
         }
-        double Rxy = com.ruoyi.warehousing.utils.Mutil.subtract(com.ruoyi.warehousing.utils.Mutil.multiply(len, xySum), com.ruoyi.warehousing.utils.Mutil.multiply(xSum, ySum)) / (Math.sqrt((com.ruoyi.warehousing.utils.Mutil.multiply(len, xP2Sum) - Math.pow(xSum, 2)) * (com.ruoyi.warehousing.utils.Mutil.multiply(len, yP2Sum) - Math.pow(ySum, 2))));
-        return com.ruoyi.warehousing.utils.Mutil.round(Rxy, 2);
+        double Rxy = Mutil.subtract(Mutil.multiply(len, xySum), Mutil.multiply(xSum, ySum)) / (Math.sqrt((Mutil.multiply(len, xP2Sum) - Math.pow(xSum, 2)) * (Mutil.multiply(len, yP2Sum) - Math.pow(ySum, 2))));
+        return Mutil.round(Rxy, 2);
 
     }
 
@@ -452,7 +454,7 @@ public final class MathUtils {
             }
         }
         scoreSum = variance(Tscore);
-        return com.ruoyi.warehousing.utils.Mutil.multiply(k / (k - 1), com.ruoyi.warehousing.utils.Mutil.divide(com.ruoyi.warehousing.utils.Mutil.subtract(varianceSum, scoreSum), varianceSum, 2));
+        return Mutil.multiply(k / (k - 1), Mutil.divide(Mutil.subtract(varianceSum, scoreSum), varianceSum, 2));
 
     }
 
@@ -474,34 +476,7 @@ public final class MathUtils {
      *  
      */
     public static double zScore(double[] x, double n) {
-        return com.ruoyi.warehousing.utils.Mutil.divide(com.ruoyi.warehousing.utils.Mutil.subtract(n, mean(x)), standardDeviation(x), 2);
-
-    }
-    /**
-     *
-     *  * @描述: 独立样本T检验 ，用于检测群体x和群体y之间是否支持零假设<br/>
-     *  * @方法名: independentSamplesT <br/>
-     *  * @param x <br/>
-     *  * @param y <br/>
-     *  * @return <br/>
-     *  * @返回类型 double 分双重检测与单侧检测，结合自由度查询"临界值"对照表，如果实际值大于临界值
-     * 表示不能接受零假设，否则零假设是最有力的假设 <br/>
-     *  * @创建人 micheal <br/>
-     *  * @创建时间 2019年1月5日下午8:57:00 <br/>
-     *  * @修改人 micheal <br/>
-     *  * @修改时间 2019年1月5日下午8:57:00 <br/>
-     *  * @修改备注 <br/>
-     *  * @since <br/>
-     *  * @throws  
-     */
-    public static double independentSamplesT(double[] x, double[] y) {
-        double Xmean = mean(x);
-        double Ymean = mean(y);
-        int n1 = x.length;
-        int n2 = y.length;
-        double Xvariance = variance(x);
-        double Yvariance = variance(y);
-        return com.ruoyi.warehousing.utils.Mutil.divide(com.ruoyi.warehousing.utils.Mutil.subtract(Xmean, Ymean), Math.sqrt(com.ruoyi.warehousing.utils.Mutil.multiply(com.ruoyi.warehousing.utils.Mutil.divide(com.ruoyi.warehousing.utils.Mutil.add(com.ruoyi.warehousing.utils.Mutil.multiply((n1 - 1), Xvariance), com.ruoyi.warehousing.utils.Mutil.multiply((n2 - 1), Yvariance)), (n1 + n2 - 2), 2), com.ruoyi.warehousing.utils.Mutil.divide((n1 + n2), com.ruoyi.warehousing.utils.Mutil.multiply(n1, n2), 2))), 2);
+        return Mutil.divide(Mutil.subtract(n, mean(x)), standardDeviation(x), 2);
 
     }
     /**
@@ -527,7 +502,7 @@ public final class MathUtils {
         double xSD = standardDeviation(x);
         double ySD = standardDeviation(y);
 
-        return com.ruoyi.warehousing.utils.Mutil.divide(com.ruoyi.warehousing.utils.Mutil.subtract(xMean, yMean), xSD, 2);
+        return Mutil.divide(Mutil.subtract(xMean, yMean), xSD, 2);
     }
 
     /**
@@ -553,7 +528,7 @@ public final class MathUtils {
         double xVariance = variance(x);
         double yVariance = variance(y);
 
-        return com.ruoyi.warehousing.utils.Mutil.divide(com.ruoyi.warehousing.utils.Mutil.subtract(xMean, yMean), Math.sqrt(com.ruoyi.warehousing.utils.Mutil.divide(com.ruoyi.warehousing.utils.Mutil.add(xVariance, yVariance), 2, 2)), 2);
+        return Mutil.divide(Mutil.subtract(xMean, yMean), Math.sqrt(Mutil.divide(Mutil.add(xVariance, yVariance), 2, 2)), 2);
 
     }
 
@@ -588,11 +563,11 @@ public final class MathUtils {
         double xySum = 0;
         int len = x.length;
         for (int i = 0; i < n; i++) {
-            xSum = com.ruoyi.warehousing.utils.Mutil.add(xSum, x[i]);
-            ySum = com.ruoyi.warehousing.utils.Mutil.add(ySum, y[i]);
-            xP2Sum = com.ruoyi.warehousing.utils.Mutil.add(xP2Sum, Math.pow(x[i], 2));
-            yP2Sum = com.ruoyi.warehousing.utils.Mutil.add(yP2Sum, Math.pow(y[i], 2));
-            xySum = com.ruoyi.warehousing.utils.Mutil.add(xySum, com.ruoyi.warehousing.utils.Mutil.multiply(x[i], y[i]));
+            xSum = Mutil.add(xSum, x[i]);
+            ySum = Mutil.add(ySum, y[i]);
+            xP2Sum = Mutil.add(xP2Sum, Math.pow(x[i], 2));
+            yP2Sum = Mutil.add(yP2Sum, Math.pow(y[i], 2));
+            xySum = Mutil.add(xySum, Mutil.multiply(x[i], y[i]));
 
         }
         double b = (xySum - (xSum * ySum) / n) / (xP2Sum - (Math.pow(xSum, 2) / n));

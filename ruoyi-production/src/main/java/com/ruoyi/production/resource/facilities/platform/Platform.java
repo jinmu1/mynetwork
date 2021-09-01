@@ -5,7 +5,7 @@ import com.ruoyi.production.form.Car;
 import com.ruoyi.production.form.Goods;
 import com.ruoyi.production.queue.Point;
 import com.ruoyi.production.resource.personnel.Emp;
-import com.ruoyi.warehousing.action.WarehousingUtil;
+import com.ruoyi.production.action.WarehousingUtil;
 
 import java.util.ArrayList;
 import java.util.List;

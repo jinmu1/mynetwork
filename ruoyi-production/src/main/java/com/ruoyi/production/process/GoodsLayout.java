@@ -2,9 +2,9 @@ package com.ruoyi.production.process;
 
 import com.ruoyi.production.form.Cargo;
 import com.ruoyi.production.form.Goods;
-import com.ruoyi.warehousing.queue.Point;
-import com.ruoyi.warehousing.resource.facilities.storage.Storage;
-import com.ruoyi.warehousing.utils.AreaUtils;
+import com.ruoyi.production.queue.Point;
+import com.ruoyi.production.resource.facilities.storage.Storage;
+import com.ruoyi.production.utils.AreaUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

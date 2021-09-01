@@ -3,7 +3,7 @@ package com.ruoyi.production.resource.facilities.buffer;
 
 import com.ruoyi.production.form.Car;
 import com.ruoyi.production.queue.Point;
-import com.ruoyi.warehousing.action.WarehousingUtil;
+import com.ruoyi.production.action.WarehousingUtil;
 
 import java.util.ArrayList;
 import java.util.List;

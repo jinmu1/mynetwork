@@ -2,12 +2,12 @@ package com.ruoyi.production.utils;
 
 
 import com.ruoyi.production.enumType.StorageType;
-import com.ruoyi.warehousing.enumType.CarType;
-import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
-import com.ruoyi.warehousing.resource.facilities.platform.Platform;
-import com.ruoyi.warehousing.resource.facilities.storage.Storage;
-import com.ruoyi.warehousing.resource.equipment.LightStorage;
-import com.ruoyi.warehousing.resource.equipment.StereoStorage;
+import com.ruoyi.production.enumType.CarType;
+import com.ruoyi.production.resource.facilities.buffer.Tally;
+import com.ruoyi.production.resource.facilities.platform.Platform;
+import com.ruoyi.production.resource.facilities.storage.Storage;
+import com.ruoyi.production.resource.equipment.LightStorage;
+import com.ruoyi.production.resource.equipment.StereoStorage;
 
 public  class AreaUtils {
 

@@ -1,6 +1,6 @@
 package com.ruoyi.production.utils;
 
-import com.ruoyi.warehousing.utils.StringUtils;
+import com.ruoyi.production.utils.StringUtils;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -175,16 +175,16 @@ public final class DateUtils {
     /**
      * 解析日期 yyyy-MM-dd
      *
-     * @param  日期字符串
+     * @param
      * @return
      */
     public static Timestamp parse(Object object) {
         if (object instanceof Date) {
             return new Timestamp(((Date) object).getTime());
         }
-        if (com.ruoyi.warehousing.utils.StringUtils.isEmpty(object))
+        if (StringUtils.isEmpty(object))
             return null;
-        String date = com.ruoyi.warehousing.utils.StringUtils.asString(object);
+        String date = StringUtils.asString(object);
         try {
             if (date.length() == 10) {
                 return parseSimple(date);

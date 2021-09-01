@@ -19,7 +19,7 @@ import com.ruoyi.production.resource.facilities.platform.Platform;
 import com.ruoyi.production.resource.facilities.storage.Storage;
 import com.ruoyi.production.result.EmpLog;
 import com.ruoyi.production.result.Result;
-import com.ruoyi.warehousing.utils.DateUtils;
+import com.ruoyi.production.utils.DateUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.poi.ss.formula.functions.T;
 
@@ -592,8 +592,8 @@ public class WarehousingUtil {
         LinkedList<com.ruoyi.production.form.Goods> materials = new LinkedList<>();
         total = 0.0;//总托
         List<com.ruoyi.production.form.Cargo> cargos = new ArrayList<>();
-        for (int i = 1; i <= com.ruoyi.production.utils.AreaUtils.getHightStorage(total, total).getLayer(); i++) {
-            for (int j = 1; j <= com.ruoyi.production.utils.AreaUtils.getHightStorage(total, total).getLine(); j++) {
+        for (int i = 1; i <=AreaUtils.getHightStorage(total, total).getLayer(); i++) {
+            for (int j = 1; j <= AreaUtils.getHightStorage(total, total).getLine(); j++) {
                 for (int k = 1; k <= AreaUtils.getHightStorage(total, total).getRow(); k++) {
                     com.ruoyi.production.form.Goods goods1 = materials.poll();
                     com.ruoyi.production.queue.Point point = new com.ruoyi.production.queue.Point(i, j, k);

@@ -3,21 +3,21 @@ package com.ruoyi.production.action;
 import com.ruoyi.production.form.Goods;
 import com.ruoyi.production.queue.Point;
 import com.ruoyi.production.resource.equipment.Tray;
-import com.ruoyi.warehousing.enumType.CarType;
-import com.ruoyi.warehousing.form.*;
-import com.ruoyi.warehousing.process.*;
-import com.ruoyi.warehousing.queue.Order;
-import com.ruoyi.warehousing.resource.equipment.Elevator;
-import com.ruoyi.warehousing.resource.equipment.LightStorage;
-import com.ruoyi.warehousing.resource.facilities.buffer.Park;
-import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
-import com.ruoyi.warehousing.resource.facilities.platform.Platform;
-import com.ruoyi.warehousing.resource.facilities.storage.Storage;
-import com.ruoyi.warehousing.resource.personnel.Emp;
-import com.ruoyi.warehousing.result.*;
-import com.ruoyi.warehousing.utils.AreaUtils;
-import com.ruoyi.warehousing.utils.DateUtils;
-import com.ruoyi.warehousing.utils.RandomUtil;
+import com.ruoyi.production.enumType.CarType;
+import com.ruoyi.production.form.*;
+import com.ruoyi.production.process.*;
+import com.ruoyi.production.queue.Order;
+import com.ruoyi.production.resource.equipment.Elevator;
+import com.ruoyi.production.resource.equipment.LightStorage;
+import com.ruoyi.production.resource.facilities.buffer.Park;
+import com.ruoyi.production.resource.facilities.buffer.Tally;
+import com.ruoyi.production.resource.facilities.platform.Platform;
+import com.ruoyi.production.resource.facilities.storage.Storage;
+import com.ruoyi.production.resource.personnel.Emp;
+import com.ruoyi.production.result.*;
+import com.ruoyi.production.utils.AreaUtils;
+import com.ruoyi.production.utils.DateUtils;
+import com.ruoyi.production.utils.RandomUtil;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.poi.ss.formula.functions.T;
 
@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ruoyi.warehousing.utils.DateUtils.randomDate;
+import static com.ruoyi.production.utils.DateUtils.randomDate;
 import static java.util.stream.Collectors.groupingBy;
 
 public class Action {

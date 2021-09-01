@@ -7,7 +7,7 @@ import com.ruoyi.production.queue.Order;
 import com.ruoyi.production.queue.Point;
 import com.ruoyi.production.resource.equipment.Tray;
 import com.ruoyi.production.utils.AreaUtils;
-import com.ruoyi.warehousing.action.WarehousingUtil;
+import com.ruoyi.production.action.WarehousingUtil;
 import org.apache.poi.ss.formula.functions.T;
 
 import java.util.ArrayList;

@@ -6,8 +6,8 @@ import com.ruoyi.production.form.Goods;
 import com.ruoyi.production.process.GoodsLayout;
 import com.ruoyi.production.queue.Point;
 import com.ruoyi.production.resource.personnel.Emp;
-import com.ruoyi.warehousing.resource.equipment.LightStorage;
-import com.ruoyi.warehousing.utils.AreaUtils;
+import com.ruoyi.production.resource.equipment.LightStorage;
+import com.ruoyi.production.utils.AreaUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
