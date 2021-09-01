@@ -1,5 +1,6 @@
 package com.ruoyi.production.process;
 
+import com.ruoyi.production.form.Goods;
 import com.ruoyi.production.queue.Order;
 import com.ruoyi.production.utils.DateUtils;
 import org.gavaghan.geodesy.GlobalCoordinates;
@@ -12,8 +13,14 @@ import java.util.stream.Collectors;
  * 中间仓往线边仓配送
  */
 public class Distribution {
-
-    public double work( List<Order> outorders,double meterDouble,double workTime){
+    /**
+     * 线边仓配送
+     * @param outorders
+     * @param meterDouble
+     * @param workTime
+     * @return
+     */
+    public double work(List<Order> outorders, double meterDouble, double workTime, List<Goods> inventory) {
         Map<String, List<Order>> orderMaps = outorders.stream().collect(Collectors.groupingBy(Order::getOrderCode));//出库单
         double transportCost = 0;
         for (String ordercode : orderMaps.keySet()) {
@@ -25,15 +32,19 @@ public class Distribution {
              * 配送运输成本计算
              */
             for (Order order : orderList) {
-                        orderCost += order.getGoodsNum() * order.getVolume() * Math.ceil(meterDouble)  * (1 + 0.11);//运输体积与运输量以及运输费率得到运输成本
-                        transportDate = meterDouble / workTime; //运输周期
-                        transportCost += orderCost;
-                    }
-                }
-            return transportCost;
+                orderCost += order.getGoodsNum() * order.getVolume() * Math.ceil(meterDouble) * (1 + 0.11);//运输体积与运输量以及运输费率得到运输成本
+                transportDate = meterDouble / workTime; //运输周期
+                transportCost += orderCost;
             }
+        }
+        return transportCost;
+    }
 
+    /**
+     * 分配配送批次
+     */
+    public void  initBatch(List<Order> orderList,String carType){
 
-
+    }
 
 }
