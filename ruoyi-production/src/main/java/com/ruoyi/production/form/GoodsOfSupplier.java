@@ -1,8 +1,8 @@
 package com.ruoyi.production.form;
 
 public class GoodsOfSupplier {
-    private String supplier_code;
-
+    private String supplier_code;//供应商编码
+    private String DistributionType;//配送模式
     private String goodsCode;//物料编码
 
 

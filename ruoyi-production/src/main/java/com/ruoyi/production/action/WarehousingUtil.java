@@ -2,6 +2,7 @@ package com.ruoyi.production.action;
 
 import com.ruoyi.production.enumType.CarType;
 import com.ruoyi.production.form.Goods;
+import com.ruoyi.production.network.Supplier;
 import com.ruoyi.production.queue.Order;
 import com.ruoyi.production.queue.Point;
 import com.ruoyi.production.resource.equipment.Elevator;
@@ -10,18 +11,10 @@ import com.ruoyi.production.resource.personnel.Emp;
 import com.ruoyi.production.utils.AreaUtils;
 import com.ruoyi.production.utils.MathUtils;
 import com.ruoyi.production.utils.RandomUtil;
-import com.ruoyi.production.form.*;
-import com.ruoyi.production.process.Putaway;
-import com.ruoyi.production.process.Sorting;
-import com.ruoyi.production.resource.equipment.LightStorage;
 import com.ruoyi.production.resource.facilities.buffer.Tally;
 import com.ruoyi.production.resource.facilities.platform.Platform;
 import com.ruoyi.production.resource.facilities.storage.Storage;
-import com.ruoyi.production.result.EmpLog;
-import com.ruoyi.production.result.Result;
-import com.ruoyi.production.utils.DateUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.poi.ss.formula.functions.T;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.ruoyi.production.utils.DateUtils.randomDate;
 import static java.util.stream.Collectors.*;
 
 public class WarehousingUtil {
@@ -462,7 +454,7 @@ public class WarehousingUtil {
      * @param rangeNum
      * @return
      */
-    public static List<com.ruoyi.production.form.Goods> createGoodsMessage(double rangeNum, List<com.ruoyi.production.form.Supplier> suppliers) {
+    public static List<com.ruoyi.production.form.Goods> createGoodsMessage(double rangeNum, List<Supplier> suppliers) {
         List<com.ruoyi.production.form.Goods> materialList = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < rangeNum; i++) {
@@ -617,11 +609,11 @@ public class WarehousingUtil {
         }
         return cargos;
     }
-    public static List<com.ruoyi.production.form.Supplier> initSupplier(double num) {
-        List<com.ruoyi.production.form.Supplier> suppliers = new ArrayList<>();
+    public static List<Supplier> initSupplier(double num) {
+        List<Supplier> suppliers = new ArrayList<>();
         Random random = new Random();
         for (int i=0;i<=num;i++){
-                com.ruoyi.production.form.Supplier supplier = new com.ruoyi.production.form.Supplier();
+                Supplier supplier = new Supplier();
                 supplier.setSupplierCode(com.ruoyi.production.utils.RandomUtil.toFixdLengthString(random.nextInt(10000000),8));
                 supplier.setLeadTime(random(3,6));
                 suppliers.add(supplier);
@@ -734,7 +726,7 @@ public class WarehousingUtil {
         return Math.sqrt(v)*random.nextGaussian()+u;
     }
 
-    public static List<com.ruoyi.production.form.Goods> initMaterialSupplier(List<com.ruoyi.production.form.Supplier> suppliers, List<com.ruoyi.production.form.Goods> list) {
+    public static List<com.ruoyi.production.form.Goods> initMaterialSupplier(List<Supplier> suppliers, List<com.ruoyi.production.form.Goods> list) {
         Random random = new Random();
         for (com.ruoyi.production.form.Goods material:list){
             int i = (int)random(1,suppliers.size());
@@ -816,9 +808,9 @@ public class WarehousingUtil {
         List<com.ruoyi.production.form.Car> carList = new ArrayList<>();
         int carSize = Integer.parseInt(com.ruoyi.production.enumType.CarType.valueOf(carLength).getCode());
         int carNum = (int)(Math.ceil(transportNum/carSize)*1.5);
-        Map<com.ruoyi.production.form.Supplier, List<com.ruoyi.production.form.Goods>> outOrdersList = list.stream().collect(Collectors.groupingBy(com.ruoyi.production.form.Goods::getSupplier));//出库单
+        Map<Supplier, List<com.ruoyi.production.form.Goods>> outOrdersList = list.stream().collect(Collectors.groupingBy(com.ruoyi.production.form.Goods::getSupplier));//出库单
         List<List<com.ruoyi.production.form.Goods>> goodsList = new ArrayList<>();
-        for(com.ruoyi.production.form.Supplier supplier:outOrdersList.keySet()){
+        for(Supplier supplier:outOrdersList.keySet()){
             goodsList.add(outOrdersList.get(supplier));
         }
         Random random = new Random();

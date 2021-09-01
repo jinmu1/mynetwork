@@ -5,6 +5,7 @@ public class Production {
     private String goods_code;// 物料编码
     private double goods_num;//物料数量
 
+
     public String getCode() {
         return code;
     }

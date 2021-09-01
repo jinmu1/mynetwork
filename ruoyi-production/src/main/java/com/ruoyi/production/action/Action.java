@@ -1,32 +1,23 @@
 package com.ruoyi.production.action;
 
 import com.ruoyi.production.form.Goods;
+import com.ruoyi.production.network.Supplier;
 import com.ruoyi.production.queue.Point;
 import com.ruoyi.production.resource.equipment.Tray;
-import com.ruoyi.production.enumType.CarType;
-import com.ruoyi.production.form.*;
 import com.ruoyi.production.process.*;
-import com.ruoyi.production.queue.Order;
-import com.ruoyi.production.resource.equipment.Elevator;
-import com.ruoyi.production.resource.equipment.LightStorage;
 import com.ruoyi.production.resource.facilities.buffer.Park;
 import com.ruoyi.production.resource.facilities.buffer.Tally;
 import com.ruoyi.production.resource.facilities.platform.Platform;
 import com.ruoyi.production.resource.facilities.storage.Storage;
 import com.ruoyi.production.resource.personnel.Emp;
 import com.ruoyi.production.result.*;
-import com.ruoyi.production.utils.AreaUtils;
-import com.ruoyi.production.utils.DateUtils;
 import com.ruoyi.production.utils.RandomUtil;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.poi.ss.formula.functions.T;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ruoyi.production.utils.DateUtils.randomDate;
 import static java.util.stream.Collectors.groupingBy;
 
 public class Action {
@@ -54,7 +45,7 @@ public class Action {
         Platform platform = new Platform();
         int parking_num = platform.getParking_num(carLength, transportNum, unloading_time, everyDay_unloading_time, batch); //计算月台数量
         double area = platform.getPlatformArea(parking_num, platform_width, platform_length);
-        List<com.ruoyi.production.form.Supplier> suppliers = WarehousingUtil.initSupplier(supplier);
+        List<Supplier> suppliers = WarehousingUtil.initSupplier(supplier);
         List<com.ruoyi.production.form.Goods> list = WarehousingUtil.createGoodsMessage(goods_num, suppliers);
         List<com.ruoyi.production.form.Car> cars = WarehousingUtil.initCar(list, transportNum, carLength);
         List<Platform> platforms = WarehousingUtil.initPlat(parking_num, platform_width);
@@ -354,13 +345,13 @@ public class Action {
     }
 
     public static List<Result> runRuOrder(double transportNum, double supplier, double goods_num, double volatility, double iq) {
-        List<com.ruoyi.production.form.Supplier> suppliers = WarehousingUtil.initSupplier(supplier);
+        List<Supplier> suppliers = WarehousingUtil.initSupplier(supplier);
         List<com.ruoyi.production.form.Goods> list = WarehousingUtil.createGoodsMessage(goods_num, suppliers);
         int carSize = 16;
         int carNum = (int) (Math.ceil(transportNum / carSize));
-        Map<com.ruoyi.production.form.Supplier, List<com.ruoyi.production.form.Goods>> outOrdersList = list.stream().collect(Collectors.groupingBy(com.ruoyi.production.form.Goods::getSupplier));//出库单
+        Map<Supplier, List<com.ruoyi.production.form.Goods>> outOrdersList = list.stream().collect(Collectors.groupingBy(com.ruoyi.production.form.Goods::getSupplier));//出库单
         List<List<com.ruoyi.production.form.Goods>> goodsList = new ArrayList<>();
-        for (com.ruoyi.production.form.Supplier supplier1 : outOrdersList.keySet()) {
+        for (Supplier supplier1 : outOrdersList.keySet()) {
             goodsList.add(outOrdersList.get(supplier1));
         }
         List<Result> results = new ArrayList<>();

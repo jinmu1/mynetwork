@@ -17,7 +17,7 @@ public class GoodsLayout {
      * @param goods
      * @return
      */
-    public static List<com.ruoyi.production.form.Cargo> initGoodsLayout(Storage storage, List<com.ruoyi.production.form.Goods> goods){
+    public static List<Cargo> initGoodsLayout(Storage storage, List<com.ruoyi.production.form.Goods> goods){
         List<com.ruoyi.production.form.Cargo> cargos1 = initCargos(goods,storage);
         List<com.ruoyi.production.form.Cargo> cargos = new ArrayList<>();
         for (int i = 1; i <=storage.getLayer(); i++) {

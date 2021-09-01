@@ -1,5 +1,6 @@
 package com.ruoyi.production.form;
 
+import com.ruoyi.production.network.Supplier;
 import com.ruoyi.production.queue.Point;
 
 import java.util.Objects;

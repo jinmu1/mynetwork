@@ -1,5 +1,8 @@
 package com.ruoyi.production.queue;
 
+import com.ruoyi.production.form.Customer;
+import com.ruoyi.production.network.Supplier;
+
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +17,9 @@ public class Order {
     private double  weight;//重量
     private int status;//完成状态
     private String customerCode;
-    private String customerCity;
+    private Supplier supplier;
+    private Customer customerCity;
+
     public Order(){
         super();
     }
@@ -44,12 +49,20 @@ public class Order {
         this.customerCode = customerCode;
     }
 
-    public String getCustomerCity() {
+    public Customer getCustomerCity() {
         return customerCity;
     }
 
-    public void setCustomerCity(String customerCity) {
+    public void setCustomerCity(Customer customerCity) {
         this.customerCity = customerCity;
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     public int getStatus() {
