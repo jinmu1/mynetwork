@@ -26,6 +26,7 @@ public class Storage {
     private int layer;
     private int line;
     private int row;
+
     public Point getEmpTar(Emp emp) {
         Point point =new Point();
         for (Cargo cargo: cargos){
@@ -55,10 +56,10 @@ public class Storage {
                 if (cargos>storageNum  && i>5){
                     double num = (i*cargo_box_length+shelf_space)*(j*cargo_box_width*2+forklift_channel);
                     double num1 = i*j*2*high_shelf_layer*high_cargo_price;//货架的价格
-                    if (price>num1){
+                    if (price>num1&&(int)Math.ceil(j/2)>0){
                         price = num1;
                         rows = i;
-                        line = j/2;
+                        line = (int) (Math.ceil(j/2));
                         layer = high_shelf_layer;
                         cargo = cargos;
                         area = num;

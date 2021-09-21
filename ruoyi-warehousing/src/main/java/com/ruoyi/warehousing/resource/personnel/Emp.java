@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Emp {
     private String name;//员工名称
-    private String code;//月台编码
+    private String code;// 编码
     private  double v0;//空托盘行走速度
     private  double v1;//满托行走速度
     private  double t0;//装满一托盘的速度

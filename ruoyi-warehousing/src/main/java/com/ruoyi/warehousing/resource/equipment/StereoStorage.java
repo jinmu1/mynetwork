@@ -9,7 +9,6 @@ public class StereoStorage {
     private int layer;//层
     private int  line;//列
     private  double area;//面积
-    private double price;//设备总价
     private int  cargo;//货位数量
     private int stacker;//堆垛机数量
     private double belt;//传送带长度
@@ -42,6 +41,12 @@ public class StereoStorage {
     protected static double ay_cargo_box_stacker_speed = 0.2;//向上加速度
     protected static double ax_cargo_box_stacker_speed = 0.2;//堆垛机向前加速度
     protected static double belt_price = 2000;//传送带每米的价格
+
+
+    private String type;//货架类型
+    private double price;//价格
+
+
 
     public int getRow() {
         return row;

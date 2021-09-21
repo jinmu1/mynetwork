@@ -1,46 +1,38 @@
 package com.ruoyi.web.controller.warehouse;
 
+
+
+
+
+import com.mathworks.toolbox.javabuilder.MWClassID;
+import com.mathworks.toolbox.javabuilder.MWException;
+import com.mathworks.toolbox.javabuilder.MWNumericArray;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.network.form.GlcPoint;
-import com.ruoyi.network.node.*;
-import com.ruoyi.network.utils.NetWorkPlanUtils;
-import com.ruoyi.network.utils.NetworkUtils;
-import com.ruoyi.system.domain.EduReceiving;
-import com.ruoyi.system.service.IGlcPointService;
+
 import com.ruoyi.warehousing.action.Action;
 import com.ruoyi.warehousing.enumType.CarType;
-import com.ruoyi.warehousing.form.Cargo;
-import com.ruoyi.warehousing.form.Goods;
-import com.ruoyi.warehousing.process.Delivery;
-import com.ruoyi.warehousing.process.Putaway;
-import com.ruoyi.warehousing.process.Sorting;
-import com.ruoyi.warehousing.process.Upload;
+
 import com.ruoyi.warehousing.queue.Point;
-import com.ruoyi.warehousing.resource.equipment.Elevator;
-import com.ruoyi.warehousing.resource.equipment.LightStorage;
-import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
-import com.ruoyi.warehousing.resource.facilities.platform.Platform;
-import com.ruoyi.warehousing.action.WarehousingUtil;
-import com.ruoyi.warehousing.resource.personnel.Emp;
+
 import com.ruoyi.warehousing.result.*;
-import com.ruoyi.warehousing.utils.AreaUtils;
 import com.ruoyi.warehousing.utils.DateUtils;
-import org.apache.commons.collections4.ListUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.ujmp.core.Matrix;
+import org.ujmp.core.io.ImportMatrixMAT;
+import palletSingleShelvesLayout.Layout;
+
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
-
 /**
  * 【请填写功能名称】Controller
  *
@@ -52,8 +44,6 @@ public class WarehousingController extends BaseController {
     private static Date runTime = DateUtils.convertString2Date("HH:mm:ss", "08:00:00");//当前时间
     private static Date startTime = new Date();//开始时间
     private static Date endTime = new Date();//工作结束时间
-    @Autowired
-    private IGlcPointService glcPointService;
 
     private String prefix = "system/warehouse";
 
@@ -80,7 +70,10 @@ public class WarehousingController extends BaseController {
     public String main1() {
         return prefix + "/main1";
     }
-
+    @GetMapping("/entrepot2")
+    public String main2() {
+        return prefix + "/main2";
+    }
     @PostMapping("/getTally")
     @ResponseBody
     public TableDataInfo getTally(HttpServletRequest req) {
@@ -1196,5 +1189,85 @@ public class WarehousingController extends BaseController {
         }
 
         return getDataTable(list);
+    }
+
+
+    @PostMapping("/getShelfPoint")
+    @ResponseBody
+    public TableDataInfo getShelfPoint(HttpServletRequest req) {
+        double shelf_width = 3;
+        if (req.getParameter("shelf_width") != null && !req.getParameter("shelf_width").equals("")) {
+            shelf_width = Double.parseDouble(req.getParameter("shelf_width"));
+        }
+        double shelf_length = 0.2;
+        if (req.getParameter("shelf_length") != null && !req.getParameter("shelf_length").equals("")) {
+            shelf_length = Double.parseDouble(req.getParameter("shelf_length"));
+        }
+        double shelf_height = 1.5;
+        if (req.getParameter("shelf_height") != null && !req.getParameter("shelf_height").equals("")) {
+            shelf_height = Double.parseDouble(req.getParameter("shelf_height"));
+        }
+        MWNumericArray a = null;
+        MWNumericArray b = null;
+        MWNumericArray c = null;
+        MWNumericArray d = null;
+        MWNumericArray e1 = null;
+        MWNumericArray f = null;
+        MWNumericArray g = null;
+        MWNumericArray h = null;
+        MWNumericArray i = null;
+        MWNumericArray j = null;
+        Layout layout ;
+        Object[] result = null;
+        try {
+            layout= new Layout();
+            a = new MWNumericArray(Double.valueOf(shelf_length), MWClassID.DOUBLE);
+            b = new MWNumericArray(Double.valueOf(shelf_width), MWClassID.DOUBLE);
+            c = new MWNumericArray(Double.valueOf(shelf_height),MWClassID.DOUBLE);
+            d = new MWNumericArray(Double.valueOf(6), MWClassID.DOUBLE);
+            e1 = new MWNumericArray(Double.valueOf(4),MWClassID.DOUBLE);
+            f = new MWNumericArray(Double.valueOf(10),MWClassID.DOUBLE);
+            g = new MWNumericArray(Double.valueOf(2),MWClassID.DOUBLE);
+            h = new MWNumericArray(Double.valueOf(4),MWClassID.DOUBLE);
+            i = new MWNumericArray(Double.valueOf(3),MWClassID.DOUBLE);
+            j = new MWNumericArray(Double.valueOf(6),MWClassID.DOUBLE);
+            result = layout.palletSingleShelvesLayout(1,a,b,c,d,e1,f,g,h,i,j);
+        } catch (MWException e) {
+            e.printStackTrace();
+        }
+        String path = System.getProperty("user.dir")+"\\dat.mat";
+        File file1 = new File(path);
+        Matrix sampleData= ImportMatrixMAT.fromFile(file1);
+        double[][] doubles = new double[][]{};
+        doubles = sampleData.toDoubleArray();
+        List<Point> list = new ArrayList<>();
+        for (int s=0;s<doubles.length;s++){
+            list.add(new Point(doubles[s][0],doubles[s][1],doubles[s][2]));
+        }
+        deleteFile(path);
+        return getDataTable(list);
+    }
+    /**
+     * 删除单个文件
+     *
+     * @param fileName
+     *            要删除的文件的文件名
+     * @return 单个文件删除成功返回true，否则返回false
+     */
+    public static boolean deleteFile(String fileName) {
+        File file = new File(fileName);
+        // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+        if (file.exists() && file.isFile()) {
+            if (file.delete()) {
+                System.out.println("删除单个文件" + fileName + "成功！");
+                return true;
+            } else {
+                System.out.println("删除单个文件" + fileName + "失败！");
+                return false;
+            }
+        } else {
+            System.out.println("删除单个文件失败：" + fileName + "不存在！");
+            return false;
+        }
     }
 }

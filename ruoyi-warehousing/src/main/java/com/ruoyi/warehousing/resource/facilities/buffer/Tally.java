@@ -238,9 +238,9 @@ public class Tally {
         }
         Map<String,List<Goods>> map = goodsList.stream().collect(Collectors.groupingBy(Goods::getGoodsCode));//出库单
 
-        for (int i = 0;i<map.keySet().size();i++){
+        for (int i = 0;i<points.size();i++){
             Tray tray = new Tray();
-            tray.setPoint(points.get(points.size()-1-i));
+            tray.setPoint(points.get(points.size()-i-1));
             points.get(i).setStatus(1);
             trayList.add(tray);
         }

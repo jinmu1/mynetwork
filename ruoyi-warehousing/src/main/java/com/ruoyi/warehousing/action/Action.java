@@ -1,13 +1,14 @@
 package com.ruoyi.warehousing.action;
 
+import com.mathworks.toolbox.javabuilder.MWClassID;
+import com.mathworks.toolbox.javabuilder.MWException;
+import com.mathworks.toolbox.javabuilder.MWNumericArray;
 import com.ruoyi.warehousing.enumType.CarType;
 import com.ruoyi.warehousing.form.*;
 import com.ruoyi.warehousing.process.*;
 import com.ruoyi.warehousing.queue.Order;
 import com.ruoyi.warehousing.queue.Point;
-import com.ruoyi.warehousing.resource.equipment.Elevator;
-import com.ruoyi.warehousing.resource.equipment.LightStorage;
-import com.ruoyi.warehousing.resource.equipment.Tray;
+import com.ruoyi.warehousing.resource.equipment.*;
 import com.ruoyi.warehousing.resource.facilities.buffer.Park;
 import com.ruoyi.warehousing.resource.facilities.buffer.Tally;
 import com.ruoyi.warehousing.resource.facilities.platform.Platform;
@@ -19,7 +20,12 @@ import com.ruoyi.warehousing.utils.DateUtils;
 import com.ruoyi.warehousing.utils.RandomUtil;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.poi.ss.formula.functions.T;
+import org.ujmp.core.Matrix;
+import org.ujmp.core.io.ImportMatrixMAT;
+import palletSingleShelvesLayout.Layout;
 
+
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -197,28 +203,28 @@ public class Action {
         Tray tray = new Tray();
 
         tally.initTally(tally.getTally_transverse() * orderLine, tally.getTally_longitudinal() * orderLine, tally_channel, tray_clearance, tray.getWidth(), tray.getLength());
-        List<Goods> list = WarehousingUtil.createGoods(goods_num);
-        List<Tray> trays = Tray.initTrays(list, transportNum * orderLine);
-        List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
+//        List<Goods> list = WarehousingUtil.createGoods(goods_num);
+//        List<Tray> trays = Tray.initTrays(list, transportNum * orderLine);
+//        List<Emp> emps = WarehousingUtil.initEmp(tally.getTally_transverse());
 
         double distance = 0.0;
         double rate = 0.0;
-        List<EmpLog> list1 = Sorting.work(tally, trays, sortingSpeed, emps, batch, sort_type, orderLine / 2, sortingTime);
-        for (EmpLog empLog : list1) {
-            distance += empLog.getDistance();
-            rate += empLog.getEmpStatus();
-        }
+//        List<EmpLog> list1 = Sorting.work(tally, trays, sortingSpeed, emps, batch, sort_type, orderLine / 2, sortingTime);
+//        for (EmpLog empLog : list1) {
+//            distance += empLog.getDistance();
+//            rate += empLog.getEmpStatus();
+//        }
 
         Result result = new Result();
         result.setSortingArea(tally.getArea());
         result.setDistance(distance);
-        result.setSortingRate(rate / 10 / 60 / 60 / emps.size());
+//        result.setSortingRate(rate / 10 / 60 / 60 / emps.size());
         result.setTally_longitudinal(tally.getTally_longitudinal());
         result.setTally_transverse(tally.getTally_transverse());
-        int emp = (int) Math.ceil(emps.size());
-        int emp1 = (int) Math.ceil(emps.size() * result.getSortingRate() / (utilization / 100));
-        result.setSortingEmp(emp1 + (int) Math.sqrt(batch));
-        result.setSortingRate(emp * result.getSortingRate() / emp1);
+//        int emp = (int) Math.ceil(emps.size());
+//        int emp1 = (int) Math.ceil(emps.size() * result.getSortingRate() / (utilization / 100));
+//        result.setSortingEmp(emp1 + (int) Math.sqrt(batch));
+//        result.setSortingRate(emp * result.getSortingRate() / emp1);
         return result;
     }
 
@@ -364,7 +370,7 @@ public class Action {
         }
         List<Result> results = new ArrayList<>();
         Random random = new Random();
-        int[] nums = WarehousingUtil.splitInteger(list.size(), (int) transportNum*90, false);
+        int[] nums = WarehousingUtil.splitInteger(list.size(), (int) transportNum * 90, false);
         for (int i = 0; i < list.size(); i++) {
             list.get(i).setPlutNum(nums[i]);
         }
@@ -390,12 +396,12 @@ public class Action {
             }
         }
 
-        double[] numl = WarehousingUtil.splitDouble(results.size(),  transportNum*90, false);
+        double[] numl = WarehousingUtil.splitDouble(results.size(), transportNum * 90, false);
         int k = 0;
-        for (Result result:results){
-            result.setGoods_num2(new BigDecimal(numl[k]).setScale(2,   BigDecimal.ROUND_HALF_UP).doubleValue()+(int)WarehousingUtil.random(-1,1));
-            result.setGoods_num1((int)result.getGoods_num2()*result.getRow());
-            result.setGoods_num((int)result.getGoods_num1()*result.getLine());
+        for (Result result : results) {
+            result.setGoods_num2(new BigDecimal(numl[k]).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + (int) WarehousingUtil.random(-1, 1));
+            result.setGoods_num1((int) result.getGoods_num2() * result.getRow());
+            result.setGoods_num((int) result.getGoods_num1() * result.getLine());
             k++;
         }
         return results;
@@ -441,12 +447,12 @@ public class Action {
             }
 
         }
-        double[] numl = WarehousingUtil.splitDouble(results.size(), transportNum*90, false);
+        double[] numl = WarehousingUtil.splitDouble(results.size(), transportNum * 90, false);
         int k = 0;
-        for (Result2 result:results){
-            result.setGoods_num2(new BigDecimal(numl[k]).setScale(2,   BigDecimal.ROUND_HALF_UP).doubleValue()+(int)WarehousingUtil.random(-1,1));
-            result.setGoods_num1((int)result.getGoods_num2()*result.getRow());
-            result.setGoods_num((int)result.getGoods_num1()*result.getLine());
+        for (Result2 result : results) {
+            result.setGoods_num2(new BigDecimal(numl[k]).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + (int) WarehousingUtil.random(-1, 1));
+            result.setGoods_num1((int) result.getGoods_num2() * result.getRow());
+            result.setGoods_num((int) result.getGoods_num1() * result.getLine());
             k++;
         }
         return results;
@@ -472,14 +478,56 @@ public class Action {
             }
 
         }
-        double[] numl = WarehousingUtil.splitDouble(results.size(),  transportNum*90, false);
+        double[] numl = WarehousingUtil.splitDouble(results.size(), transportNum * 90, false);
         int k = 0;
-        for (Result3 result:results){
-            result.setGoods_num2(new BigDecimal(numl[k]).setScale(2,   BigDecimal.ROUND_HALF_UP).doubleValue()+(int)WarehousingUtil.random(-1,1));
-            result.setGoods_num1((int)result.getGoods_num2()*result.getRow());
-            result.setGoods_num((int)result.getGoods_num1()*result.getLine());
+        for (Result3 result : results) {
+            result.setGoods_num2(new BigDecimal(numl[k]).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + (int) WarehousingUtil.random(-1, 1));
+            result.setGoods_num1((int) result.getGoods_num2() * result.getRow());
+            result.setGoods_num((int) result.getGoods_num1() * result.getLine());
             k++;
         }
         return results;
+    }
+
+    public static List<Point> initStorageShelf(double shelf_length, double shelf_width, double shelf_height,double xRow,double yRow,double yColumnNum,double xColumnNum,double zColumnNum,double xSpacing,double ySpacing) {
+        MWNumericArray a = null;
+        MWNumericArray b = null;
+        MWNumericArray c = null;
+        MWNumericArray d = null;
+        MWNumericArray e1 = null;
+        MWNumericArray f = null;
+        MWNumericArray g = null;
+        MWNumericArray h = null;
+        MWNumericArray i = null;
+        MWNumericArray j = null;
+         Layout layout = null ;
+        Object[] result = null;
+        try {
+            layout= new Layout();
+            a = new MWNumericArray(Double.valueOf(shelf_length), MWClassID.DOUBLE);
+            b = new MWNumericArray(Double.valueOf(shelf_width),MWClassID.DOUBLE);
+            c = new MWNumericArray(Double.valueOf(shelf_height),MWClassID.DOUBLE);
+            d = new MWNumericArray(Double.valueOf(xRow),MWClassID.DOUBLE);
+            e1 = new MWNumericArray(Double.valueOf(yRow),MWClassID.DOUBLE);
+            f = new MWNumericArray(Double.valueOf(yColumnNum),MWClassID.DOUBLE);
+            g = new MWNumericArray(Double.valueOf(xColumnNum),MWClassID.DOUBLE);
+            h = new MWNumericArray(Double.valueOf(zColumnNum),MWClassID.DOUBLE);
+            i = new MWNumericArray(Double.valueOf(xSpacing),MWClassID.DOUBLE);
+            j = new MWNumericArray(Double.valueOf(ySpacing),MWClassID.DOUBLE);
+            result = layout.palletSingleShelvesLayout(1,a,b,c,d,e1,f,g,h,i,j);
+        } catch (MWException e) {
+            e.printStackTrace();
+        }
+        String path = System.getProperty("user.dir")+"\\dat.mat";
+        File file1 = new File(path);
+        Matrix sampleData= ImportMatrixMAT.fromFile(file1);
+        double[][] doubles = new double[][]{};
+        doubles = sampleData.toDoubleArray();
+        List<Point> list = new ArrayList<>();
+        for (int s=0;s<doubles.length;s++){
+            list.add(new Point(doubles[s][0],doubles[s][1],doubles[s][2]));
+        }
+        return list;
+
     }
 }

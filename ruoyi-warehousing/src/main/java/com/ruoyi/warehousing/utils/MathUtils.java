@@ -71,6 +71,8 @@ public final class MathUtils {
         return 3 * Mutil.divide(Mutil.subtract(mean, median), SD, 2);
     }
 
+
+
     /**
      *
      *  * @描述:集中趋势量数：均值/算术平均数（arithmetic mean) <br/>

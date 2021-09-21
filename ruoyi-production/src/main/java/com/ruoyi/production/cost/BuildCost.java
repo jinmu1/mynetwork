@@ -19,7 +19,7 @@ public class BuildCost {
     public double getSidebin() {
         return sidebin;
     }
-
+ 
     public void setSidebin(double sidebin) {
         this.sidebin = sidebin;
     }

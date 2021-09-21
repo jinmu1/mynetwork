@@ -1,546 +1,652 @@
 ﻿<!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
 <head>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes"/>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8">
     <title>立库和平库（存储）决策</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: rgb(239, 239, 239);
+        }
+
+        .layui-layer-content {
+            color: #000000;
+        }
+
+
+        .th-inner {
+            color: rgb(171, 225, 245);
+
+        }
+
+        .thead .tr {
+            color: rgb(243, 243, 243);
+        }
+
+        .table-hover > tbody > tr {
+            text-align: right;
+        }
+
+        .table-hover > tbody > tr:hover > td,
+        .table-hover > tbody > tr:hover > th {
+            color: rgb(14, 108, 132);
+            cursor: pointer;
+        }
+
+        #tan {
+            position: absolute;
+            color: #fff;
+            z-index: 102;
+            font-size: 16px;
+        }
+
+        #tan0 {
+            position: absolute;
+            color: #fff;
+            background: rgba(2, 4, 27, 0.8);
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #00aeef;
+            z-index: 102;
+            width: 180px;
+            font-size: 16px;
+        }
+
+        #canvas {
+            z-index: 0;
+        }
+
+        #tan0 > div {
+            padding: 5px;
+        }
+
+        .uiswitch {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            -ms-appearance: none;
+            -o-appearance: none;
+            appearance: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            height: 31px;
+            width: 51px;
+            position: relative;
+            border-radius: 16px;
+            cursor: pointer;
+            outline: 0;
+            z-index: 0;
+            margin: 0;
+            padding: 0;
+            border: none;
+            background-color: #e5e5e5;
+            -webkit-transition-duration: 600ms;
+            -moz-transition-duration: 600ms;
+            transition-duration: 600ms;
+            -webkit-transition-timing-function: ease-in-out;
+            -moz-transition-timing-function: ease-in-out;
+            transition-timing-function: ease-in-out;
+            -webkit-touch-callout: none;
+            -webkit-text-size-adjust: none;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-user-select: none;
+        }
+
+        .uiswitch::before {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            height: 27px;
+            width: 47px;
+            content: ' ';
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            z-index: 1;
+            -webkit-transition-duration: 300ms;
+            -moz-transition-duration: 300ms;
+            transition-duration: 300ms;
+            -webkit-transform: scale(1);
+            -moz-transform: scale(1);
+            -ms-transform: scale(1);
+            -o-transform: scale(1);
+            transform: scale(1);
+        }
+
+        .uiswitch::after {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            height: 27px;
+            width: 27px;
+            content: ' ';
+            position: absolute;
+            border-radius: 27px;
+            background: #ffffff;
+            z-index: 2;
+            top: 2px;
+            left: 2px;
+            box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.25), 0px 4px 11px 0px rgba(0, 0, 0, 0.08), -1px 3px 3px 0px rgba(0, 0, 0, 0.14);
+            -webkit-transition: -webkit-transform 300ms, width 280ms;
+            -moz-transition: -moz-transform 300ms, width 280ms;
+            transition: transform 300ms, width 280ms;
+            -webkit-transform: translate3d(0, 0, 0);
+            -moz-transform: translate3d(0, 0, 0);
+            -ms-transform: translate3d(0, 0, 0);
+            -o-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            -webkit-transition-timing-function: cubic-bezier(0.42, 0.8, 0.58, 1.2);
+            -moz-transition-timing-function: cubic-bezier(0.42, 0.8, 0.58, 1.2);
+            transition-timing-function: cubic-bezier(0.42, 0.8, 0.58, 1.2);
+        }
+
+        .uiswitch:checked {
+            background-color: #4CD964;
+            background-image: -webkit-linear-gradient(-90deg, #4CD964 0%, #4dd865 100%);
+            background-image: linear-gradient(-180deg, #4CD964 0%, #4dd865 100%);
+        }
+
+        .uiswitch:checked::after {
+            -webkit-transform: translate3d(16px, 0, 0);
+            -moz-transform: translate3d(16px, 0, 0);
+            -ms-transform: translate3d(16px, 0, 0);
+            -o-transform: translate3d(16px, 0, 0);
+            transform: translate3d(16px, 0, 0);
+            right: 18px;
+            left: inherit;
+        }
+
+        .uiswitch:active::after {
+            width: 35px;
+        }
+
+        .uiswitch:checked::before, .uiswitch:active::before {
+            -webkit-transform: scale(0);
+            -moz-transform: scale(0);
+            -ms-transform: scale(0);
+            -o-transform: scale(0);
+            transform: scale(0);
+        }
+
+        .uiswitch:disabled {
+            opacity: 0.5;
+            cursor: default;
+            -webkit-transition: none;
+            -moz-transition: none;
+            transition: none;
+        }
+
+        .uiswitch:disabled:active::before, .uiswitch:disabled:active::after, .uiswitch:disabled:checked:active::before, .uiswitch:disabled:checked::before {
+            width: 27px;
+            -webkit-transition: none;
+            -moz-transition: none;
+            transition: none;
+        }
+
+        .uiswitch:disabled:active::before {
+            height: 27px;
+            width: 41px;
+            -webkit-transform: translate3d(6px, 0, 0);
+            -moz-transform: translate3d(6px, 0, 0);
+            -ms-transform: translate3d(6px, 0, 0);
+            -o-transform: translate3d(6px, 0, 0);
+            transform: translate3d(6px, 0, 0);
+        }
+
+        .uiswitch:disabled:checked:active::before {
+            height: 27px;
+            width: 27px;
+            -webkit-transform: scale(0);
+            -moz-transform: scale(0);
+            -ms-transform: scale(0);
+            -o-transform: scale(0);
+            transform: scale(0);
+        }
+
+        .uiswitch {
+            background-color: #e5e5e5;
+        }
+
+        .uiswitch::before {
+            background-color: #ffffff;
+        }
+
+        .uiswitch::after {
+            background: #ffffff;
+        }
+
+        .uiswitch:checked {
+            background-color: #4CD964;
+            background-image: -webkit-linear-gradient(-90deg, #4CD964 0%, #4dd865 100%);
+            background-image: linear-gradient(-180deg, #4CD964 0%, #4dd865 100%);
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+        }
+
+        p {
+            font-size: 18px;
+            font-weight: 300;
+        }
+
+        pre, code {
+            font-family: Monaco, Menlo, "Courier New", Courier, monospace;
+            font-size: 13px;
+        }
+
+        pre {
+            text-align: left;
+        }
+
+        pre {
+            background-color: #fbfbfb;
+            border: 1px solid #eee;
+            padding: .6em;
+            display: inline-block;
+            border-radius: 3px;
+        }
+
+        .wrapper {
+            width: 90%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 200;
+            text-align: center;
+            margin: 2em;
+        }
+
+        .fields__item {
+            display: inline-block;
+            margin-right: 1.875em;
+            text-align: center;
+        }
+
+        h6 {
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: #aaa;
+            margin: 1em;
+        }
+
+        .section {
+            margin: 2em auto;
+        }
+
+        .custom {
+            background-color: #eadcbc;
+        }
+
+        .custom::before {
+            background-color: #f7f2e5;
+        }
+
+        .custom::after {
+            background: #fff3a6;
+        }
+
+        .custom:checked {
+            background-color: #ffca3f;
+            background-image: -webkit-linear-gradient(-90deg, #ffca3f 0%, #feca40 100%);
+            background-image: linear-gradient(-180deg, #ffca3f 0%, #feca40 100%);
+        }
+
+        .my-switch {
+            border-radius: 4px;
+        }
+
+        .my-switch::before {
+            border-radius: 2px;
+        }
+
+        .my-switch::after {
+            border-radius: 1px;
+        }
+
+        .my-switch:checked {
+            background: hotpink;
+        }
+
+        .my-switch:checked::after {
+            background-color: #333;
+        }
+
+        #left {
+            position: absolute;
+            z-index: 200;
+            width: 150px;
+            background: rgba(255, 255, 255, 1.0);
+            padding: 15px;
+            height: 100%;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        .HUD {
+            box-shadow: 0 0 2px #00ffff inset;
+            background: linear-gradient(#00ffff, #00ffff) left top,
+            linear-gradient(#00ffff, #00ffff) left top,
+            linear-gradient(#00ffff, #00ffff) right bottom,
+            linear-gradient(#00ffff, #00ffff) right bottom;
+            background-repeat: no-repeat;
+            background-size: 1px 6px, 6px 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+
+            color: #ffffff;
+            font-size: 12px;
+            padding: 4px 10px;
+        }
+    </style>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.min.js"></script>
+    <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/controls/OrbitControls.js"></script>
+    <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/loaders/OBJLoader.js"></script>
+    <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/renderers/CSS2DRenderer.js"></script>
+    <script type="text/javascript"
+            src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/postprocessing/EffectComposer.js"></script>
+    <script type="text/javascript"
+            src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/postprocessing/RenderPass.js"></script>
+    <script type="text/javascript"
+            src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/postprocessing/ShaderPass.js"></script>
+    <script type="text/javascript"
+            src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/shaders/CopyShader.js"></script>
+    <script type="text/javascript"
+            src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/postprocessing/OutlinePass.js"></script>
+    <script src="http://www.yanhuangxueyuan.com/js/vue@2.5.16.min.js"></script>
+    <script src="http://www.yanhuangxueyuan.com/js/element-ui/index.js"></script>
+    <link rel="stylesheet" href="http://www.yanhuangxueyuan.com/js/element-ui/index.css">
+    <script type="text/javascript"
+            src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/shaders/FXAAShader.js"></script>
+    <th:block th:include="include :: echarts-js"/>
+
 </head>
 
-<th:block th:include="include :: point-public1-css"/>
-<th:block th:include="include :: point-index4-css"/>
-<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
-<script th:src="@{/js/jquery.min.js}"></script>
+<body>
 
-<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
-<th:block th:include="include :: echarts-js"/>
-
-<th:block th:include="include :: point-finereport-js"/>
-<th:block th:include="include :: footer"/>
-
-<style>
-    .layui-layer-content {
-        color: #000000;
-    }
-
-    body, html {
-        overflow-x: hidden;
-    }
-
-    .echarts {
-        height: 350px;
-    }
-
-    .th-inner {
-        color: rgb(171, 225, 245);
-
-    }
-
-    .thead .tr {
-        color: rgb(243, 243, 243);
-    }
-
-    .table-hover > tbody > tr {
-        text-align: right;
-    }
-
-    .table-hover > tbody > tr:hover > td,
-    .table-hover > tbody > tr:hover > th {
-        color: rgb(14, 108, 132);
-        cursor: pointer;
-    }
-
-    /*[class*="col-"]{*/
-    /*    padding: 2px;*/
-    /*    margin:2px*/
-    /*}*/
-    /*.row {*/
-    /*    margin-right: -15px;*/
-    /*    margin-left: -15px;*/
-    /*}*/
-    /*.table1{width:25xp;height: 25%}*/
-</style>
-<script>
-
-    var docEl = document.documentElement,
-        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
-    var clientWidth = docEl.clientWidth;
-    docEl.style.fontSize = 10 * (clientWidth / 320) + 'px';
-    window.addEventListener(resizeEvt, function () {
-        clientWidth = docEl.clientWidth;
-        docEl.style.fontSize = 10 * (clientWidth / 320) + 'px';
-    }, false);
-</script>
-<script>
-
-    $(document).ready(function () {
-        var whei = $(window).width()
-        $("html").css({fontSize: whei / 22});
-        $(window).resize(function () {
-            var whei = $(window).width();
-            $("html").css({fontSize: whei / 22})
-        });
-    });
-</script>
-<body style="background: #jjj;height: 100%;width: 100%;">
-
-<div class="main">
-
-    <div class="header">
-        <div class="header-left fl">
-            <img class="imgs" th:src="@{/img/img.png}"
-                 style="width: 60%;margin-left: -5%;margin-top: -46%;z-index: 9999">
+<div style="z-index:2;text-align:center;font-size: 16px;color:#00ffff;top:4px;position: absolute;width:100%;background: rgba(255, 0, 0, 0.0);">
+    立库和平库（存储）决策系统
+</div>
+<div style="z-index:1;position: absolute;width:100%;">
+    <img th:src="@{/img/warehouse/line2.png}" alt="" style="width:100%;height:28px">
+</div>
+<div id="label" style="visibility:hidden">
+    <div style="position:relative;">
+        <div style="position: absolute;top:-50px;left:20px;width:100px;color:#03B5B3;">
         </div>
-        <div class="header-center fl">
-            <div class="header-title">
-                仓库各功能区面积测算
-            </div>
-            <div class="header-img"></div>
-        </div>
-        <div class="header-right fl">
-        </div>
-        <div class="header-bottom fl">
+        <div style="position: absolute;top:-30px;left:0px;">
+            <img th:src="@{/img/w2.png}" alt="">
         </div>
     </div>
-    <th:block th:include="include :: three-js"/>
-    <th:block th:include="include :: OrbitControls-js"/>
-    <th:block th:include="include :: GLTFLoader-js"/>
+</div>
+<div id="label3" style="visibility:hidden">
+    <div style="position:relative;">
+        <div style="position: absolute;top:-120px;left:55px;width:100px;color:#ffffff;">
+        </div>
+        <div style="position: absolute;top:-100px;left:0px;">
+            <img th:src="@{/img/w1.png}" alt="">
+        </div>
+    </div>
+</div>
+<div id="app">
+    <div STYLE=";z-index:9999;">
 
-    <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row">
-            <div class="col-lg-12">
-                <h4 style="text-align: center">参数输入 <small></small></h4>
-                <form class="form-horizontal m-t" id="signupForms" onsubmit="post_data()"
-                      target="nm_iframe">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="titled-pane"></div>
-                            <div class="table-responsive table1">
-                                <table class="table table-bordered  width1">
-                                    <thead>
-                                    <tr>
-                                        <th colspan="2"
-                                            style="text-align:center;vertical-align:middle;">理货区参数
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <th>每日入库托数</th>
-                                        <td><input name="transportNum" value="1000" id="transportNum1"
-                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   data-placement="right" title="请输入" th:type="text"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   onchange="changeplant()" required=""/>托
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>每日入库物料种类数</th>
-                                        <td><input name="transportNum" value="1000" id="goods_num1"
-                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   data-placement="right" title="请输入" th:type="text"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   onchange="changeplant()" required=""/>托
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th> 每天理货批次数</th>
-                                        <td><input name="batch" value="6" id="batch"
-                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   data-placement="right" title="请输入" th:type="text"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   onchange="changeplant()" required=""/></td>
-                                    </tr>
-
-                                    <tr>
-                                        <th colspan="2"
-                                            style="text-align:center;vertical-align:middle;">面积参数
-                                        </th>
-                                    </tr>
-
-                                    <tr>
-                                        <th>理货区通道宽度</th>
-                                        <td>
-                                            <input type="value" id="tally_channel" value="3"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>托盘之间间隙</th>
-                                        <td>
-                                            <input type="value" id="tray_clearance" value="0.1"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="2"
-                                            style="text-align:center;vertical-align:middle;">资源参数
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th>行走速度</th>
-                                        <td>
-                                            <input type="value" id="tallyEmpCapacity" value="1.1"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m/s
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>理货速度</th>
-                                        <td>
-                                            <input type="value" id="tallyTime" value="120"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>托/s
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>资源利用率(MAX)</th>
-                                        <td>
-                                            <input type="value" id="utilization1" value="80"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""
-                                                   oninput="if(value>100)value=100;if(value<0)value=0"/>%
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="titled-pane"></div>
-                            <div class="table-responsive table1">
-                                <table class="table table-bordered  width1">
-                                    <thead>
-                                    <tr>
-                                        <th colspan="2"
-                                            style="text-align:center;vertical-align:middle;">存储区参数
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <th>每日上架托数</th>
-                                        <td><input name="putawayNum" value="1000" id="putawayNum"
-                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   data-placement="right" title="请输入" th:type="text"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>上架作业时间</th>
-                                        <td>
-                                            <input type="value" id="everyDay_putaway_time" value="8"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>h
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>行走速度</th>
-                                        <td>
-                                            <input type="value" id="putaway_speed" value="1.1"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m/s
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>资源利用率(MAX)</th>
-                                        <td>
-                                            <input type="value" id="utilization2" value="80"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""
-                                                   oninput="if(value>100)value=100;if(value<0)value=0"/>%
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>存储托数</th>
-                                        <td><input name="storageNum" value="20000" id="storageNum"
-                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   data-placement="right" title="请输入" th:type="text"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   onchange="changeplant()" required=""/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>存储区高度</th>
-                                        <td>
-                                            <input type="value" id="height" value="9"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>存储区单层的高度</th>
-                                        <td>
-                                            <input type="value" id="shelf_height" value="1.5"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>存储区通道宽度</th>
-                                        <td>
-                                            <input type="value" id="forklift_channel" value="3"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>货架之间间隙</th>
-                                        <td>
-                                            <input type="value" id="shelf_space" value="0.01"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="titled-pane"></div>
-                            <div class="table-responsive table1">
-                                <table class="table table-bordered  width1">
-                                    <thead>
-                                    <tr>
-                                        <th colspan="2"
-                                            style="text-align:center;vertical-align:middle;">分拣区域参数
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    <tr>
-                                        <th>物料种类数</th>
-                                        <td><input name="sortingNum" value="1000" id="goods_num"
-                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   data-placement="right" title="请输入" th:type="text"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   onchange="changeplant()" required=""/>种
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>每天分拣批次数</th>
-                                        <td><input name="batch" value="6" id="batch1"
-                                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
-                                                   data-placement="right" title="请输入" th:type="text"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   onchange="changeplant()" required=""/></td>
-                                    </tr>
-                                    <tr>
-                                        <th>分拣方式</th>
-                                        <td><select name="sort_type" id="sort_type"
-                                                    style="background:rgb(14, 108, 132); color: #000;color:#fff;">
-                                            <option selected>按单拣选</option>
-                                            <option>批量拣选</option>
-                                        </select></td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>平均订单行数</th>
-                                        <td>
-                                            <input type="value" id="orderLine" value="7"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>行/单
-                                        </td>
-                                    </tr>
-
-
-                                    <tr>
-                                        <th colspan="2"
-                                            style="text-align:center;vertical-align:middle;">面积参数
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th>分拣区通道宽度</th>
-                                        <td>
-                                            <input type="value" id="tally_channel1" value="3"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>托盘之间间隙</th>
-                                        <td>
-                                            <input type="value" id="tray_clearance1" value="0.1"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="2"
-                                            style="text-align:center;vertical-align:middle;">资源参数
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th>行走速度</th>
-                                        <td>
-                                            <input type="value" id="sortingSpeed" value="1.1"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""/>m/s
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>资源利用率(MAX)</th>
-                                        <td>
-                                            <input type="value" id="utilization4" value="80"
-                                                   style="background:rgb(14, 108, 132); color: #000;color:#fff;"
-                                                   required=""
-                                                   oninput="if(value>100)value=100;if(value<0)value=0"/>%
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="ibox float-e-margins" style="height: 60px">
-                                        <button class="btn btn-primary" type="submit"
-                                                style="margin-top: -2%;margin-left: 45%;z-index: 9999">
-                                            确认并提交
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="ibox float-e-margins" style="height: 60px">
-                                        <button class="btn btn-primary" type="submit"
-                                                style="margin-top: -2%;margin-left: 45%;z-index: 9999">
-                                            确认并提交
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="ibox float-e-margins" style="height: 60px">
-                                        <button class="btn btn-primary" type="submit"
-                                                style="margin-top: -2%;margin-left: 45%;z-index: 9999">
-                                            确认并提交
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <div class="HUD"
+             style="background-color:rgba(255,255,255,0.1);padding:12px 20px;position: absolute;left: 50px;top: 165px;z-index:9999;line-height:20px;vertical-align:middle">
+            <table class="table table-bordered  width1">
+                <thead>
+                <tr>
+                    <th colspan="2"
+                        style="text-align:center;vertical-align:middle;">单区域存储区参数
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th>存储区类型</th>
+                    <td><select name="sort_type" id="shelf_type"
+                                style="background:rgb(14, 108, 132); color: #000;color:#fff;">
+                        <option selected>自动化货架存储区</option>
+                        <option>横梁货架存储区</option>
+                        <option>隔板货架存储区</option>
+                        <option>平面地堆存储区</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <th>存储区层高</th>
+                    <td>
+                        <input type="value" id="height" value="9"
+                               style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                               required=""/>m
+                    </td>
+                </tr>
+                <tr>
+                    <th>货位长度</th>
+                    <td>
+                        <input type="value" id="shelf_length" value="1.2"
+                               style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                               required=""/>m
+                    </td>
+                </tr>
+                <tr>
+                    <th>货位宽度</th>
+                    <td>
+                        <input type="value" id="shelf_width" value="1.2"
+                               style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                               required=""/>m
+                    </td>
+                </tr>
+                <tr>
+                    <th>货位高度</th>
+                    <td>
+                        <input type="value" id="shelf_height" value="1.5"
+                               style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                               required=""/>m
+                    </td>
+                </tr>
+                <tr>
+                    <th>货位层数</th>
+                    <td>
+                        <input type="value" id="shelf_layer" value="3"
+                               style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                               required=""/>m
+                    </td>
+                </tr>
+                <tr>
+                    <th>货架间隙</th>
+                    <td>
+                        <input type="value" id="shelf_space" value="0.01"
+                               style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                               required=""/>m
+                    </td>
+                </tr>
+                <tr>
+                    <th>货架通道</th>
+                    <td>
+                        <input type="value" id="shelf_channel" value="2.5"
+                               style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                               required=""/>m
+                    </td>
+                </tr>
+                <tr>
+                    <th>货架排数</th>
+                    <td>
+                        <input type="value" id="row" value="6"
+                               style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                               required=""/>m
+                    </td>
+                </tr>
+                <tr>
+                    <th>货架列数</th>
+                    <td>
+                        <input type="value" id="lines" value="5"
+                               style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                               required=""/>m
+                    </td>
+                </tr>
+                <tr>
+                    <th>货架组数</th>
+                    <td>
+                        <input type="value" id="zu" value="3"
+                               style="background:rgb(14, 108, 132); color: #000;color:#fff;"
+                               required=""/>m
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="ibox float-e-margins" style="height: 40px">
+                <button class="btn btn-primary" type="submit"
+                        style="margin-top:2%;margin-left: 20%;z-index: 9999" onclick="post_data()">
+                    确认并提交
+                </button>
+                <section id="fields" class="fields section" style="margin-left: 80%;margin-top: -20%">
+                    <div class="fields__item">
+                        <input type="checkbox" class="uiswitch" onchange="runMove()">
+                        <h6>运行</h6>
                     </div>
+                </section>
+            </div>
 
-                </form>
-            </div>
-            <div class="col-sm-4 border">
-                <table id="bootstrap-table1"></table>
-            </div>
-            <div class="col-sm-4 border">
-                <table id="bootstrap-table2"></table>
-            </div>
-            <div class="col-sm-4 border">
-                <table id="bootstrap-table3"></table>
-            </div>
+
         </div>
+
     </div>
 
-</div>
-</div>
-<iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
-<div class="modal fade" id="loadingModal">
-    <div style="width: 200px;height:20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
-        <div class="progress progress-striped active" style="margin-bottom: 0;">
-            <div class="progress-bar" style="width: 100%;"></div>
-        </div>
-        <h5>正在加载...</h5>
-    </div>
-</div>
-<div class="footer" style="margin-left: 45.5%; bottom:0;height: 10%;">
+
 </div>
 <script>
-    var isClick = true;
-    showLoading = function () {
-        $('#loadingModal').modal({backdrop: 'static', keyboard: false});
-    }
-    //隐藏掉loading框
-    hideLoading = function () {
-        $('#loadingModal').modal('hide');
-    }
-
-    function post_data() {
-        if (isClick) {
-            showLoading();
-            isClick = false;
-            setTimeout(function () {
-                onload();
-            }, 1000);//一秒内不能重复点击
-
-            setTimeout(function () {
-                isClick = true;
-            }, 1000);//一秒内不能重复点击
-        } else {
-            return;
-        }
-        return false;
-    }
-
-    var linhaTemp = [];
-    var maquinasTemp = [];
-
-
-    var renderer = new THREE.WebGLRenderer();
-
-    //botao luminosidade
-    function onButtonClickLuminosidade(event) {
-        if (luzAcesa.value % 2 != 0) acenderLuz(); else apagarLuz();
-    }
-
     var scene;
-
     scene = new THREE.Scene();
-    var target = new THREE.Object3D();
-    target.position = new THREE.Vector3(5, 0, 0);
-    var camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
+
+    function main() {
+        var direction = new THREE.DirectionalLight(0xffffff);
+        scene.add(direction);
+        // var textureLoader = new THREE.TextureLoader();
+        // var texture = textureLoader.load('img/0.jpg');
+        scene.background = new THREE.Color('#cdd1d0');
+        var group1 = new THREE.Group();
+        var group2 = new THREE.Group();
+        var group3 = new THREE.Group();
+        group1.position.set(-40, 0, -105);
+        group2.position.set(-40, 0, -25);
+        group3.position.set(+10, 0, -85);
+        var AllGroup = new THREE.Group();
+        AllGroup.add(group1, group2, group3);
+        scene.add(AllGroup);
+        var axesHelper = new THREE.AxesHelper(500);
+        var directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
+        directionalLight.position.set(50, 250, 500);
+        scene.add(directionalLight);
+        var directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight2.position.set(-400, -400, -400);
+        scene.add(directionalLight2);
+        var ambient = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambient);
 
 
-    var set_camera_init = function () {
-        camera.position.z = 300;
-        camera.position.y = 400;
-        camera.position.x = 10;
     }
 
-    var animate = function () {
-        requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-        renderer.setSize( 840, 510 );
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    var k = width / height;
+    var s = 100;
+    var camera = new THREE.PerspectiveCamera(60, width / height, 1, 1000);
 
-    };
+    camera.position.set(260, 40, 246);
+    camera.lookAt(scene.position);
+    var renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(width, height);
+    renderer.setClearColor(0x409EFF, 1);
+    document.body.appendChild(renderer.domElement);
+    var labelRenderer = new THREE.CSS2DRenderer();
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0';
+    labelRenderer.domElement.style.pointerEvents = 'none';
+    document.body.appendChild(labelRenderer.domElement);
+    var renderPass = new THREE.RenderPass(scene, camera);
+    var OutlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
+    OutlinePass.visibleEdgeColor = new THREE.Color(0, 1, 0);
+    OutlinePass.hiddenEdgeColor = new THREE.Color(0, 1, 0);
+    OutlinePass.edgeThickness = 3.0;
+    var composer = new THREE.EffectComposer(renderer);
+    composer.addPass(renderPass);
+    composer.addPass(OutlinePass);
+    var FXAAShaderPass = new THREE.ShaderPass(THREE.FXAAShader);
+    FXAAShaderPass.renderToScreen = true;
+    FXAAShaderPass.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+    composer.addPass(FXAAShaderPass);
+    var clock = new THREE.Clock();
+    var FPS = 30;
+    var T = 1 / FPS;
+    var timeS = 0;
+    var i = 0;
+    scene.rotateY(-0.3);
 
-    var COMPRIMENTO_FABRICA = 80;
-    var LARGURA_FABRICA = 40;
+    function render() {
+        i += 1;
+        if (i < 300) {
+            scene.rotateY(0.001)
+        }
+        requestAnimationFrame(render);
+        var deltaT = clock.getDelta();
+        timeS = timeS + deltaT;
+        if (timeS > T) {
+            composer.render();
+            labelRenderer.render(scene, camera);
+            timeS = 0
+        }
+    }
+
+    main();
+    render();
+    var tally_l = 19;
+    var tally_w = 10;
+    var rows = $("#row").val();
+    var lines = $("#lines").val();
+    var layer = $("#shelf_layer").val();
+    var zu = $("#zu").val();
+    var sort_l = 10;
+    var sort_w = 10;
     var geometry = new THREE.Geometry();
+
+    var group = new THREE.Group();
+    var group1 = new THREE.Group();
+    var group2 = new THREE.Group();
+    var group3 = new THREE.Group();
+    var group4 = new THREE.Group();
+    var group5 = new THREE.Group();
+    var group6 = new THREE.Group();
+
+    var echarts1 = new THREE.Group();
+    var echarts2 = new THREE.Group();
+    var echarts3 = new THREE.Group();
+    var echarts4 = new THREE.Group();
     //创建立方体的顶点
     var vertices = [
-        new THREE.Vector3(1, 1, 1), //v0
-        new THREE.Vector3(-1, 1, 1), //v1
-        new THREE.Vector3(-1, -1, 1), //v2
-        new THREE.Vector3(1, -1, 1), //v3
-        new THREE.Vector3(1, -1, -1), //v4
-        new THREE.Vector3(1, 1, -1), //v5
-        new THREE.Vector3(-1, 1, -1), //v6
-        new THREE.Vector3(-1, -1, -1) //v7
+        new THREE.Vector3(2, 2, 2), //v0
+        new THREE.Vector3(-2, 2, 2), //v1
+        new THREE.Vector3(-2, -2, 2), //v2
+        new THREE.Vector3(2, -2, 2), //v3
+        new THREE.Vector3(2, -2, -2), //v4
+        new THREE.Vector3(2, 2, -2), //v5
+        new THREE.Vector3(-2, 2, -2), //v6
+        new THREE.Vector3(-2, -2, -2) //v7
     ];
 
     geometry.vertices = vertices;
@@ -558,42 +664,58 @@
         new THREE.Face3(3, 2, 7),
         new THREE.Face3(3, 7, 4)
     ];
-    var tally_l = 19;
-    var tally_w = 10;
-    var rows = 10;
-    var lines = 10;
-    var layer = 5;
-    var zu = 3;
-    var sort_l = 10;
-    var sort_w = 10;
 
-    function onload() {
-        var storageNum = $("#storageNum").val();
-        var height = $("#height").val();
-        var forklift_channel = $("#forklift_channel").val();
-        var shelf_space = $("#shelf_space").val();
-        var shelf_height = $("#shelf_height").val();
-        $.post("/getStorage", {
-            "storageNum": storageNum,
-            "height": height,
-            "forklift_channel": forklift_channel,
-            "shelf_space": shelf_space,
-            "shelf_height": shelf_height,
-        }, function (result) {
-            var d = result.rows[0];
-            rows = parseInt(d.row / 3);
-            lines = parseInt(d.line);
-            layer = parseInt(d.layer);
-            scene = new THREE.Scene();
+    function footerStyle(column) {
+        return {
+//         	    userBalance: {
+//         	        classes: 'class'
+//         	    },
+            userBalance: {
+                css: {color: 'red', 'font-weight': 'normal'}
+            }
+        }[column.field]
+    };
+
+    function post_data() {
+        rows = $("#row").val();
+        lines = $("#lines").val();
+        layer = $("#shelf_layer").val();
+        zu = $("#zu").val();
+        var shelf_type = $("#shelf_type option:selected").val();
+        if (shelf_type === "自动化货架存储区") {
+            scene.remove(group3);
+            scene.remove(echarts1);
+            drawStorage();
+            initEcharts();
+        } else if (shelf_type === "横梁货架存储区") {
+            scene.remove(group4);
+            scene.remove(echarts2);
+            drawStorage1();
+            initEcharts1();
+        } else if (shelf_type === "隔板货架存储区") {
+            scene.remove(group5);
+            scene.remove(echarts3);
+            initEcharts2();
+            drawStorage2();
+            initEcharts2();
+        } else if (shelf_type === "平面地堆存储区") {
+            scene.remove(group6);
+            scene.remove(echarts4);
+            drawStorage3();
+            initEcharts3();
+        }
 
 
-        });
+    }
+
+    function post_data1() {
+
         var transportNum = $("#transportNum1").val();
         var carlength = $("#carLength option:selected").val();
         var batch = $("#batch").val();
         var tally_channel = $("#tally_channel").val();
         var tray_clearance = $("#tray_clearance").val();
-        var utilization = $("#utilization1").val();
+        var utilization = 80;
         var tallyEmpCapacity = $("#tallyEmpCapacity").val();
         var tallyTime = $("#tallyTime").val();
         var goods_num = $("#goods_num1").val();
@@ -610,14 +732,19 @@
         }, function (result) {
             var d = result.rows[0];
             tally_l = parseInt(d.tally_transverse);
-            tally_w = parseInt(d.tally_longitudinal)
+            tally_w = parseInt(d.tally_longitudinal);
 
+            deleteGroup();
+
+            drawTally();
         });
+    }
+
+    function post_data2() {
+
         var batch = $("#batch1").val();
         var orderLine = $("#orderLine").val();
         var transportNum = $("#sortingNum").val();
-
-        // var sortingTime = $("#sortingTime").val();
         var tally_channel = $("#tally_channel1").val();
         var tray_clearance = $("#tray_clearance1").val();
         var sort_type = $("#sort_type option:selected").val();
@@ -636,303 +763,618 @@
             var d = result.rows[0];
             sort_l = parseInt(d.tally_transverse);
             sort_w = parseInt(d.tally_longitudinal)
-            main();
-            hideLoading();
+            scene.remove(group1);
+            drawSort();
         });
-        // $('#bootstrap-table1').bootstrapTable({
-        //     url:"/putawayOrder?transportNum="+transportNum,
-        //     method: 'post',
-        //     showFooter: true,
-        //     showSearch: false,
-        //     showRefresh: false,
-        //     showToggle: false,
-        //     showColumns: false,
-        //     pagination: true,
-        //     sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
-        //     pageNumber:1,                       //初始化加载第一页，默认第一页
-        //     pageSize: 10,                       //每页的记录行数（*）
-        //     pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
-        //     footerStyle: footerStyle,
-        //     columns: [{
-        //         checkbox: true
-        //     },
-        //         {
-        //             field: 'time',
-        //             title: '时间'
-        //         },
-        //         {
-        //             field: 'order_code',
-        //             title: '订单编码'
-        //         },
-        //
-        //         {
-        //             field: 'goods_code',
-        //             title: '物料编码'
-        //         },
-        //         {
-        //             field: 'goods_num',
-        //             title: '物料量'
-        //         }]
-        // });
-        // $('#bootstrap-table2').bootstrapTable({
-        //     url:"/putawayList?transportNum="+transportNum,
-        //     method: 'post',
-        //     showFooter: true,
-        //     showSearch: false,
-        //     showRefresh: false,
-        //     showToggle: false,
-        //     showColumns: false,
-        //     pagination: true,
-        //     sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
-        //     pageNumber:1,                       //初始化加载第一页，默认第一页
-        //     pageSize: 10,                       //每页的记录行数（*）
-        //     pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
-        //     footerStyle: footerStyle,
-        //     columns: [{
-        //         checkbox: true
-        //     },
-        //         {
-        //             field: 'time',
-        //             title: '时间'
-        //         },
-        //         {
-        //             field: 'empNo',
-        //             title: '员工编号'
-        //         },
-        //         {
-        //             field: 'empStatus',
-        //             title: '工作状态'
-        //         }]
-        // });
-        // $('#bootstrap-table3').bootstrapTable({
-        //     url:"/putawayEmp?transportNum="+transportNum,
-        //     method: 'post',
-        //     showFooter: true,
-        //     showSearch: false,
-        //     showRefresh: false,
-        //     showToggle: false,
-        //     showColumns: false,
-        //     pagination: true,
-        //     sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
-        //     pageNumber:1,                       //初始化加载第一页，默认第一页
-        //     pageSize: 10,                       //每页的记录行数（*）
-        //     pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
-        //     footerStyle: footerStyle,
-        //     columns: [{
-        //         checkbox: true
-        //     },
-        //         {
-        //             field: 'time',
-        //             title: '时间'
-        //         },
-        //         {
-        //             field: 'empStatus',
-        //             title: '工作人员数量'
-        //         }]
-        // });
     }
-    function footerStyle(column) {
-        return {
-//         	    userBalance: {
-//         	        classes: 'class'
-//         	    },
-            userBalance: {
-                css: { color: 'red', 'font-weight': 'normal' }
-            }
-        }[column.field]
-    };
-    var draw = function () {
+
+    function deleteGroup() {
+        scene.remove(group);
+    }
+
+    var mesh = [];
+
+    function drawTally() {
+        group = new THREE.Group();
+        var tally_channel = $("#tally_channel").val();
+        var tray_clearance = $("#tray_clearance").val();
         var direction = new THREE.DirectionalLight(0xffffff);
         scene.add(direction);
-
         geometry.faces = faces;
-
         for (var i = 0; i < tally_l; i++) {
             for (var k = 0; k < tally_w; k++) {
-                var b = "#210dcd";
+                var b = "#6c737b";
                 var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
-                sphere.position.set(-5 * rows * zu - i * 2.5, 0, -48 + k * 9);
+                sphere.position.set(-10 * rows * zu - i * 3 * tray_clearance, 0, -48 + k * tally_channel * 3);
                 sphere.geometry.verticesNeedUpdate = true;
                 sphere.geometry.normalsNeedUpdate = true;
-                scene.add(sphere);
+                group.add(sphere);
+
             }
         }
+        scene.add(group);
+    }
 
+    drawTally();
+
+    function drawSort() {
+        group1 = new THREE.Group();
+        var tally_channel = $("#tally_channel1").val();
+        var tray_clearance = $("#tray_clearance1").val();
         for (var i = 0; i < sort_l; i++) {
             for (var k = 0; k < sort_w; k++) {
                 var b = "#210dcd";
                 var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
-                sphere.position.set(zu * rows * 10 + 200 + i * 2.5, 0, -48 + k * 9);
+                sphere.position.set(zu * rows * 10 + 100 + i * 3 * tray_clearance, 0, -48 + k * 3 * tally_channel);
                 sphere.geometry.verticesNeedUpdate = true;
                 sphere.geometry.normalsNeedUpdate = true;
-                scene.add(sphere);
+                group1.add(sphere);
             }
         }
+        scene.add(group1);
+    }
+
+    // drawSort();
+    var forklift_channel;
+
+
+    function drawStorage() {
+        group3 = new THREE.Group();
+        var shelf_height = parseInt($("#shelf_height").val());
+        var shelf_width = parseInt($("#shelf_width").val());
+        var shelf_length = parseInt($("#shelf_length").val());
+        forklift_channel = parseInt($("#shelf_channel").val()) * 0.5;
+        var shelf_space = parseInt($("#shelf_space").val());
+
+        lines = parseInt($("#lines").val());
 
         for (var z = 0; z < zu; z++) {
             for (var i = 0; i < rows; i++) {
                 for (var j = 0; j < layer; j++) {
                     for (var k = 0; k < lines; k++) {
                         var b = "#210dcd";
-                        if (j > 50) {
-                            b = "#c5cdc5"
-                        }
                         var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
-                        sphere.position.set(-58 + i * 15 + z * rows * 20, j * 5 - 3, -48 + k * 5);
+                        sphere.position.set(-60 + shelf_width * 2.5 + i * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space), j * 5 * shelf_height - 3, -48 + k * 5 * shelf_length);
                         sphere.geometry.verticesNeedUpdate = true;
                         sphere.geometry.normalsNeedUpdate = true;
-                        scene.add(sphere);
+                        group3.add(sphere);
                         var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
-                        sphere.position.set(-58 + i * 15 + z * rows * 20 + 5, j * 5 - 3, -48 + k * 5);
+                        sphere.position.set(-60 + shelf_width * 2.5 + i * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (shelf_width + shelf_space) * 5, j * 5 * shelf_height - 3, -48 + k * 5 * shelf_length);
                         sphere.geometry.verticesNeedUpdate = true;
                         sphere.geometry.normalsNeedUpdate = true;
-                        scene.add(sphere);
+                        group3.add(sphere);
+
                     }
                 }
+
             }
+
             for (var m = 0; m < rows; m++) {
                 for (var i = 0; i < lines + 1; i++) {
                     for (var j = 0; j < layer; j++) {
                         var geometry1 = new THREE.Geometry();
-                        geometry1.vertices.push(new THREE.Vector3(-50 + m * 15 + z * rows * 20, -5 + j * 5, -50 + i * 5));
-                        geometry1.vertices.push(new THREE.Vector3(-50 + m * 15 + z * rows * 20, -5 + j * 5, -50 + i * 5));
-                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 15 + z * rows * 20, -5 + j * 5, -50 + i * 5));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + shelf_width * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
                         //使用Line方法将线初始化
                         var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
                         //将线添加到场景
-                        scene.add(line);
+                        group3.add(line);
+
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (shelf_width + shelf_space) * 5 + shelf_width * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group3.add(line);
                     }
                 }
 
             }
+
+
             for (var m = 0; m < rows; m++) {
-                for (var j = 0; j < layer; j++) {
-                    var geometry1 = new THREE.Geometry();
-                    geometry1.vertices.push(new THREE.Vector3(-60 + m * 15 + z * rows * 20, -5 + j * 5, -50));
-                    geometry1.vertices.push(new THREE.Vector3(-60 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
-                    geometry1.vertices.push(new THREE.Vector3(-60 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
-                    //使用Line方法将线初始化
-                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
-                    //将线添加到场景
-                    scene.add(line);
-                    var geometry1 = new THREE.Geometry();
-                    geometry1.vertices.push(new THREE.Vector3(-55 + m * 15 + z * rows * 20, -5 + j * 5, -50));
-                    geometry1.vertices.push(new THREE.Vector3(-55 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
-                    geometry1.vertices.push(new THREE.Vector3(-55 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
-                    //使用Line方法将线初始化
-                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
-                    //将线添加到场景
-                    scene.add(line);
-                    var geometry1 = new THREE.Geometry();
-                    geometry1.vertices.push(new THREE.Vector3(-50 + m * 15 + z * rows * 20, -5 + j * 5, -50));
-                    geometry1.vertices.push(new THREE.Vector3(-50 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
-                    geometry1.vertices.push(new THREE.Vector3(-50 + m * 15 + z * rows * 20, -5 + j * 5, -50 + lines * 5));
-                    //使用Line方法将线初始化
-                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
-                    //将线添加到场景
-                    scene.add(line);
+                for (var i = 0; i < lines + 1; i++) {
+                    for (var j = 0; j < layer; j++) {
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -50));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-60 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group3.add(line);
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + shelf_width * 5, -5 + j * 5 * shelf_height, -50));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + shelf_width * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-55 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group3.add(line);
+
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -50));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-55 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group3.add(line);
+
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (2 * shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -50));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (2 * shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-50 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group3.add(line);
+                    }
                 }
             }
         }
+        scene.add(group3);
     }
 
-    var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
+    function drawStorage1() {
+        group4 = new THREE.Group();
+        var shelf_height = parseInt($("#shelf_height").val());
+        var shelf_width = parseInt($("#shelf_width").val());
+        var shelf_length = parseInt($("#shelf_length").val());
+        forklift_channel = parseInt($("#shelf_channel").val()) * 0.5;
+        var shelf_space = parseInt($("#shelf_space").val());
+
+        lines = parseInt($("#lines").val());
+
+        for (var z = 0; z < zu; z++) {
+            for (var i = 0; i < rows; i++) {
+                for (var j = 0; j < layer; j++) {
+                    for (var k = 0; k < lines; k++) {
+                        var b = "#0dcd20";
+                        var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                        sphere.position.set(-60 + shelf_width * 2.5 + i * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space), j * 5 * shelf_height - 3, -62 - k * 5 * shelf_length);
+                        sphere.geometry.verticesNeedUpdate = true;
+                        sphere.geometry.normalsNeedUpdate = true;
+                        group4.add(sphere);
+                        var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                        sphere.position.set(-60 + shelf_width * 2.5 + i * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (shelf_width + shelf_space) * 5, j * 5 * shelf_height - 3, -62 - k * 5 * shelf_length);
+                        sphere.geometry.verticesNeedUpdate = true;
+                        sphere.geometry.normalsNeedUpdate = true;
+                        group4.add(sphere);
+
+                    }
+                }
+
+            }
+
+            for (var m = 0; m < rows; m++) {
+                for (var i = 0; i < lines + 1; i++) {
+                    for (var j = 0; j < layer; j++) {
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + shelf_width * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group4.add(line);
+
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (shelf_width + shelf_space) * 5 + shelf_width * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group4.add(line);
+                    }
+                }
+
+            }
 
 
+            for (var m = 0; m < rows; m++) {
+                for (var i = 0; i < lines + 1; i++) {
+                    for (var j = 0; j < layer; j++) {
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -60));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-60 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group4.add(line);
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + shelf_width * 5, -5 + j * 5 * shelf_height, -60));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + shelf_width * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-55 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group4.add(line);
 
-    var sphere1 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -60));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-55 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group4.add(line);
 
-
-    var sphere2 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
-
-
-    var sphere3 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
-
-
-    var sphere4 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
-
-
-    var sphere5 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
-
-
-    var sphere6 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
-
-
-    var sphere7 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
-
-
-    var sphere8 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
-
-    //绘制函数
-    function  onset(){
-        sphere.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
-        sphere.geometry.verticesNeedUpdate = true;
-        sphere.geometry.normalsNeedUpdate = true;
-        scene.add(sphere);
-        sphere1.position.set(-58 +randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
-        sphere1.geometry.verticesNeedUpdate = true;
-        sphere1.geometry.normalsNeedUpdate = true;
-        scene.add(sphere1);
-        sphere2.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
-        sphere2.geometry.verticesNeedUpdate = true;
-        sphere2.geometry.normalsNeedUpdate = true;
-        scene.add(sphere2);
-        sphere3.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
-        sphere3.geometry.verticesNeedUpdate = true;
-        sphere3.geometry.normalsNeedUpdate = true;
-        scene.add(sphere3);
-        sphere4.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
-        sphere4.geometry.verticesNeedUpdate = true;
-        sphere4.geometry.normalsNeedUpdate = true;
-        scene.add(sphere4);
-        sphere5.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
-        sphere5.geometry.verticesNeedUpdate = true;
-        sphere5.geometry.normalsNeedUpdate = true;
-        scene.add(sphere5);
-        sphere6.position.set(-58 + randomNum(1, rows) * 15 + randomNum(0, zu) * rows * 20, 0, -48 + randomNum(1, lines) * 5);
-        sphere6.geometry.verticesNeedUpdate = true;
-        sphere6.geometry.normalsNeedUpdate = true;
-        scene.add(sphere6);
-        sphere7.position.set(-5 * rows * zu - randomNum(0, tally_l) * 2.5, 0, -46 + randomNum(0, tally_w) * 9);
-        sphere7.geometry.verticesNeedUpdate = true;
-        sphere7.geometry.normalsNeedUpdate = true;
-        scene.add(sphere7);
-        sphere8.position.set(-5 * rows * zu - randomNum(0, tally_l) * 2.5, 0, -46 + randomNum(0, tally_w) * 9);
-        sphere8.geometry.verticesNeedUpdate = true;
-        sphere8.geometry.normalsNeedUpdate = true;
-        scene.add(sphere8);
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (2 * shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -60));
+                        geometry1.vertices.push(new THREE.Vector3(-60 + m * 10 * (forklift_channel + shelf_width + shelf_space) + z * rows * 12 * (forklift_channel + shelf_width + shelf_space) + (2 * shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-50 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group4.add(line);
+                    }
+                }
+            }
+        }
+        scene.add(group4);
     }
 
-    //设计一个阳台
+    function drawStorage2() {
+        group5 = new THREE.Group();
+        var shelf_height = parseInt($("#shelf_height").val());
+        var shelf_width = parseInt($("#shelf_width").val());
+        var shelf_length = parseInt($("#shelf_length").val());
+        forklift_channel = parseInt($("#shelf_channel").val()) * 0.5;
+        var shelf_space = parseInt($("#shelf_space").val());
 
-    var ALTURA_BALCAO = 6;
-    var LARGURA_BALCAO = 2;
+        lines = parseInt($("#lines").val());
 
-    var desenharBalcoes = function () {
-        desenhaBalcao(COMPRIMENTO_FABRICA, ALTURA_BALCAO, LARGURA_BALCAO, 19, -17, LARGURA_FABRICA / 2, Math.PI / 2); //balcao da direita
-        desenhaBalcao(COMPRIMENTO_FABRICA, ALTURA_BALCAO, LARGURA_BALCAO, -19, -17, LARGURA_FABRICA / 2, Math.PI / 2)
+        for (var z = 0; z < zu; z++) {
+            for (var i = 0; i < rows; i++) {
+                for (var j = 0; j < layer; j++) {
+                    for (var k = 0; k < lines; k++) {
+                        var b = "#0dcd43";
+                        var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                        sphere.position.set(-120 - shelf_width * 2.5 - i * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space), j * 5 * shelf_height - 3, -48 + k * 5 * shelf_length);
+                        sphere.geometry.verticesNeedUpdate = true;
+                        sphere.geometry.normalsNeedUpdate = true;
+                        group5.add(sphere);
+                        var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                        sphere.position.set(-120 - shelf_width * 2.5 - i * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (shelf_width + shelf_space) * 5, j * 5 * shelf_height - 3, -48 + k * 5 * shelf_length);
+                        sphere.geometry.verticesNeedUpdate = true;
+                        sphere.geometry.normalsNeedUpdate = true;
+                        group5.add(sphere);
+
+                    }
+                }
+
+            }
+
+            for (var m = 0; m < rows; m++) {
+                for (var i = 0; i < lines + 1; i++) {
+                    for (var j = 0; j < layer; j++) {
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - shelf_width * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group5.add(line);
+
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (shelf_width + shelf_space) * 5 - shelf_width * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group5.add(line);
+                    }
+                }
+
+            }
+
+
+            for (var m = 0; m < rows; m++) {
+                for (var i = 0; i < lines + 1; i++) {
+                    for (var j = 0; j < layer; j++) {
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -50));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-60 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group5.add(line);
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - shelf_width * 5, -5 + j * 5 * shelf_height, -50));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - shelf_width * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-55 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group5.add(line);
+
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -50));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-55 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group5.add(line);
+
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (2 * shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -50));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (2 * shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -50 + i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-50 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group5.add(line);
+                    }
+                }
+            }
+        }
+        scene.add(group5);
     }
 
-    var desenhaBalcao = function (comprimento, largura, altura, x, y, z, rotX) {
-        var geometry_balcao = new THREE.BoxGeometry(comprimento, largura, altura);
-        var material = new THREE.MeshLambertMaterial({color: 0x993300});
-        geometry_balcao.rotateY(Math.PI / 2);
-        geometry_balcao.translate(x, y, z);
-        var linha = new THREE.Mesh(geometry_balcao, material);
-        scene.add(linha);
+    function drawStorage3() {
+        group6 = new THREE.Group();
+        var shelf_height = parseInt($("#shelf_height").val());
+        var shelf_width = parseInt($("#shelf_width").val());
+        var shelf_length = parseInt($("#shelf_length").val());
+        forklift_channel = parseInt($("#shelf_channel").val()) * 0.5;
+        var shelf_space = parseInt($("#shelf_space").val());
+        lines = parseInt($("#lines").val());
+        for (var z = 0; z < zu; z++) {
+            for (var i = 0; i < rows; i++) {
+                for (var j = 0; j < layer; j++) {
+                    for (var k = 0; k < lines; k++) {
+                        var b = "#0da7cd";
+                        var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                        sphere.position.set(-120 - shelf_width * 2.5 - i * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space), j * 5 * shelf_height - 3, -62 - k * 5 * shelf_length);
+                        sphere.geometry.verticesNeedUpdate = true;
+                        sphere.geometry.normalsNeedUpdate = true;
+                        group6.add(sphere);
+                        var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                        sphere.position.set(-120 - shelf_width * 2.5 - i * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (shelf_width + shelf_space) * 5, j * 5 * shelf_height - 3, -62 - k * 5 * shelf_length);
+                        sphere.geometry.verticesNeedUpdate = true;
+                        sphere.geometry.normalsNeedUpdate = true;
+                        group6.add(sphere);
+
+                    }
+                }
+
+            }
+
+            for (var m = 0; m < rows; m++) {
+                for (var i = 0; i < lines + 1; i++) {
+                    for (var j = 0; j < layer; j++) {
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - shelf_width * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group6.add(line);
+
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (shelf_width + shelf_space) * 5 - shelf_width * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group6.add(line);
+                    }
+                }
+
+            }
+
+
+            for (var m = 0; m < rows; m++) {
+                for (var i = 0; i < lines + 1; i++) {
+                    for (var j = 0; j < layer; j++) {
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -60));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space), -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-60 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group6.add(line);
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - shelf_width * 5, -5 + j * 5 * shelf_height, -60));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - shelf_width * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-55 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group6.add(line);
+
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -60));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-55 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group6.add(line);
+
+                        var geometry1 = new THREE.Geometry();
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (2 * shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -60));
+                        geometry1.vertices.push(new THREE.Vector3(-120 - m * 10 * (forklift_channel + shelf_width + shelf_space) - z * rows * 12 * (forklift_channel + shelf_width + shelf_space) - (2 * shelf_width + shelf_space) * 5, -5 + j * 5 * shelf_height, -60 - i * 5 * shelf_length));
+                        // geometry1.vertices.push(new THREE.Vector3(-50 + m * 6 * forklift_channel + z * rows * 20, -5 + j * 2 * shelf_height, -50 +  i * 5));
+                        //使用Line方法将线初始化
+                        var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                        //将线添加到场景
+                        group6.add(line);
+                    }
+                }
+            }
+        }
+        scene.add(group6);
+    }
+    var md1 = 0;
+    var md2 = 0;
+    function drawShelf() {
+
+        var shelf_height = parseInt($("#shelf_height").val());
+        var shelf_width = parseInt($("#shelf_width").val());
+        var shelf_length = parseInt($("#shelf_length").val());
+        geometry.faces = faces;
+        $.post("/getShelfPoint", {
+            "shelf_width": shelf_width,
+            "shelf_length": shelf_length,
+            "shelf_height": shelf_height
+        }, function (result) {
+            var d = result.rows;
+            var lines = [];
+            var m = 1;
+            for (var i = 0; i < d.length; i++) {
+                if (md1 < d[i].x) {
+                    md1 = d[i].x;
+                }
+                if (md2 < d[i].y) {
+                    md2 = d[i].y;
+                }
+                lines.push(d[i]);
+                if (m == 8) {
+                    var geometry1 = new THREE.Geometry();
+                    geometry1.vertices.push(new THREE.Vector3(lines[0].x * 10, lines[0].z * 10, lines[0].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[1].x * 10, lines[1].z * 10, lines[1].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[2].x * 10, lines[2].z * 10, lines[2].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[3].x * 10, lines[3].z * 10, lines[3].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[4].x * 10, lines[4].z * 10, lines[4].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[5].x * 10, lines[5].z * 10, lines[5].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[6].x * 10, lines[6].z * 10, lines[6].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[7].x * 10, lines[7].z * 10, lines[7].y * 10));
+                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                    scene.add(line);
+                    var geometry1 = new THREE.Geometry();
+                    geometry1.vertices.push(new THREE.Vector3(lines[1].x * 10, lines[1].z * 10, lines[1].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[6].x * 10, lines[6].z * 10, lines[6].y * 10));
+                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                    scene.add(line);
+                    var geometry1 = new THREE.Geometry();
+                    geometry1.vertices.push(new THREE.Vector3(lines[2].x * 10, lines[2].z * 10, lines[2].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[7].x * 10, lines[7].z * 10, lines[7].y * 10));
+                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                    scene.add(line);
+                    var geometry1 = new THREE.Geometry();
+                    geometry1.vertices.push(new THREE.Vector3(lines[0].x * 10, lines[0].z * 10, lines[0].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[3].x * 10, lines[3].z * 10, lines[3].y * 10));
+                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                    scene.add(line);
+                    var geometry1 = new THREE.Geometry();
+                    geometry1.vertices.push(new THREE.Vector3(lines[0].x * 10, lines[0].z * 10, lines[0].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[5].x * 10, lines[5].z * 10, lines[5].y * 10));
+                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                    scene.add(line);
+                    var geometry1 = new THREE.Geometry();
+                    geometry1.vertices.push(new THREE.Vector3(lines[4].x * 10, lines[4].z * 10, lines[7].y * 10));
+                    geometry1.vertices.push(new THREE.Vector3(lines[7].x * 10, lines[7].z * 10, lines[4].y * 10));
+                    var line = new THREE.Line(geometry1, new THREE.MeshBasicMaterial({color: '#8B668B'}));
+                    scene.add(line);
+
+                    m = 0;
+                    var m1 = 0;
+                    var m2 = 0;
+                    var m3 = 0;
+                    for (var l = 0; l < lines.length; l++) {
+                        m1 = m1 + lines[l].x * 10;
+                        m2 = m2 + lines[l].z * 10;
+                        m3 = m3 + lines[l].y * 10;
+                    }
+                    var b = "#210dcd";
+                    var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: b}));
+                    sphere.position.set(m1 / 8, m2 / 8, m3 / 8);
+                    sphere.geometry.verticesNeedUpdate = true;
+                    sphere.geometry.normalsNeedUpdate = true;
+                    scene.add(sphere);
+                    lines = [];
+                }
+                m++;
+            }
+
+        });
     }
 
-    /* 主墙端部*/
+    drawShelf();
 
-    var main = function () {
-        scene.background = new THREE.Color('#cdd1d0');
+    // 获取与射线相交的对象数组
+    function getIntersects(event) {
+        event.preventDefault();
+        console.log("event.clientX:" + event.clientX)
+        console.log("event.clientY:" + event.clientY)
+        console.log(scene.children)
+        // 声明 raycaster 和 mouse 变量
+        var raycaster = new THREE.Raycaster();
+        var mouse = new THREE.Vector2();
+
+        // 通过鼠标点击位置,计算出 raycaster 所需点的位置,以屏幕为中心点,范围 -1 到 1
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        //通过鼠标点击的位置(二维坐标)和当前相机的矩阵计算出射线位置
+        raycaster.setFromCamera(mouse, camera);
+
+        // 获取与射线相交的对象数组，其中的元素按照距离排序，越近的越靠前
+        var intersects = raycaster.intersectObjects(scene.children);
+        console.log(intersects)
+        //返回选中的对象
+        return intersects;
+    }
+
+    // 改变对象材质属性
+    function changeMaterial(object) {
+
+        var material = new THREE.MeshLambertMaterial({
+            color: 0xffffff * Math.random(),
+            transparent: object.material.transparent ? false : true,
+            opacity: 0.8
+        });
+        object.material = material;
+    }
+
+    var raycaster = new THREE.Raycaster()
+    initControls();
+    //用户交互插件 鼠标左键按住旋转，右键按住平移，滚轮缩放
+    var controls;
+
+    function initControls() {
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        // 如果使用animate方法时，将此函数删除
+        //controls.addEventListener( 'change', render );
+        // 使动画循环使用时阻尼或自转 意思是否有惯性
+        controls.enableDamping = true;
+        //动态阻尼系数 就是鼠标拖拽旋转灵敏度
+        controls.dampingFactor = 1;
+        //是否可以缩放
+        controls.enableZoom = true;
+        //是否自动旋转
+        controls.autoRotate = false;
+        // controls.autoRotateSpeed = 0.5;
+        //设置相机距离原点的最远距离
+        controls.minDistance = 0.01;
+        //设置相机距离原点的最远距离
+        controls.maxDistance = 20000;
+        //是否开启右键拖拽
+        controls.enablePan = true;
+    }
+
+    var label = null;
+    renderer.localClippingEnabled = true;
+    var PlaneArr = [new THREE.Plane(new THREE.Vector3(-1, 0, 0), 1), new THREE.Plane(new THREE.Vector3(0, 0, -1), 0)];
+    let lastMesh = null;
 
 
+    window.onresize = function () {
         renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 800);
-        camera.position.set(-120, 120, 130);
-
+        k = window.innerWidth / window.innerHeight;
+        camera.left = -s * k;
+        camera.right = s * k;
+        camera.top = s;
+        camera.bottom = -s;
+        camera.updateProjectionMatrix();
         cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
         cameraControls.addEventListener('change', renderer);
         window.addEventListener('resize', function () {
@@ -942,93 +1384,73 @@
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
         });
+        location.reload()
+    };
+    scene.background = new THREE.Color('#cdd1d0');
 
-        var controls = new THREE.OrbitControls(camera, renderer.domElement);
-        const loader = new THREE.TextureLoader();
-        loader.anisotropy = renderer.capabilities.getMaxAnisotropy();
-        draw();
-        set_camera_init();
-        animate();
-        // onset();
-        // animation();
-        // animation1();
-        // animation2();
-        // animation3();
-        // animation4();
-        // animation5();
-        // animation6();
-        // animation7();
-        // animation8();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 800);
+    camera.position.set(-120, 120, 130);
 
-    }
 
-    function animation() {
-        setTimeout(function () {
-            onset();
-        }, 5000);//一秒内不能重复点击
-        if (sphere.position.z > -48) {
-            sphere.position.z += 1;
+    //产生动画
+    var step = 0;
+
+    function runMove() {
+        if (step == 0) {
+            step = 0.1;
         } else {
-            sphere.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
+            step = 0;
         }
-        renderer.render(scene, camera);
-        requestAnimationFrame(animation);
     }
 
-    function animation1() {
-        if (sphere1.position.z < 0) {
-            sphere1.position.z += 1;
-        } else {
-            sphere1.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
-        }// mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
-        renderer.render(scene, camera);
-        requestAnimationFrame(animation1);
+    var xfont = 1;
+    var yfont = 0;
+    var shelf_height = parseInt($("#shelf_height").val());
+    var shelf_width = parseInt($("#shelf_width").val());
+    var shelf_length = parseInt($("#shelf_length").val());
+    forklift_channel = parseInt($("#shelf_channel").val());
+    var shelf_space = parseInt($("#shelf_space").val());
+    var MeshGroup = new THREE.Group();
+
+    function initMesh(number) {
+        for (var i = 0; i < number; i++) {
+            var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
+            sphere.position.set(-62 + randomNum(0, (shelf_length + forklift_channel + shelf_width) * zu * lines) * 8, -2, -48 + 5 * randomNum(0, shelf_width * rows));
+            sphere.geometry.verticesNeedUpdate = true;
+            sphere.geometry.normalsNeedUpdate = true;
+            MeshGroup.add(sphere);
+            scene.add(MeshGroup);
+        }
     }
 
-    function animation2() {
-        sphere2.position.x += 0.2;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
-        renderer.render(scene, camera);
-        requestAnimationFrame(animation2);
+    // initMesh(10);
+    var sphere = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: "#210dcd"}));
+    sphere.position.set(0, 20, -5);
+    sphere.geometry.verticesNeedUpdate = true;
+    sphere.geometry.normalsNeedUpdate = true;
+    scene.add(sphere);
+    var xfont = 1;
+    var yfont = 0;
+
+    function animate() {
+        //物体移动x
+        var posx = sphere.position.x;
+        var posz = sphere.position.y;
+        var posy = sphere.position.z;
+        if (posz>0){
+            sphere.position.y -=step;
+        }else if (posx<md1){
+            sphere.position.x +=step;
+        }else if(posy<md2){
+            sphere.position.z +=step;
+        }
+        window.requestAnimationFrame(animate);
     }
 
-    function animation3() {
-        sphere3.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
-        renderer.render(scene, camera);
-        requestAnimationFrame(animation3);
-    }
+    setInterval(animate, 500);
 
-    function animation4() {
-        sphere4.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
-        renderer.render(scene, camera);
-        requestAnimationFrame(animation4);
-    }
-
-    function animation5() {
-        sphere5.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
-        renderer.render(scene, camera);
-        requestAnimationFrame(animation5);
-    }
-
-    function animation6() {
-        sphere6.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
-        renderer.render(scene, camera);
-        requestAnimationFrame(animation6);
-    }
-
-    function animation7() {
-        sphere7.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
-        renderer.render(scene, camera);
-        requestAnimationFrame(animation7);
-    }
-
-    function animation8() {
-        sphere8.position.x += 1;  // mesh就是指的物体，它有一个位置属性position，这个position是一个THREE.Vector3类型变量，所以你要把它向左移动，只需要将x的值不断的减少就可以了。这里我们减去的是1个单位。
-        renderer.render(scene, camera);
-        requestAnimationFrame(animation8);
-    }
-
-
-    main();
 
     function randomNum(minNum, maxNum) {
         switch (arguments.length) {
@@ -1043,11 +1465,539 @@
                 break;
         }
     }
-</script>
-<script>
 
 
+    function getTimeList(hours, step) {
+        var minutes = 60
+        var timeArr = []
+        hours = hours
+        step = step
+
+        for (var i = 0; i < hours; i++) {
+            var str = ''
+            if (i < 10) {
+                str = 0 + '' + i
+            } else {
+                str = '' + i
+            }
+
+            for (var j = 0; j < minutes; j++) {
+                if (j % step == 0) {
+                    var s = j < 10 ? ':' + 0 + '' + j : ':' + j;
+                    s = str + s
+                    timeArr.push(s)
+                }
+            }
+        }
+
+        return timeArr;
+
+    }
+
+    function generateData(count) {
+        var baseValue = Math.random() * 1000;
+        var time = +new Date(2011, 0, 1);
+        var smallBaseValue;
+
+        function next(idx) {
+            smallBaseValue = idx % 30 === 0
+                ? Math.random() * 700
+                : (smallBaseValue + Math.random() * 500 - 250);
+            baseValue += Math.random() * 20 - 10;
+            return Math.max(
+                0,
+                Math.round(baseValue + smallBaseValue) + 3000
+            );
+        }
+
+        var categoryData = [];
+        var valueData = [];
+
+        for (var i = 0; i < count; i++) {
+            categoryData.push(echarts.format.formatTime('yyyy-MM-dd\nhh:mm:ss', time));
+            valueData.push(next(i).toFixed(2));
+            time += 1000;
+        }
+
+        return {
+            categoryData: categoryData,
+            valueData: valueData
+        };
+    }
+
+    function initEcharts() {
+        var shelf_height = parseInt($("#shelf_height").val());
+        var shelf_width = parseInt($("#shelf_width").val());
+        var shelf_length = parseInt($("#shelf_length").val());
+        forklift_channel = parseInt($("#shelf_channel").val()) * 0.5;
+        var shelf_space = parseInt($("#shelf_space").val());
+
+        lines = parseInt($("#lines").val());
+        echarts1 = new THREE.Group();
+        var canvas = document.createElement("canvas");
+        canvas.width = 400;
+        canvas.height = 200;
+        canvas.style.width = 400 + "px";
+        canvas.style.height = 200 + "px";
+        var ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = '#2b2b2b';//填充实体颜色
+        ctx.globalAlpha = .5;
+        ctx.strokeStyle = "#00f88f";//填充边框颜色
+        ctx.lineWidth = 4;
+        ctx.fillRect(0, 0, 400, 200);
+
+        ctx.textAlign = 'center';
+        ctx.font = '30px "微软雅黑 font-weight:bold"';
+        ctx.fillStyle = "#a4f8ec"
+        ctx.globalAlpha = 1;
+        ctx.fillText("高位货架存储区", 200, 40);
+
+        ctx.textAlign = 'center';
+        ctx.font = '24px "微软雅黑 font-weight:bold"';
+        ctx.fillStyle = "#a4f8ec"
+        ctx.globalAlpha = 1;
+        ctx.fillText("---------------------------------------------------------------------------", 10, 60);
+
+
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#75f3e2"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货架类型", 100, 80);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#75f3e2"
+        ctx.globalAlpha = 1;
+        ctx.fillText("面积", 300, 80);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00d7db"
+        ctx.globalAlpha = 1;
+        ctx.fillText("高位货架", 100, 120);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00d7db"
+        ctx.globalAlpha = 1;
+        ctx.fillText("122㎡", 300, 120);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#06676a"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货位数量", 100, 160);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#06676a"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货位层数", 300, 160);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#e3f800"
+        ctx.globalAlpha = 1;
+        ctx.fillText("20000", 100, 190);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00fabb"
+        ctx.globalAlpha = 1;
+        ctx.fillText("5", 300, 190);
+
+        var texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+        var material = new THREE.SpriteMaterial({map: texture});
+        var text = new THREE.Sprite(material);
+        text.scale.set(0.5 * 100, 0.25 * 100, 0.75 * 100);
+        text.position.set(-60 + (shelf_width * 2.5 + rows * 10 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 10 * (forklift_channel + shelf_width + shelf_space)) * 0.5, layer * 5 * shelf_height + 20, -48 + lines * 0.5 * shelf_length);
+
+        echarts1.add(text);
+        //定义线的基本材料，我们可以使用LineBasicMaterial（实线材料）和LineDashedMaterial（虚线材料）
+        var material = new THREE.LineBasicMaterial({color: 0x0000ff});
+        //设置具有几何顶点的几何（Geometry）或缓冲区几何（BufferGeometry）设置顶点位置，看名字就知道了，一个是直接将数据保存在js里面的，另一个是保存在WebGL缓冲区内的，而且肯定保存到WebGL缓冲区内的效率更高
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3(-60 + (shelf_width * 2.5 + rows * 10 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 10 * (forklift_channel + shelf_width + shelf_space)) * 0.5, 0, -48 + lines * 0.5 * shelf_length));
+        geometry.vertices.push(new THREE.Vector3(-60 + (shelf_width * 2.5 + rows * 10 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 10 * (forklift_channel + shelf_width + shelf_space)) * 0.5, layer * 5 * shelf_height + 10, -48 + lines * 0.5 * shelf_length));
+        //使用Line方法将线初始化
+        var line = new THREE.Line(geometry, material);
+        echarts1.add(line);
+        //将线添加到场景
+        scene.add(echarts1);
+
+    }
+
+    function initEcharts1() {
+        echarts2 = new THREE.Group();
+        var shelf_height = parseInt($("#shelf_height").val());
+        var shelf_width = parseInt($("#shelf_width").val());
+        var shelf_length = parseInt($("#shelf_length").val());
+        forklift_channel = parseInt($("#shelf_channel").val()) * 0.5;
+        var shelf_space = parseInt($("#shelf_space").val());
+        lines = parseInt($("#lines").val());
+
+        var canvas = document.createElement("canvas");
+        canvas.width = 400;
+        canvas.height = 200;
+        canvas.style.width = 400 + "px";
+        canvas.style.height = 200 + "px";
+        var ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = '#2b2b2b';//填充实体颜色
+        ctx.globalAlpha = .5;
+        ctx.strokeStyle = "#00f88f";//填充边框颜色
+        ctx.lineWidth = 4;
+        ctx.fillRect(0, 0, 400, 200);
+
+        ctx.textAlign = 'center';
+        ctx.font = '30px "微软雅黑 font-weight:bold"';
+        ctx.fillStyle = "#a4f8ec"
+        ctx.globalAlpha = 1;
+        ctx.fillText("横梁式货架存储区", 200, 40);
+
+        ctx.textAlign = 'center';
+        ctx.font = '24px "微软雅黑 font-weight:bold"';
+        ctx.fillStyle = "#a4f8ec"
+        ctx.globalAlpha = 1;
+        ctx.fillText("---------------------------------------------------------------------------", 10, 60);
+
+
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#75f3e2"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货架类型", 100, 80);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#75f3e2"
+        ctx.globalAlpha = 1;
+        ctx.fillText("面积", 300, 80);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00d7db"
+        ctx.globalAlpha = 1;
+        ctx.fillText("横梁式货架", 100, 120);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00d7db"
+        ctx.globalAlpha = 1;
+        ctx.fillText("122㎡", 300, 120);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#06676a"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货位数量", 100, 160);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#06676a"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货位层数", 300, 160);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#e3f800"
+        ctx.globalAlpha = 1;
+        ctx.fillText("20000", 100, 190);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00fabb"
+        ctx.globalAlpha = 1;
+        ctx.fillText("5", 300, 190);
+
+        var texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+        var material = new THREE.SpriteMaterial({map: texture});
+        var text = new THREE.Sprite(material);
+        text.scale.set(0.5 * 100, 0.25 * 100, 0.75 * 100);
+        text.position.set(-60 + (rows * 10 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 10 * (forklift_channel + shelf_width + shelf_space) + (2 * shelf_width + shelf_space) * 5) * 0.5, 20 + layer * 5 * shelf_height, -60 - lines * 5 * shelf_length);
+
+        echarts2.add(text);
+        //定义线的基本材料，我们可以使用LineBasicMaterial（实线材料）和LineDashedMaterial（虚线材料）
+        var material = new THREE.LineBasicMaterial({color: 0x0000ff});
+        //设置具有几何顶点的几何（Geometry）或缓冲区几何（BufferGeometry）设置顶点位置，看名字就知道了，一个是直接将数据保存在js里面的，另一个是保存在WebGL缓冲区内的，而且肯定保存到WebGL缓冲区内的效率更高
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3(-60 + (rows * 10 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 10 * (forklift_channel + shelf_width + shelf_space) + (2 * shelf_width + shelf_space) * 5) * 0.5, 0, -60 - lines * 5 * shelf_length));
+        geometry.vertices.push(new THREE.Vector3(-60 + (rows * 10 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 10 * (forklift_channel + shelf_width + shelf_space) + (2 * shelf_width + shelf_space) * 5) * 0.5, 15 + layer * 5 * shelf_height, -60 - lines * 5 * shelf_length));
+        //使用Line方法将线初始化
+        var line = new THREE.Line(geometry, material);
+        echarts2.add(line);
+        //将线添加到场景
+        scene.add(echarts2);
+
+    }
+
+    function initEcharts2() {
+        echarts3 = new THREE.Group();
+        var shelf_height = parseInt($("#shelf_height").val());
+        var shelf_width = parseInt($("#shelf_width").val());
+        var shelf_length = parseInt($("#shelf_length").val());
+        forklift_channel = parseInt($("#shelf_channel").val()) * 0.5;
+        var shelf_space = parseInt($("#shelf_space").val());
+        lines = parseInt($("#lines").val());
+
+        var canvas = document.createElement("canvas");
+        canvas.width = 400;
+        canvas.height = 200;
+        canvas.style.width = 400 + "px";
+        canvas.style.height = 200 + "px";
+        var ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = '#2b2b2b';//填充实体颜色
+        ctx.globalAlpha = .5;
+        ctx.strokeStyle = "#00f88f";//填充边框颜色
+        ctx.lineWidth = 4;
+        ctx.fillRect(0, 0, 400, 200);
+
+        ctx.textAlign = 'center';
+        ctx.font = '30px "微软雅黑 font-weight:bold"';
+        ctx.fillStyle = "#a4f8ec"
+        ctx.globalAlpha = 1;
+        ctx.fillText("隔板货架", 200, 40);
+
+        ctx.textAlign = 'center';
+        ctx.font = '24px "微软雅黑 font-weight:bold"';
+        ctx.fillStyle = "#a4f8ec"
+        ctx.globalAlpha = 1;
+        ctx.fillText("---------------------------------------------------------------------------", 10, 60);
+
+
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#75f3e2"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货架类型", 100, 80);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#75f3e2"
+        ctx.globalAlpha = 1;
+        ctx.fillText("面积", 300, 80);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00d7db"
+        ctx.globalAlpha = 1;
+        ctx.fillText("隔板货架", 100, 120);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00d7db"
+        ctx.globalAlpha = 1;
+        ctx.fillText("122㎡", 300, 120);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#06676a"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货位数量", 100, 160);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#06676a"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货位层数", 300, 160);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#e3f800"
+        ctx.globalAlpha = 1;
+        ctx.fillText("20000", 100, 190);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00fabb"
+        ctx.globalAlpha = 1;
+        ctx.fillText("5", 300, 190);
+
+        var texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+        var material = new THREE.SpriteMaterial({map: texture});
+        var text = new THREE.Sprite(material);
+        text.scale.set(0.5 * 100, 0.25 * 100, 0.75 * 100);
+        text.position.set(-120 - (shelf_width * 2.5 + rows * 6 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 12 * (forklift_channel + shelf_width + shelf_space)) * 0.5, layer * 5 * shelf_height + 20, -48 + lines * 2.5 * shelf_length);
+
+        echarts3.add(text);
+        //定义线的基本材料，我们可以使用LineBasicMaterial（实线材料）和LineDashedMaterial（虚线材料）
+        var material = new THREE.LineBasicMaterial({color: 0x0000ff});
+        //设置具有几何顶点的几何（Geometry）或缓冲区几何（BufferGeometry）设置顶点位置，看名字就知道了，一个是直接将数据保存在js里面的，另一个是保存在WebGL缓冲区内的，而且肯定保存到WebGL缓冲区内的效率更高
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3(-120 - (shelf_width * 2.5 + rows * 10 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 12 * (forklift_channel + shelf_width + shelf_space)) * 0.5, 0, -48 + lines * 2.5 * shelf_length));
+        geometry.vertices.push(new THREE.Vector3(-120 - (shelf_width * 2.5 + rows * 10 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 12 * (forklift_channel + shelf_width + shelf_space)) * 0.5, layer * 5 * shelf_height + 15, -48 + lines * 2.5 * shelf_length));
+        //使用Line方法将线初始化
+        var line = new THREE.Line(geometry, material);
+        echarts3.add(line);
+        //将线添加到场景
+        scene.add(echarts3);
+
+    }
+
+    function initEcharts3() {
+        echarts4 = new THREE.Group();
+        var shelf_height = parseInt($("#shelf_height").val());
+        var shelf_width = parseInt($("#shelf_width").val());
+        var shelf_length = parseInt($("#shelf_length").val());
+        forklift_channel = parseInt($("#shelf_channel").val()) * 0.5;
+        var shelf_space = parseInt($("#shelf_space").val());
+        lines = parseInt($("#lines").val());
+
+        var canvas = document.createElement("canvas");
+        canvas.width = 400;
+        canvas.height = 200;
+        canvas.style.width = 400 + "px";
+        canvas.style.height = 200 + "px";
+        var ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = '#2b2b2b';//填充实体颜色
+        ctx.globalAlpha = .5;
+        ctx.strokeStyle = "#00f88f";//填充边框颜色
+        ctx.lineWidth = 4;
+        ctx.fillRect(0, 0, 400, 200);
+
+        ctx.textAlign = 'center';
+        ctx.font = '30px "微软雅黑 font-weight:bold"';
+        ctx.fillStyle = "#a4f8ec"
+        ctx.globalAlpha = 1;
+        ctx.fillText("地堆存储", 200, 40);
+
+        ctx.textAlign = 'center';
+        ctx.font = '24px "微软雅黑 font-weight:bold"';
+        ctx.fillStyle = "#a4f8ec"
+        ctx.globalAlpha = 1;
+        ctx.fillText("---------------------------------------------------------------------------", 10, 60);
+
+
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#75f3e2"
+        ctx.globalAlpha = 1;
+        ctx.fillText("存储类型", 100, 80);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#75f3e2"
+        ctx.globalAlpha = 1;
+        ctx.fillText("面积", 300, 80);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00d7db"
+        ctx.globalAlpha = 1;
+        ctx.fillText("地堆存储", 100, 120);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00d7db"
+        ctx.globalAlpha = 1;
+        ctx.fillText("122㎡", 300, 120);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#06676a"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货位数量", 100, 160);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#06676a"
+        ctx.globalAlpha = 1;
+        ctx.fillText("货位层数", 300, 160);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#e3f800"
+        ctx.globalAlpha = 1;
+        ctx.fillText("20000", 100, 190);
+        ctx.font = '20px "微软雅黑"';
+        ctx.fillStyle = "#00fabb"
+        ctx.globalAlpha = 1;
+        ctx.fillText("5", 300, 190);
+
+        var texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+        var material = new THREE.SpriteMaterial({map: texture});
+        var text = new THREE.Sprite(material);
+        text.scale.set(0.5 * 100, 0.25 * 100, 0.75 * 100);
+        text.position.set(-120 - (shelf_width * 2.5 + rows * 6 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 12 * (forklift_channel + shelf_width + shelf_space)) * 0.5, layer * 5 * shelf_height + 20, -60 - lines * 2.5 * shelf_length);
+
+        echarts4.add(text);
+        //定义线的基本材料，我们可以使用LineBasicMaterial（实线材料）和LineDashedMaterial（虚线材料）
+        var material = new THREE.LineBasicMaterial({color: 0x0000ff});
+        //设置具有几何顶点的几何（Geometry）或缓冲区几何（BufferGeometry）设置顶点位置，看名字就知道了，一个是直接将数据保存在js里面的，另一个是保存在WebGL缓冲区内的，而且肯定保存到WebGL缓冲区内的效率更高
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3(-120 - (shelf_width * 2.5 + rows * 6 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 12 * (forklift_channel + shelf_width + shelf_space)) * 0.5, 0, -48 - lines * 2.5 * shelf_length));
+        geometry.vertices.push(new THREE.Vector3(-120 - (shelf_width * 2.5 + rows * 6 * (forklift_channel + shelf_width + shelf_space) + zu * rows * 12 * (forklift_channel + shelf_width + shelf_space)) * 0.5, layer * 5 * shelf_height + 20, -60 - lines * 2.5 * shelf_length));
+        //使用Line方法将线初始化
+        var line = new THREE.Line(geometry, material);
+        echarts4.add(line);
+        //将线添加到场景
+        scene.add(echarts4);
+
+    }
+
+    initEcharts();
+
+    var goodsLoad = new THREE.Group();
+
+    function initGoods() {
+        scene.remove(goodsLoad);
+        goodsLoad = new THREE.Group();
+        var canvas = document.createElement("canvas");
+        canvas.width = 400;
+        canvas.height = 200;
+        canvas.style.width = 400 + "px";
+        canvas.style.height = 200 + "px";
+        var ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = '#fafafa';//填充实体颜色
+        ctx.globalAlpha = .5;
+        ctx.strokeStyle = "#00f88f";//填充边框颜色
+        ctx.lineWidth = 4;
+        ctx.fillRect(0, 0, 400, 200);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = "#a4f8ec"
+        ctx.globalAlpha = 1;
+        ctx.font = '30px Arial'
+        for (var i = 0; i < 5; i++) {
+            ctx.fillText("正在运行订单", 200, 40)
+            ctx.shadowColor = 'rgba(0,0,0,' + (5 - i) / 5 + ')'
+            ctx.shadowOffsetX = i + 4
+            ctx.shadowOffsetY = i * 4
+            ctx.shadowBlur = i * 4
+        }
+        ctx.fillStyle = 'white'
+        // 画矩形,第一第二个参数是画笔起始点的x坐标和y坐标
+        // 第三第四个参数是宽度和高度
+        var m = randomNum(5000000, 6000000);
+        ctx.font = '24px Arial'
+        for (var i = 0; i < 5; i++) {
+            ctx.fillStyle = '#40ec11'
+            ctx.fillText("订单" + m, 80, 80)
+            ctx.shadowColor = 'rgba(0,0,0,' + (5 - i) / 5 + ')'
+            ctx.shadowOffsetX = i + 4
+            ctx.shadowOffsetY = i * 4
+            ctx.shadowBlur = i * 4
+        }
+
+        ctx.textAlign = 'center';
+
+        ctx.globalAlpha = 1;
+        var m = randomNum(5000000, 6000000);
+        ctx.font = '24px Arial'
+        for (var i = 0; i < 5; i++) {
+            ctx.fillStyle = '#40ec11'
+            ctx.fillText("订单" + m, 80, 140)
+            ctx.shadowColor = 'rgba(0,0,0,' + (5 - i) / 5 + ')'
+            ctx.shadowOffsetX = i + 4
+            ctx.shadowOffsetY = i * 4
+            ctx.shadowBlur = i * 4
+        }
+
+        ctx.textAlign = 'center';
+
+        ctx.globalAlpha = 1;
+        var m = randomNum(5000000, 6000000);
+        ctx.font = '24px Arial'
+        for (var i = 0; i < 5; i++) {
+            ctx.fillStyle = '#40ec11'
+            ctx.fillText("订单" + m, 300, 80)
+            ctx.shadowColor = 'rgba(0,0,0,' + (5 - i) / 5 + ')'
+            ctx.shadowOffsetX = i + 4
+            ctx.shadowOffsetY = i * 4
+            ctx.shadowBlur = i * 4
+        }
+
+        ctx.textAlign = 'center';
+        ctx.globalAlpha = 1;
+        var m = randomNum(5000000, 6000000);
+        ctx.font = '24px Arial'
+        for (var i = 0; i < 5; i++) {
+            ctx.fillStyle = '#40ec11'
+            ctx.fillText("订单" + m, 300, 140)
+            ctx.shadowColor = 'rgba(0,0,0,' + (5 - i) / 5 + ')'
+            ctx.shadowOffsetX = i + 4
+            ctx.shadowOffsetY = i * 4
+            ctx.shadowBlur = i * 4
+        }
+
+        var texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+        var material = new THREE.SpriteMaterial({map: texture});
+        var text = new THREE.Sprite(material);
+        text.scale.set(0.5 * 100, 0.25 * 100, 0.75 * 100);
+        text.position.set(-62, 30, -48);
+
+        goodsLoad.add(text);
+        //定义线的基本材料，我们可以使用LineBasicMaterial（实线材料）和LineDashedMaterial（虚线材料）
+        var material = new THREE.LineBasicMaterial({color: 0x0000ff});
+        //设置具有几何顶点的几何（Geometry）或缓冲区几何（BufferGeometry）设置顶点位置，看名字就知道了，一个是直接将数据保存在js里面的，另一个是保存在WebGL缓冲区内的，而且肯定保存到WebGL缓冲区内的效率更高
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3(-62, -2, -48));
+        geometry.vertices.push(new THREE.Vector3(-62, 30, -48));
+        //使用Line方法将线初始化
+        var line = new THREE.Line(geometry, material);
+        goodsLoad.add(line);
+        //将线添加到场景
+        scene.add(goodsLoad);
+
+    }
+
+    setInterval(initGoods, 2000);
+
 </script>
-</div>
+<th:block th:include="include :: echarts-gl-js"/>
+
 </body>
+
 </html>

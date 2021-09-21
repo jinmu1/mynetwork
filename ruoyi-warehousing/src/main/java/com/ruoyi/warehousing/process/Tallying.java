@@ -31,7 +31,6 @@ public class Tallying {
                  if (i<batch) {
                      List<Tray> trays1 = lists.get(i);
                      tally.putInTrays(trays1);
-
                  }
                  i++;
              }

@@ -1,5 +1,9 @@
 package com.ruoyi.warehousing.test;
 
+import com.mathworks.toolbox.javabuilder.MWClassID;
+import com.mathworks.toolbox.javabuilder.MWException;
+import com.mathworks.toolbox.javabuilder.MWNumericArray;
+import com.ruoyi.warehousing.action.Action;
 import com.ruoyi.warehousing.action.WarehousingUtil;
 import com.ruoyi.warehousing.form.*;
 import com.ruoyi.warehousing.process.*;
@@ -11,14 +15,16 @@ import com.ruoyi.warehousing.resource.facilities.platform.Platform;
 import com.ruoyi.warehousing.resource.facilities.storage.Storage;
 import com.ruoyi.warehousing.resource.personnel.Emp;
 import com.ruoyi.warehousing.result.EmpLog;
+import com.ruoyi.warehousing.result.Result;
 import com.ruoyi.warehousing.utils.DateUtils;
 import org.junit.Test;
-
+import org.ujmp.core.Matrix;
+import palletSingleShelvesLayout.Layout;
+import org.ujmp.jmatio.ImportMatrixMAT;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class WarehouseTest {
     private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -172,4 +178,63 @@ public class WarehouseTest {
         }
         System.out.println(distance);
     }
+
+    @Test
+    public void getStorage(){
+        Result result = Action.getStorage(100,9,3,0.2,1.5);
+
+        System.out.println(Math.ceil(1/2));
+    }
+
+    /**
+     * 调用matlab算法部分
+     *
+     * @param
+     */
+    @Test
+    public void matlabTest() throws IOException {
+        MWNumericArray a = null;
+        MWNumericArray b = null;
+        MWNumericArray c = null;
+        Layout layout ;
+        Object[] result = null;
+        try {
+            layout= new Layout();
+            a = new MWNumericArray(Double.valueOf(1.2), MWClassID.DOUBLE);
+            b = new MWNumericArray(Double.valueOf(1.5),MWClassID.DOUBLE);
+            c = new MWNumericArray(Double.valueOf(1),MWClassID.DOUBLE);
+            result = layout.palletSingleShelvesLayout(1,a,b,c);
+        } catch (MWException e) {
+            e.printStackTrace();
+        }
+        MWNumericArray X = (MWNumericArray) result[0];//第一个返回值是多元线性方程系数
+        double b1 = X.getDouble(1);
+        System.out.println("x方向的货架区域长度:" + b1);
+        double b2 = X.getDouble(2);
+        System.out.println("货位数:" + b2);
+        double b3 = X.getDouble(3);
+        System.out.println("y方向的货架区域长度:" + b3);
+        double b4 = X.getDouble(4);
+        System.out.println("货位面积:" + b4);
+        double b5 = X.getDouble(5);
+        System.out.println("z方向的货架区域高度:" + b5);
+        double b6 = X.getDouble(6);
+        System.out.println("货架面积率:" + b6);
+        double b7 = X.getDouble(7);
+        System.out.println("货架区域面积:" + b7);
+        double b8 = X.getDouble(8);
+        System.out.println("单位面积存量:" + b8);
+        String path = System.getProperty("user.dir")+"/dat.mat";
+        File file1 = new File(path);
+        Matrix sampleData=ImportMatrixMAT.fromFile(file1);
+        double[][] doubles = new double[][]{};
+        doubles = sampleData.toDoubleArray();
+        List<Point> list = new ArrayList<>();
+        for (int i=0;i<doubles.length;i++){
+            list.add(new Point(doubles[i][0],doubles[i][1],doubles[i][2]));
+        }
+        System.out.println(list.get(0).toString());
+
+    }
+
 }

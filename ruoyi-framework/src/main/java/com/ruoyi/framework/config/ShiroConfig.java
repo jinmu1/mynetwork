@@ -322,6 +322,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/warehousePlan", "anon,captchaValidate");
         filterChainDefinitionMap.put("/entrepot", "anon,captchaValidate");
         filterChainDefinitionMap.put("/entrepot1", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/entrepot2", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getUpload", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getUploadLine", "anon,captchaValidate");
         filterChainDefinitionMap.put("/common/download/resource", "anon,captchaValidate");
@@ -350,6 +351,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/takeDown", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getLoading", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getLoadingList", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/getShelfPoint", "anon,captchaValidate");
         filterChainDefinitionMap.put("/getBatch", "anon,captchaValidate");
         filterChainDefinitionMap.put("/demo/modal/demo1", "anon,captchaValidate");
         filterChainDefinitionMap.put("/demo/modal/demo2", "anon,captchaValidate");
