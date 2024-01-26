@@ -92,20 +92,20 @@ public class WarehouseTest {
     @Test
     public void getPutaway(){
         Storage storage = new Storage();
-        storage = storage.getHightStorage(1000,12,3,0.1,1.5);
-        List<Goods> list = WarehousingUtil.createGoods(1000);
-        List<Cargo> cargos = WarehousingUtil.initCargos(list,40000,storage);
-
-        List<Emp> emps = WarehousingUtil.initEmp((int)(1000/50));
-        List<Tray> trays = Tray.initTrays(list,1000);
-        double distance = 0.0;
-        double rate = 0.0;
-        List<EmpLog> list1 = Putaway.work(storage,trays,1.1,emps);
-        for (EmpLog empLog : list1) {
-            distance += empLog.getDistance();
-            rate += empLog.getEmpStatus();
-        }
-        System.out.println(distance);
+        storage = storage.getHightStorage(2000,8.2,3,0.1,1.5);
+//        List<Goods> list = WarehousingUtil.createGoods(1000);
+//        List<Cargo> cargos = WarehousingUtil.initCargos(list,40000,storage);
+//
+//        List<Emp> emps = WarehousingUtil.initEmp((int)(1000/50));
+//        List<Tray> trays = Tray.initTrays(list,1000);
+//        double distance = 0.0;
+//        double rate = 0.0;
+//        List<EmpLog> list1 = Putaway.work(storage,trays,1.1,emps);
+//        for (EmpLog empLog : list1) {
+//            distance += empLog.getDistance();
+//            rate += empLog.getEmpStatus();
+//        }
+        System.out.println(storage.getArea());
     }
     @Test
     public void getSorting() {
@@ -214,7 +214,6 @@ public class WarehouseTest {
         System.out.println("货位数:" + b2);
         double b3 = X.getDouble(3);
         System.out.println("y方向的货架区域长度:" + b3);
-        double b4 = X.getDouble(4);
         System.out.println("货位面积:" + b4);
         double b5 = X.getDouble(5);
         System.out.println("z方向的货架区域高度:" + b5);
@@ -222,7 +221,8 @@ public class WarehouseTest {
         System.out.println("货架面积率:" + b6);
         double b7 = X.getDouble(7);
         System.out.println("货架区域面积:" + b7);
-        double b8 = X.getDouble(8);
+        double b8 = X.getDouble(
+        double b4 = X.getDouble(4);8);
         System.out.println("单位面积存量:" + b8);
         String path = System.getProperty("user.dir")+"/dat.mat";
         File file1 = new File(path);

@@ -49,33 +49,33 @@ public class Storage {
         int cargo = 0;
         double area = 0.0;
         double price =Double.MAX_VALUE;
-        int high_shelf_layer = (int)Math.floor(height/shelf_height);
-        for (int i=1;i<200;i++){
-            for (int j=1;j<200;j++){
-                int cargos = i*j*high_shelf_layer;
-                if (cargos>storageNum  && i>5){
-                    double num = (i*cargo_box_length+shelf_space)*(j*cargo_box_width*2+forklift_channel);
-                    double num1 = i*j*2*high_shelf_layer*high_cargo_price;//货架的价格
-                    if (price>num1&&(int)Math.ceil(j/2)>0){
-                        price = num1;
-                        rows = i;
-                        line = (int) (Math.ceil(j/2));
-                        layer = high_shelf_layer;
-                        cargo = cargos;
-                        area = num;
+        int high_shelf_layer = 4;
+//        for (int i=1;i<200;i++){
+//            for (int j=1;j<200;j++){
+//                int cargos = i*j*high_shelf_layer;
+//                if (cargos>storageNum  && i>5){
+                    area = (5*2+shelf_space)*(18*1.2*2+3);
+//                    double num1 = i*j*2*high_shelf_layer*high_cargo_price;//货架的价格
+//                    if (price>num1&&(int)Math.ceil(j/2)>0){
+//                        price = num1;
+//                        rows = i;
+//                        line = (int) (Math.ceil(j/2));
+//                        layer = high_shelf_layer;
+//                        cargo = cargos;
+//                        area = num;
 
-                    }
-                }
-            }
-        }
+//                    }
+//                }
+//            }
+//        }
         ;
 
         Storage storage = new Storage();
         storage.setArea(area);
-        storage.setCargo(cargo);
-        storage.setLayer(layer);
-        storage.setLine(line);
-        storage.setRow(rows);
+//        storage.setCargo(cargo);
+//        storage.setLayer(layer);
+//        storage.setLine(line);
+//        storage.setRow(rows);
         return storage;
     }
 

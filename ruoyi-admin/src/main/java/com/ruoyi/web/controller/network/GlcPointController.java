@@ -26,6 +26,8 @@ import com.ruoyi.network.utils.AreaUtils;
 
 import com.ruoyi.network.utils.NetworkUtils;
 import com.ruoyi.network.utils.RandomUtil;
+import com.ruoyi.system.domain.GlcMdis;
+import com.ruoyi.system.service.IGlcMdisService;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -71,6 +73,9 @@ public class GlcPointController extends BaseController
 
     @Autowired
     private IGlcPointService glcPointService;
+
+    @Autowired
+    private IGlcMdisService glcMdisService;
 
 //    @RequiresPermissions("system:point:view")
     @GetMapping("/index")
@@ -1928,10 +1933,30 @@ public class GlcPointController extends BaseController
         List<Material> list = NetworkUtils.createGoods(goods_num);
         list = NetworkUtils.initMaterialPrice(list,b_size,m_size,s_size);
         list = NetworkUtils.initMaterialVolume(list,h_price,m_price,l_price);
-
         return list;
     }
-
+    @PostMapping("/point/get223")
+    @ResponseBody
+    public  List<City> getMids(HttpServletRequest req){
+        List<City> list = new ArrayList<>();
+        List<GlcMdis> glcMdis = glcMdisService.selectGlcMdisList(new GlcMdis());
+        for(GlcMdis glcMdis1:glcMdis){
+            City city = new City();
+            city.setCity(glcMdis1.getName());
+            city.setCity1(glcMdis1.getName1());
+            city.setLat(glcMdis1.getLat());
+            city.setLng(glcMdis1.getLng());
+            city.setLat1(glcMdis1.getLat1());
+            city.setLng1(glcMdis1.getLng1());
+            City city1 = new City();
+            city1.setCity(glcMdis1.getName());
+            city1.setLat(glcMdis1.getLat1());
+            city1.setLng(glcMdis1.getLng1());
+            city.setDistance(NetworkUtils.twoJuLi(city,city1));
+            list.add(city);
+        }
+        return list;
+    }
 
     /**
      * 选择城市 城市对应各城市

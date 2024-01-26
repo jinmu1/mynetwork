@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GlcMdisMapper">
+    
+    <resultMap type="GlcMdis" id="GlcMdisResult">
+        <result property="name"    column="name"    />
+        <result property="arr"    column="arr"    />
+        <result property="lat"    column="lat"    />
+        <result property="lng"    column="lng"    />
+        <result property="name1"    column="name1"    />
+        <result property="arr1"    column="arr1"    />
+        <result property="lat1"    column="lat1"    />
+        <result property="lng1"    column="lng1"    />
+        <result property="distance"    column="distance"    />
+        <result property="showt"    column="showt"    />
+    </resultMap>
+
+    <sql id="selectGlcMdisVo">
+        select name, arr, lat, lng, name1, arr1, lat1, lng1, distance, showt from glc_mdis
+    </sql>
+
+    <select id="selectGlcMdisList" parameterType="GlcMdis" resultMap="GlcMdisResult">
+        <include refid="selectGlcMdisVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="arr != null  and arr != ''"> and arr = #{arr}</if>
+            <if test="lat != null  and lat != ''"> and lat = #{lat}</if>
+            <if test="lng != null  and lng != ''"> and lng = #{lng}</if>
+            <if test="name1 != null  and name1 != ''"> and name1 = #{name1}</if>
+            <if test="arr1 != null  and arr1 != ''"> and arr1 = #{arr1}</if>
+            <if test="lat1 != null  and lat1 != ''"> and lat1 = #{lat1}</if>
+            <if test="lng1 != null  and lng1 != ''"> and lng1 = #{lng1}</if>
+            <if test="distance != null  and distance != ''"> and distance = #{distance}</if>
+            <if test="showt != null  and showt != ''"> and showt = #{showt}</if>
+        </where>
+    </select>
+    
+    <select id="selectGlcMdisById" parameterType="String" resultMap="GlcMdisResult">
+        <include refid="selectGlcMdisVo"/>
+        where name = #{name}
+    </select>
+        
+    <insert id="insertGlcMdis" parameterType="GlcMdis">
+        insert into glc_mdis
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="arr != null">arr,</if>
+            <if test="lat != null">lat,</if>
+            <if test="lng != null">lng,</if>
+            <if test="name1 != null">name1,</if>
+            <if test="arr1 != null">arr1,</if>
+            <if test="lat1 != null">lat1,</if>
+            <if test="lng1 != null">lng1,</if>
+            <if test="distance != null">distance,</if>
+            <if test="showt != null">showt,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="arr != null">#{arr},</if>
+            <if test="lat != null">#{lat},</if>
+            <if test="lng != null">#{lng},</if>
+            <if test="name1 != null">#{name1},</if>
+            <if test="arr1 != null">#{arr1},</if>
+            <if test="lat1 != null">#{lat1},</if>
+            <if test="lng1 != null">#{lng1},</if>
+            <if test="distance != null">#{distance},</if>
+            <if test="showt != null">#{showt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGlcMdis" parameterType="GlcMdis">
+        update glc_mdis
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="arr != null">arr = #{arr},</if>
+            <if test="lat != null">lat = #{lat},</if>
+            <if test="lng != null">lng = #{lng},</if>
+            <if test="name1 != null">name1 = #{name1},</if>
+            <if test="arr1 != null">arr1 = #{arr1},</if>
+            <if test="lat1 != null">lat1 = #{lat1},</if>
+            <if test="lng1 != null">lng1 = #{lng1},</if>
+            <if test="distance != null">distance = #{distance},</if>
+            <if test="showt != null">showt = #{showt},</if>
+        </trim>
+        where name = #{name}
+    </update>
+
+    <delete id="deleteGlcMdisById" parameterType="String">
+        delete from glc_mdis where name = #{name}
+    </delete>
+
+    <delete id="deleteGlcMdisByIds" parameterType="String">
+        delete from glc_mdis where name in 
+        <foreach item="name" collection="array" open="(" separator="," close=")">
+            #{name}
+        </foreach>
+    </delete>
+
+</mapper>

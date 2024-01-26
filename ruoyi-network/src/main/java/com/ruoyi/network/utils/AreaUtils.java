@@ -31,7 +31,7 @@ public final class AreaUtils {
     protected static double shelf_space = 0.1;//货架间隙
     protected static double light_cargo_box_height = 0.6;//轻型货架单个货格的高度
     protected static int light_shelf_layer = 4;//轻型货架层数
-    protected static int high_shelf_layer = 5;//高位货架层数
+    protected static int high_shelf_layer = 4;//高位货架层数
     protected static double beam_high_cargo_box_height = 1.7;//横梁式高位货架单个货格的高度
     protected static double shuttle_high_cargo_box_height = 1.9;//穿梭式高位货架单个货格的高度
     protected static double state1_high_cargo_box_width =1.65;//提升机巷道宽度
@@ -490,8 +490,8 @@ public final class AreaUtils {
         double area = 0.0;
         double price =Double.MAX_VALUE;
         double emp = throughput/workload;
-        for (int i=1;i<200;i++){
-            for (int j=1;j<200;j++){
+        for (int i=4;i<200;i++){
+            for (int j=9;j<200;j++){
                 int cargos = i*j*high_shelf_layer;
                 if (cargos>total && j>emp && i>5){
                     double num = (i*cargo_box_length+shelf_space)*(j*cargo_box_width*2+forklift_channel);

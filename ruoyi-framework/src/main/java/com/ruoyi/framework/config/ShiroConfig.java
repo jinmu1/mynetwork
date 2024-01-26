@@ -295,6 +295,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/system/point/point/get", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/get1", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/get2", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/system/point/point/get223", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/network", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/network2", "anon,captchaValidate");
         filterChainDefinitionMap.put("/system/point/point/network1", "anon,captchaValidate");

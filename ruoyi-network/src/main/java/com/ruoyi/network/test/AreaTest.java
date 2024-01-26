@@ -61,7 +61,7 @@ public class AreaTest {
     }
     @Test
     public void printHighStorage(){
-        LightStorage storage = AreaUtils.getHightStorage(3400,0);
+        LightStorage storage = AreaUtils.getHightStorage(2000,0);
         System.out.println("存储区数据:"+ Math.round(storage.getArea())+"平方米，层数:"+storage.getLayer()+"层，列数:"+storage.getLine()+"列，排数:"+storage.getRow()+"排，价格:"+storage.getPrice()+"万，货位数量："+storage.getCargo()+"个,人员数量:"+storage.getEmp());
 //        //用excel写出距离
 //        HSSFWorkbook wb=new HSSFWorkbook();
